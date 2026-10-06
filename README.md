@@ -132,7 +132,7 @@ For a downloaded ZIP, use Properties > Unblock before extraction if needed. Do n
 
 ## macOS quick start
 
-Prerequisites: macOS 13.5 or later on Apple silicon or Intel, Terminal, and a USB with enough room for your ISO. Ventoy has no official macOS installer. To create a new Ventoy USB, this utility uses [Mactoy](https://github.com/cashcon57/mactoy), a free, open-source (MIT), signed and notarized app. Install Mactoy yourself; this utility never downloads or installs software.
+Prerequisites: macOS 13.5 or later on Apple silicon or Intel, Terminal, and a USB with enough room for your ISO. Ventoy has no official macOS installer. To create a new Ventoy USB, this utility uses [Mactoy](https://github.com/cashcon57/mactoy), a free, open-source (MIT) app. The Mactoy project says that the app is signed and notarized. Mactoy is a young app with one maintainer, and it asks for Full Disk Access, so check the download before you open it (see option 1). Install Mactoy yourself; this utility never downloads or installs software.
 
 ### 1. Download the project and start the utility
 
@@ -156,7 +156,15 @@ Ventoy USB Setup (macOS)
 
 **Installing Ventoy erases every file on the USB that you choose. Back it up first.**
 
-If Mactoy is in `/Applications` or `~/Applications`, the utility opens it. If not, it opens the [Mactoy releases page](https://github.com/cashcon57/mactoy/releases) in your browser. Download the `.dmg` file, open it and drag Mactoy to **Applications**. Then, in Mactoy:
+If Mactoy is in `/Applications` or `~/Applications`, the utility opens it. If not, it opens the [Mactoy releases page](https://github.com/cashcon57/mactoy/releases) in your browser. Download the `.dmg` file and its `.dmg.sha256` file from the same release.
+
+**Check the Mactoy download before you give it Full Disk Access.** In Terminal, in the download folder (replace `<ver>` with the release version, for example `0.5.1`):
+
+1. Run `shasum -a 256 Mactoy-<ver>.dmg`. Compare the result with the text in `Mactoy-<ver>.dmg.sha256`. If they are different, delete the file and do not open it.
+2. Open the `.dmg` file and drag Mactoy to **Applications**.
+3. Run `spctl -a -vv /Applications/Mactoy.app`. The result must show `accepted` and `source=Notarized Developer ID`. If it does not, delete Mactoy and do not open it.
+
+Then, in Mactoy:
 
 1. Connect the USB. Select its card in the sidebar. Check its name and size.
 2. On the **Install Ventoy** tab, keep the defaults: version **Latest**, **MBR**, **Secure Boot** on.
@@ -185,7 +193,7 @@ At the path prompt, drag the ISO from Finder into the Terminal window and press 
 
 The utility copies the ISO with progress (percent, GiB copied, MiB/s, time left), mounts the USB again so that it reads the USB and not the cache, and compares the SHA-256 of the source and the copy. When you see **ISO copied and SHA-256 verified.**, the utility asks if it can eject the USB (default: no). Eject the USB before you unplug it.
 
-Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes and after it mounts the USB again, it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**. It also removes the hidden `._` file in which macOS keeps file attributes on exFAT and FAT32, so Ventoy does not list a `._<name>.iso` file.
+Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes and after it mounts the USB again (if the USB mounts at a different folder, it continues there), it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**. It also removes the hidden `._` file in which macOS keeps file attributes on exFAT and FAT32, so Ventoy does not list a `._<name>.iso` file.
 
 ## Linux quick start
 
