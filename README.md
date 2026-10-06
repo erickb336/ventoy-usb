@@ -28,7 +28,7 @@ This graphic shows the script to run on each computer, and the two options of th
 <a href="docs/assets/pick-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/pick-dark.svg">
-  <img alt="Pick your computer. Windows 10 or 11: run ventoy.ps1 in PowerShell as administrator, with the full command in step 3 of the Windows quick start. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 copies ISOs from a folder. On every computer, option 1 continues with option 2 when it finishes." src="docs/assets/pick-light.svg" width="100%">
+  <img alt="Pick your computer. Windows 10 or 11: run ventoy.ps1 in PowerShell as administrator, with the full command in step 3 of the Windows quick start. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 adds the ISOs of a folder, each with a SHA-256 check. On every computer, option 1 continues with option 2 when it finishes." src="docs/assets/pick-light.svg" width="100%">
 </picture>
 </a>
 
@@ -52,7 +52,7 @@ This graphic shows the four steps from a blank USB to an installed PC, with Wind
 <a href="docs/assets/journey-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/journey-dark.svg">
-  <img alt="The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; on Windows and macOS, the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks." src="docs/assets/journey-light.svg" width="480">
+  <img alt="The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks." src="docs/assets/journey-light.svg" width="480">
 </picture>
 </a>
 </p>
@@ -287,7 +287,7 @@ Run from the repository directory. If you downloaded a ZIP, restore permissions 
 chmod +x ventoy.sh ventoy-install.sh ventoy-add-isos.sh
 ```
 
-The Linux scripts are unchanged. You can also run them directly:
+You can also run the Linux scripts directly:
 
 ```bash
 ./ventoy-install.sh          # latest release, USB selection, YES confirmation
@@ -298,17 +298,28 @@ The Linux scripts are unchanged. You can also run them directly:
 
 Select a whole USB device such as `/dev/sdb`, not `/dev/sdb1`. Check `lsblk -o NAME,TRAN,SIZE,MODEL,LABEL,MOUNTPOINT` before confirming. The installer uses force-install (`-I`), which erases existing Ventoy installations too. It offers ISO URL downloads and copying from a local directory. Only use trusted direct ISO URLs; download Windows ISOs manually because Microsoft links can expire.
 
-Linux retains Ventoy's default partition style (MBR); the Windows path explicitly uses GPT. Existing Linux scripts find mounts by the `Ventoy` label, so connect only one Ventoy USB and verify the mount point. Their copy command can overwrite matching filenames. These behaviors were preserved, not rewritten for this Windows addition.
+`./ventoy-add-isos.sh` copies each `.iso` file of the folder and checks its SHA-256, as on Windows and macOS (see [The verified copy](#the-verified-copy)):
+
+- It never overwrites a file. When an ISO with the same name is already on the USB, it skips that ISO and tells you.
+- It refuses an ISO that is larger than the free space, or larger than 4 GiB minus 1 byte on FAT32.
+- At the end, it prints a summary: copied and SHA-256 verified, skipped, and failed. If it skipped or failed an ISO, it exits with code 1, and `./ventoy-install.sh` shows a warning instead of "Ventoy USB is ready".
+- It reads the ISO as your user. It uses sudo only for the USB (write and read-back), and only when the mount is not writable by you (for example, a mount made by root). It then asks for your password once, before the first copy.
+
+Linux keeps Ventoy's default partition style (MBR); the Windows path uses GPT. Which USB gets the ISOs:
+
+- `./ventoy-install.sh` copies the ISOs only to the USB that it just installed. It uses the `Ventoy` partition of the device that you selected, never a Ventoy USB of another device. If that partition is not mounted, the script mounts it at a new temporary folder and unmounts it at the end.
+- `./ventoy-add-isos.sh` (option 2) finds the USB by its `Ventoy` label. The mount point that you give must be the mount point of a file system with that label, or the script asks before it continues. When two or more Ventoy USBs are connected, it lists them and asks which one to use.
+- When the installer cannot copy all the downloaded ISOs, it keeps them in their temporary folder. It shows the folder and the command to copy them later.
 
 ## The verified copy
 
-On Windows and macOS, option 2 copies the ISO in the same safe way. This graphic shows each step, and what happens after an error.
+On Windows, macOS and Linux, option 2 copies each ISO in the same safe way. This graphic shows each step, and what happens after an error.
 
 <p align="center">
 <a href="docs/assets/copy-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/copy-dark.svg">
-  <img alt="The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a temp file named .ventoy-copy-something; on macOS, the file is hidden. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file, or tell you how to delete it, and stop." src="docs/assets/copy-light.svg" width="480">
+  <img alt="The verified copy, on Windows, macOS and Linux. 1, check: enough free space, the FAT32 file size limit, and no file with the same name; on Windows and macOS, also check that it is the same USB; on Linux, an ISO whose name is already on the USB is skipped. 2, write to a temp file named .ventoy-copy-something; on macOS and Linux, the file is hidden. 3, copy, with progress: on Windows and macOS, the percent, GiB copied, MiB per second and time left; on Linux, the bytes copied and the speed. 4, flush the data to the USB. 5, skip the cache, so that the copy is read from the USB: on macOS, unmount the USB, mount it again, and check that it is the same USB; on Linux, read the copy with O_DIRECT. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file where possible, and stop. Linux then goes on with the next ISO, except after Ctrl+C." src="docs/assets/copy-light.svg" width="480">
 </picture>
 </a>
 </p>
@@ -319,6 +330,8 @@ On Windows and macOS, option 2 copies the ISO in the same safe way. This graphic
 Copying requires the standard Ventoy partition layout on the selected disk, checks free space and FAT32 limits, refuses filename collisions, and uses a temporary file until checksum verification succeeds. This checks copy integrity, not ISO authenticity.
 
 Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes and after it mounts the USB again (if the USB mounts at a different folder, it continues there), it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**. It also removes the hidden `._` file in which macOS keeps file attributes on exFAT and FAT32, so Ventoy does not list a `._<name>.iso` file.
+
+Copy rules on Linux are the same, with these differences. It does not check the disk identity or the Ventoy partition layout: it checks only that the exact mount point that you give has the `Ventoy` label, and it does not check the disk again before it writes. It copies all the ISOs of a folder, one after the other. It skips an ISO whose name is already on the USB, and an error stops only that ISO; **Ctrl+C** stops all. It shows the progress of `dd` (bytes copied and speed). It reads the copy back with O_DIRECT, so that it reads the USB and not the page cache. If the file system does not support O_DIRECT, it drops the copy from the page cache, reads it again and prints a note. If it cannot remove the temporary file, it tells you its name, so that you can delete it.
 
 </details>
 
@@ -392,6 +405,22 @@ Open the list for the computer that prepares the USB.
 | macOS: Mactoy cannot write the USB | Turn on Full Disk Access for Mactoy in System Settings > Privacy & Security, and allow it in Login Items. Then retry in Mactoy. |
 | macOS: "Could not unmount" during verification | Close Finder windows and apps that use the USB, then run option 2 again. The temporary file is removed. |
 | macOS: `permission denied: ./ventoy.sh` | Run `chmod +x ventoy.sh macos/ventoy-mac.sh`, or run `bash ventoy.sh`. |
+
+</details>
+
+<details>
+<summary><b>Linux</b></summary>
+
+| Problem | Action |
+| --- | --- |
+| Linux: "Skipped: … already exists. It was not changed." | The USB already has a file with that name. The script never overwrites it. To replace it, delete the old ISO from the USB yourself, then run the script again. |
+| Linux: the summary shows a skipped or failed ISO, and the script exits with code 1 | Read the line of that ISO above the summary. The ISOs marked ✅ copied were verified. Fix the cause, then copy again with `./ventoy-add-isos.sh` (option 2); do not install Ventoy again. It skips the ISOs that are already on the USB. If `./ventoy-install.sh` downloaded the ISOs, it kept them and shows their folder and the command to use. |
+| Linux: "Expected 1 partition with the label Ventoy on …" | After the install, the installer did not find exactly one `Ventoy` partition on the device that you selected, so it copied nothing. Ventoy is installed. Unplug and reconnect the USB, check it with `lsblk -o NAME,LABEL,MOUNTPOINT`, then copy the ISOs with `./ventoy-add-isos.sh` (option 2). |
+| Linux: "sudo is necessary to write to it" | Your user cannot write to the mount point, for example because root mounted it. Type your password once. To copy without sudo, mount the USB as your user (for example, open it in your file manager). |
+| Linux: "sudo needs the password again" | The sudo time limit ended during a long run. Run the script again; it skips the ISOs that are already on the USB. |
+| Linux: "sudo on this computer asks for the password at each command" | Your sudo setting keeps no time limit (`timestamp_timeout=0`), so the script cannot copy with sudo. It stops before the first copy. Mount the USB as your user (open it in your file manager, or run `udisksctl mount -b /dev/<partition>`), then run the script again. |
+| Linux: "does not appear to be a Ventoy mount point" | Give the mount point of the USB's large `Ventoy` partition itself, not a folder in it. Check it with `lsblk -o NAME,LABEL,MOUNTPOINT`. |
+| Linux: "Could not remove the temporary file" | Delete the hidden `.ventoy-copy-…` file named in the message from the top folder of the USB. |
 
 </details>
 
