@@ -46,6 +46,12 @@ for bad in folder.iso empty.iso notes.txt missing.iso; do
     mac_is_iso "$work/$bad" && fail "$bad rejected" || pass "$bad rejected"
 done
 
+echo "== Control characters"
+# A removal must not join the bytes around it into a new C1 (U+009B is CSI).
+check "ESC between C2 and 9B removed" "AB" "$(mac_clean $'A\xc2\x1b\x9bB')"
+check "nested C1 removed" "AB" "$(mac_clean $'A\xc2\xc2\x9b\x9bB')"
+check "other UTF-8 kept" "café Ā" "$(mac_clean 'café Ā')"
+
 echo "== Disk eligibility (stub diskutil with plist fixtures)"
 fix=$work/fixtures
 mkdir -p "$fix" "$work/bin"
@@ -118,9 +124,18 @@ contains "disk not in external physical list rejected" "not an external physical
 
 out=$(mac_select_disk 2>&1 <<<3; echo "selected=$VT_SELECTED_DISK uuid=$VT_SELECTED_UUID")
 contains "select by list number, not disk id" "selected=disk10 uuid=UUID-disk10" "$out"
-for answer in 0 6 disk4 ""; do
-    out=$(mac_select_disk 2>&1 <<<"$answer")
-    contains "selection [$answer] rejected" "Invalid USB selection." "$out"
+out=$(mac_select_disk 2>&1 <<<01; echo "selected=$VT_SELECTED_DISK")
+contains "leading zero accepted" "selected=disk4" "$out"
+for answer in 0 6 disk4 "" 000 0001 99999999999999999999 18446744073709551617; do
+    out=$(mac_select_disk 2>&1 <<<"$answer"; echo "selected=${VT_SELECTED_DISK:-}")
+    check "selection [$answer] rejected" "Error: Invalid USB selection." "$(echo "$out" | grep -v '^\[' | grep -v '^Ventoy USB disks:')"
+done
+# "08" and "09" are not octal. A list of 9 stands in for 9 connected USB disks.
+for answer in 08 09; do
+    out=$(mac_list_ventoy_disks() { VT_CAND_DISKS=(d1 d2 d3 d4 d5 d6 d7 d8 d9); VT_CAND_UUIDS=(u1 u2 u3 u4 u5 u6 u7 u8 u9); }
+        mac_select_disk 2>&1 <<<"$answer"; echo "selected=$VT_SELECTED_DISK")
+    check "selection [$answer] is decimal" "Ventoy USB disks:
+selected=d${answer#0}" "$out"
 done
 out=$(mac_prepare_volume disk5 UUID-disk5 2>&1)
 contains "NTFS rejected as read-only on macOS" "macOS can only read NTFS" "$out"
@@ -146,6 +161,8 @@ contains "no disk: clear message" "No Ventoy USB found. Connect the USB and run 
 printf '#!/bin/bash\n' >"$work/bin/open"
 chmod +x "$work/bin/open"
 out=$(printf '1\n\n' | HOME=$work /bin/bash "$root/macos/ventoy-mac.sh" 2>&1)
+contains "option 1 tells how to check Mactoy" "spctl -a -vv /Applications/Mactoy.app
+It must show \"source=Notarized Developer ID\"" "$out"
 contains "no disk after option 1: reconnect hint" "No Ventoy USB found. If Mactoy finished, unplug and reconnect the USB, then run ./ventoy.sh and choose 2." "$out"
 rm "$work/bin/open"
 PATH=$realpath_
@@ -169,8 +186,9 @@ image_owns() {
     [ -n "$2" ] && [ "$(image_disk "$1")" = "$2" ] &&
         [ "$(plist_get "$(diskutil info -plist "$2")" VirtualOrPhysical)" = Virtual ]
 }
-# make_image <data fs> <data MB>: create, attach and partition a Ventoy-like image
-# $work/image-<data fs>.dmg; print the disk id.
+# make_image <data fs> <data MB> <data label>: create, attach and partition a Ventoy-like image
+# $work/image-<data fs>.dmg; print the disk id. Use a label unique to this run, so that another
+# volume with the same name (another run, or a real Ventoy USB) does not move the mount point.
 make_image() {
     local img=$work/image-$1.dmg disk sectors
     sectors=$((($2 + 40) * 2048)) # data + 32 MiB VTOYEFI + free space
@@ -180,11 +198,17 @@ make_image() {
     # $disk only when it is that disk.
     image_disk "$img" >>"$work/attached"
     image_owns "$img" "$disk" || return 1
-    diskutil partitionDisk "$disk" MBR "$1" Ventoy "$(($2 * 1048576))B" "MS-DOS FAT16" VTOYEFI 33554432B "Free Space" free R >/dev/null 2>&1 || return 1
+    diskutil partitionDisk "$disk" MBR "$1" "$3" "$(($2 * 1048576))B" "MS-DOS FAT16" VTOYEFI 33554432B "Free Space" free R >/dev/null 2>&1 || return 1
     echo "$disk"
 }
 
-disk=$(make_image ExFAT 160)
+# own_mount: set VT_MOUNT to the mount point of this run's image now, or fail.
+own_mount() {
+    VT_MOUNT=""
+    mac_ventoy_disk "$disk" any && [ -n "$VT_MOUNT" ]
+}
+
+disk=$(make_image ExFAT 160 "VT$$E")
 if [ -z "$disk" ]; then
     fail "create exFAT disk image"
 else
@@ -200,7 +224,8 @@ else
     contains "copy prints verified" "ISO copied and SHA-256 verified." "$out"
     contains "copy shows progress" "100% | 0.02 / 0.02 GiB" "$out"
     check "copy exit code" 0 "$rc"
-    mac_ventoy_disk "$disk" any
+    own_mount
+    check "data volume has this run's label" "VT$$E" "$VT_LABEL"
     check "copy hash matches source" "$(mac_sha256 "$work/Test Image.iso")" "$(mac_sha256 "$VT_MOUNT/Test Image.iso")"
     check "no temp file after success" "" "$(ls -A "$VT_MOUNT" | grep ventoy-copy)"
     check "no AppleDouble ._ file after success" "" "$(ls -A "$VT_MOUNT" | grep '^\._')"
@@ -241,7 +266,7 @@ $dragged "; echo "$VT_ISO") | tail -1)
     rc=$?
     contains "checksum mismatch refused" "Copied ISO checksum mismatch." "$out"
     check "mismatch exit code" 1 "$rc"
-    mac_ventoy_disk "$disk" any
+    own_mount
     check "no temp file after mismatch" "" "$(ls -A "$VT_MOUNT" | grep ventoy-copy)"
     [ -e "$VT_MOUNT/mismatch.iso" ] && fail "no ISO after mismatch" || pass "no ISO after mismatch"
 
@@ -250,6 +275,7 @@ $dragged "; echo "$VT_ISO") | tail -1)
     printf '#!/bin/bash\nhead -c 1000000 "$1"\nexec sleep 30\n' >"$work/slow-cat/cat"
     chmod +x "$work/slow-cat/cat"
     cp "$work/Test Image.iso" "$work/interrupt.iso"
+    own_mount
     set -m # job control, so the background copy receives SIGINT like Ctrl+C
     (PATH=$work/slow-cat:$PATH mac_copy_iso "$disk" "$uuid" "$work/interrupt.iso" any >/dev/null 2>&1) &
     copier=$!
@@ -264,9 +290,17 @@ $dragged "; echo "$VT_ISO") | tail -1)
     check "no temp file after interrupt" "" "$(ls -A "$VT_MOUNT" | grep ventoy-copy)"
     [ -e "$VT_MOUNT/interrupt.iso" ] && fail "no ISO after interrupt" || pass "no ISO after interrupt"
 
+    # A link to an ISO: its size is the size of the ISO, not of the link.
+    ln -s "$work/Test Image.iso" "$work/linked.iso"
+    out=$(mac_copy_iso "$disk" "$uuid" "$work/linked.iso" any 2>&1)
+    contains "ISO behind a symbolic link copied" "ISO copied and SHA-256 verified." "$out"
+    own_mount
+    check "linked ISO copy matches" "$(mac_sha256 "$work/Test Image.iso")" "$(mac_sha256 "$VT_MOUNT/linked.iso")"
+
     cp "$work/Test Image.iso" "$work/-x.iso"
     out=$(cd "$work" && mac_copy_iso "$disk" "$uuid" -x.iso any 2>&1)
     contains "relative ISO name that starts with - copied" "ISO copied and SHA-256 verified." "$out"
+    own_mount
     check "-x.iso copy matches" "$(mac_sha256 "$work/-x.iso")" "$(mac_sha256 "$VT_MOUNT/-x.iso")"
 
     # Hooks around the real tools, to change the USB at exact moments.
@@ -277,7 +311,9 @@ $dragged "; echo "$VT_ISO") | tail -1)
 # STOP_ON_MOUNT: on "mount", stop the caller with SIGTERM and do not mount. (SIGINT, as from
 # Ctrl+C, takes the same cleanup path, but a background job ignores it.)
 # FLIP: from the FLIP_AT-th "info -plist FLIP_PART" on, replace a key ("Key -type value").
+# MOUNT_AT: on "mount", mount at this folder (as when the usual mount point is taken by another volume).
 [ "$1" = mount ] && [ -n "${STOP_ON_MOUNT:-}" ] && { kill -TERM $PPID; exit 1; }
+[ "$1" = mount ] && [ -n "${MOUNT_AT:-}" ] && exec /usr/sbin/diskutil mount -mountPoint "$MOUNT_AT" "$2"
 if [ "$1 $2 $3" = "info -plist ${FLIP_PART:-}" ]; then
     n=$(($(cat "$FLIP_COUNT" 2>/dev/null || echo 0) + 1))
     echo "$n" >"$FLIP_COUNT"
@@ -315,6 +351,7 @@ EOF2
         shift
         rm -f "$FLIP_COUNT"
         cp "$work/Test Image.iso" "$work/$n.iso"
+        own_mount || return 1
         dest=$VT_MOUNT/$n.iso
         out=$(env PATH="$hook:$PATH" "$@" /bin/bash -c '. "$1/macos/disks.sh"; . "$1/macos/isos.sh"; mac_copy_iso "$2" "$3" "$4" any' _ \
             "$root" "$disk" "$uuid" "$work/$n.iso" 2>&1)
@@ -324,21 +361,38 @@ EOF2
     hooked before FLIP_PART="${disk}s1" FLIP_AT=2 FLIP="VolumeUUID -string OTHER"
     contains "USB changed before the write refused" "Error: The USB changed. Run again" "$out"
     case "$out" in *"[1/3]"*) fail "nothing written after the change" ;; *) pass "nothing written after the change" ;; esac
+    # Mount point changes between the selection and the write: nothing is written.
+    mkdir "$work/other"
+    hooked before-mount FLIP_PART="${disk}s1" FLIP_AT=2 FLIP="MountPoint -string $work/other"
+    contains "mount point change before the write refused" "Error: The USB changed. Run again" "$out"
+    case "$out" in *"[1/3]"*) fail "nothing written after the mount point change" ;; *) pass "nothing written after the mount point change" ;; esac
+    check "nothing written to the new mount point" "" "$(ls -A "$work/other")"
     # Identity changes across the remount: refused, temp file removed.
-    for flip in "VolumeUUID -string OTHER" "WritableVolume -bool false" "MountPoint -string /Volumes/Other"; do
+    for flip in "VolumeUUID -string OTHER" "WritableVolume -bool false"; do
         hooked across FLIP_PART="${disk}s1" FLIP_AT=3 FLIP="$flip"
         contains "USB change across the remount refused ($flip)" "Error: The USB changed during the copy." "$out"
         check "no ISO or temp file after the change ($flip)" "" "$([ -e "$dest" ] && echo "$dest"; leftovers)"
     done
 
+    # The same volume mounts again at another folder: the copy continues there.
+    mkdir "$work/mnt"
+    hooked elsewhere MOUNT_AT="$work/mnt"
+    contains "copy continues at the new mount point" "ISO copied and SHA-256 verified." "$out"
+    own_mount
+    check "volume mounted at the new folder" "$work/mnt" "$VT_MOUNT"
+    check "copy at the new mount point matches" "$(mac_sha256 "$work/Test Image.iso")" "$(mac_sha256 "$work/mnt/elsewhere.iso")"
+    check "no temp file at the new mount point" "" "$(leftovers)"
+    diskutil unmount "${disk}s1" >/dev/null && diskutil mount "${disk}s1" >/dev/null
+
     # A stop (Ctrl+C or SIGTERM) while the volume is unmounted: the hidden file name is shown.
     hooked stop STOP_ON_MOUNT=1
     check "stop while unmounted exit code" 143 "$rc"
     diskutil mount "${disk}s1" >/dev/null
+    own_mount
     left=$(ls -A "$VT_MOUNT" | grep '^\.ventoy-copy')
     [ -n "$left" ] && pass "temp file stays on the unmounted USB" || fail "temp file stays on the unmounted USB"
     contains "stop while unmounted names the hidden file" "The hidden temporary file $left can remain on the USB." "$out"
-    rm -f "$VT_MOUNT/$left" "$VT_MOUNT/._$left"
+    [ -n "$left" ] && own_mount && rm -f "$VT_MOUNT/$left" "$VT_MOUNT/._$left"
 
     # The ISO name appears during the verification, or at the rename.
     for kind in file dir link mv-dir; do
@@ -349,7 +403,7 @@ EOF2
         contains "name collision refused ($kind)" "Error: Already exists: $dest." "$out"
         case "$out" in *verified*) fail "no 'verified' after collision ($kind)" ;; *) pass "no 'verified' after collision ($kind)" ;; esac
         check "no temp file after collision ($kind)" "" "$(leftovers)"
-        rm -rf "$dest" "$VT_MOUNT/._$kind.iso" # the hook, not the copy, made this ._ file
+        own_mount && rm -rf "$VT_MOUNT/$kind.iso" "$VT_MOUNT/._$kind.iso" # the hook, not the copy, made this ._ file
     done
     check "existing link target untouched" "" "$(ls -A "$work/outside")"
     hooked mvfail HOOK_MV_FAIL=1
@@ -358,7 +412,7 @@ EOF2
     check "no ._ file on the volume after all copies" "" "$(ls -A "$VT_MOUNT" | grep '^\._')"
 fi
 
-disk=$(make_image "MS-DOS FAT32" 100)
+disk=$(make_image "MS-DOS FAT32" 100 "VT$$F")
 if [ -z "$disk" ]; then
     fail "create FAT32 disk image"
 else
@@ -366,6 +420,10 @@ else
     dd if=/dev/zero of="$work/huge.iso" bs=1 count=0 seek=4294967296 2>/dev/null
     out=$(mac_copy_iso "$disk" "$VT_UUID" "$work/huge.iso" any 2>&1)
     contains "FAT32 4 GiB limit refused" "larger than the FAT32 file size limit" "$out"
+    ln -s "$work/huge.iso" "$work/huge-link.iso"
+    out=$(mac_copy_iso "$disk" "$VT_UUID" "$work/huge-link.iso" any 2>&1)
+    contains "FAT32 limit refused for a link to a large ISO" "larger than the FAT32 file size limit" "$out"
+    case "$out" in *"[1/3]"*) fail "nothing copied for a link to a large ISO" ;; *) pass "nothing copied for a link to a large ISO" ;; esac
     image_owns "$work/image-MS-DOS FAT32.dmg" "$disk" && pass "image guard accepts its own disk" || fail "image guard accepts its own disk"
     image_owns "$work/image-ExFAT.dmg" "$disk" && fail "image guard refuses another image's disk" || pass "image guard refuses another image's disk"
 fi

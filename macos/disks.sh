@@ -14,8 +14,9 @@ die() {
 
 # Print $1 without control characters (C0, DEL and UTF-8 C1), so that a USB name
 # cannot send escape sequences to the terminal. Use it on text that the USB sets.
+# tr runs first and sed repeats until no C1 is left, so a removal cannot join two bytes into a new C1.
 mac_clean() {
-    printf '%s' "$1" | LC_ALL=C sed $'s/\xc2[\x80-\x9f]//g' | LC_ALL=C tr -d '\000-\037\177'
+    printf '%s' "$1" | LC_ALL=C tr -d '\000-\037\177' | LC_ALL=C sed -e :a -e $'s/\xc2[\x80-\x9f]//' -e ta
 }
 
 # plist_get <plist text> <key path>: print the raw value, or fail if the key is absent.
@@ -101,7 +102,8 @@ mac_select_disk() {
     fi
     read -r -p "Select USB by list number: " answer || die "No selection."
     case "$answer" in
-        '' | *[!0-9]*) die "Invalid USB selection." ;;
+        [0-9] | [0-9][0-9] | [0-9][0-9][0-9]) answer=$((10#$answer)) ;; # 10#: "08" is 8, not octal.
+        *) die "Invalid USB selection." ;;
     esac
     if [ "$answer" -lt 1 ] || [ "$answer" -gt "${#VT_CAND_DISKS[@]}" ]; then
         die "Invalid USB selection."
@@ -127,8 +129,9 @@ mac_prepare_volume() {
     [ "$VT_WRITABLE" = true ] || die "The Ventoy data partition at $VT_MOUNT is mounted read-only."
 }
 
-# mac_same_volume <disk> <uuid> <mount> [scope]: fail unless the data volume is unchanged.
+# mac_same_volume <disk> <uuid> [scope]: fail unless the data volume is unchanged and mounted
+# writable. The mount point can change after a remount; the caller reads it from VT_MOUNT.
 mac_same_volume() {
-    mac_ventoy_disk "$1" "${4:-physical}" && [ "$VT_UUID" = "$2" ] && [ "$VT_MOUNT" = "$3" ] &&
+    mac_ventoy_disk "$1" "${3:-physical}" && [ "$VT_UUID" = "$2" ] && [ -n "$VT_MOUNT" ] &&
         [ "$VT_WRITABLE" = true ]
 }
