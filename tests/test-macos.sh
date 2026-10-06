@@ -361,6 +361,12 @@ EOF2
     hooked before FLIP_PART="${disk}s1" FLIP_AT=2 FLIP="VolumeUUID -string OTHER"
     contains "USB changed before the write refused" "Error: The USB changed. Run again" "$out"
     case "$out" in *"[1/3]"*) fail "nothing written after the change" ;; *) pass "nothing written after the change" ;; esac
+    # Mount point changes between the selection and the write: nothing is written.
+    mkdir "$work/other"
+    hooked before-mount FLIP_PART="${disk}s1" FLIP_AT=2 FLIP="MountPoint -string $work/other"
+    contains "mount point change before the write refused" "Error: The USB changed. Run again" "$out"
+    case "$out" in *"[1/3]"*) fail "nothing written after the mount point change" ;; *) pass "nothing written after the mount point change" ;; esac
+    check "nothing written to the new mount point" "" "$(ls -A "$work/other")"
     # Identity changes across the remount: refused, temp file removed.
     for flip in "VolumeUUID -string OTHER" "WritableVolume -bool false"; do
         hooked across FLIP_PART="${disk}s1" FLIP_AT=3 FLIP="$flip"
