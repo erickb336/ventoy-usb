@@ -1,12 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# fetch <url> [curl option]...: download over https only. A redirect to http stops the download.
+fetch() {
+  curl -fL --proto =https --proto-redir =https "${@:2}" "$1"
+}
+
+# release_digest <version>: print the SHA-256 that the GitHub release gives for ventoy-<version>-linux.tar.gz
+# (the asset's "digest" field, as the Windows installer uses it). It prints nothing when the release has no digest.
+release_digest() {
+  fetch "https://api.github.com/repos/ventoy/Ventoy/releases/tags/v$1" -sS -H 'Accept: application/vnd.github+json' |
+    awk -v name="\"ventoy-$1-linux.tar.gz\"," '
+      $1 == "\"name\":" { asset = ($2 == name) }
+      asset && $1 == "\"digest\":" { print $2; exit }' |
+    sed -n -E 's/^"sha256:([0-9a-fA-F]{64})",?$/\1/p' | tr 'A-F' 'a-f'
+}
+
 # download_isos <url>...: download the ISOs into a new folder, TEMP_ISO_DIR. Each file gets a name that ends in .iso,
-# so that ventoy-add-isos.sh copies it. Two URLs with the same file name stop the script before any download.
+# so that ventoy-add-isos.sh copies it. An http URL, or two URLs with the same file name, stop the script before any download.
 download_isos() {
   local url name names=() n i
   (( $# > 0 )) || return 0
   for url in "$@"; do
+    if [[ "${url,,}" != https://* ]]; then
+      echo "❌ Only https URLs are allowed: $url. Aborted." >&2
+      return 1
+    fi
     name=${url%%#*}
     name=${name%%\?*}
     name=${name##*/}
@@ -24,7 +43,7 @@ download_isos() {
   echo "📥 Downloading ISOs to $TEMP_ISO_DIR..."
   for i in "${!names[@]}"; do
     echo "Downloading ${names[i]}..."
-    curl -fL -o "$TEMP_ISO_DIR/${names[i]}" "${@:i+1:1}"
+    fetch "${@:i+1:1}" -o "$TEMP_ISO_DIR/${names[i]}"
   done
 }
 
@@ -116,14 +135,32 @@ trap '[[ -z "$TEMP_ISO_DIR" || ! -d "$TEMP_ISO_DIR" ]] || downloads_kept' EXIT
 
 echo "🚀 Ventoy USB Installer Script"
 
-# Check for version argument or ask interactively
-if [[ $# -gt 0 ]]; then
-  VENTOY_VERSION="$1"
-  VENTOY_VERSION=${VENTOY_VERSION#v}  # Remove leading 'v' if present
+# Arguments: [version] [--sha256 <hex>]. --sha256 gives the expected SHA-256 of the package yourself,
+# for a release that has no digest. It needs an explicit version. There is no way to skip the verification.
+VENTOY_VERSION="" EXPECTED_SHA256=""
+while (( $# )); do
+  case $1 in
+    --sha256)
+      EXPECTED_SHA256=$(tr 'A-F' 'a-f' <<<"${2:-}")
+      if [[ ! "$EXPECTED_SHA256" =~ ^[0-9a-f]{64}$ ]]; then
+        echo "❌ --sha256 needs the 64 hex characters of the expected SHA-256."
+        exit 1
+      fi
+      shift ;;
+    -*) echo "❌ Unknown option: $1. Usage: ./ventoy-install.sh [version] [--sha256 <hex>]"; exit 1 ;;
+    *) VENTOY_VERSION=${1#v} ;;  # Remove leading 'v' if present
+  esac
+  shift
+done
+
+if [[ -n "$VENTOY_VERSION" ]]; then
   echo "Using specified Ventoy version: $VENTOY_VERSION"
+elif [[ -n "$EXPECTED_SHA256" ]]; then
+  echo "❌ --sha256 needs an explicit version: ./ventoy-install.sh <version> --sha256 <hex>"
+  exit 1
 else
   echo "Fetching latest Ventoy version..."
-  VENTOY_VERSION=$(curl -s https://api.github.com/repos/ventoy/Ventoy/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+  VENTOY_VERSION=$(fetch https://api.github.com/repos/ventoy/Ventoy/releases/latest -sS | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
   VENTOY_VERSION=${VENTOY_VERSION#v}  # Remove leading 'v' if present
 
   if [[ -z "$VENTOY_VERSION" ]]; then
@@ -134,28 +171,48 @@ else
   echo "Latest version: $VENTOY_VERSION"
   read -rp "Press Enter to use latest, or enter a specific version: " USER_VERSION
   if [[ -n "$USER_VERSION" ]]; then
-    VENTOY_VERSION="$USER_VERSION"
-    VENTOY_VERSION=${VENTOY_VERSION#v}
+    VENTOY_VERSION=${USER_VERSION#v}
     echo "Using specified version: $VENTOY_VERSION"
   fi
 fi
 
-VENTOY_URL="https://github.com/ventoy/Ventoy/releases/download/v$VENTOY_VERSION/ventoy-$VENTOY_VERSION-linux.tar.gz"
-
-echo "📥 Downloading Ventoy $VENTOY_VERSION..."
-curl -L -o ventoy.tar.gz "$VENTOY_URL"
-
-if [[ ! -f ventoy.tar.gz ]] || [[ ! -s ventoy.tar.gz ]]; then
-  echo "❌ Download failed. Check your internet connection or try again later."
+if [[ ! "$VENTOY_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "❌ $VENTOY_VERSION is not a Ventoy version such as 1.1.17."
   exit 1
 fi
 
-# Verify the downloaded file is a valid tar.gz
-if ! tar -tzf ventoy.tar.gz >/dev/null 2>&1; then
-  echo "❌ Downloaded file is not a valid tar.gz archive. The Ventoy version or URL may be incorrect."
+VENTOY_URL="https://github.com/ventoy/Ventoy/releases/download/v$VENTOY_VERSION/ventoy-$VENTOY_VERSION-linux.tar.gz"
+
+# The package runs as root later, so its SHA-256 must match the digest of the GitHub release (or the --sha256 that you gave)
+# before anything extracts or runs it. Without a digest, the install stops: there is no way to skip this check.
+if [[ -z "$EXPECTED_SHA256" ]]; then
+  echo "🔍 Reading the SHA-256 of Ventoy $VENTOY_VERSION from the GitHub release..."
+  if ! EXPECTED_SHA256=$(release_digest "$VENTOY_VERSION") || [[ -z "$EXPECTED_SHA256" ]]; then
+    echo "❌ The GitHub release v$VENTOY_VERSION gives no SHA-256 digest for ventoy-$VENTOY_VERSION-linux.tar.gz, so the download cannot be verified."
+    echo "   Check the version and your internet connection, then retry. Do not bypass the verification."
+    echo "   If you have the SHA-256 from a source that you trust: ./ventoy-install.sh $VENTOY_VERSION --sha256 <hex>"
+    exit 1
+  fi
+fi
+
+echo "📥 Downloading Ventoy $VENTOY_VERSION..."
+if ! fetch "$VENTOY_URL" -o ventoy.tar.gz || [[ ! -s ventoy.tar.gz ]]; then
+  rm -f ventoy.tar.gz
+  echo "❌ Download failed. Check the version, your internet connection, or try again later."
   echo "URL attempted: $VENTOY_URL"
   exit 1
 fi
+
+ACTUAL_SHA256=$(sha256sum ventoy.tar.gz | cut -d' ' -f1)
+if [[ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]]; then
+  rm -f ventoy.tar.gz
+  echo "❌ SHA-256 mismatch for ventoy-$VENTOY_VERSION-linux.tar.gz. The download was removed and nothing was installed."
+  echo "   expected: $EXPECTED_SHA256"
+  echo "   got:      $ACTUAL_SHA256"
+  echo "   Retry the download. Do not bypass the verification."
+  exit 1
+fi
+echo "✅ SHA-256 verified."
 
 echo "📦 Extracting Ventoy..."
 tar -xzf ventoy.tar.gz
