@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 740" width="1280" height="740" role="img" aria-label="ventoy-usb: one USB stick, many ISO files; pick one when the PC starts. Prepare the USB from Windows with .\ventoy.ps1, or from macOS or Linux with ./ventoy.sh. ISO files such as Windows 11, a Linux system or a rescue disk go onto one multiboot USB. Then the target PC starts from the USB, and you pick an ISO at boot.">
+<style>.blink{animation:blink 2.4s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.blink{animation:none}}</style>
+<defs>
+<pattern id="hero-l-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.4" fill="#0F766E" opacity="0.13"/></pattern>
+<filter id="hero-l-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+<clipPath id="hero-l-frame"><rect width="1280" height="740" rx="24"/></clipPath>
+<marker id="hero-l-go" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#0F766E"/></marker>
+<marker id="hero-l-bad" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#C2362B"/></marker>
+<marker id="hero-l-muted" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#8DB0A8"/></marker>
+</defs>
+<g clip-path="url(#hero-l-frame)">
+<rect width="1280" height="740" fill="#F2F7F6"/>
+<rect width="1280" height="740" fill="url(#hero-l-dots)"/>
+<path d="M0 340 L-80 340 L-40 380 L60 380" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="0" cy="340" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="60" cy="380" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M920 100 L960 60 L1040 60 L1100 0" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="920" cy="100" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1100" cy="0" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M620 180 L620 260 L650 230 L610 230" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="620" cy="180" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="610" cy="230" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M660 80 L660 200 L520 200 L520 340" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="660" cy="80" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="520" cy="340" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M220 600 L300 520 L440 520 L320 520" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="220" cy="600" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="320" cy="520" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M1060 260 L920 260 L1000 180 L1000 280" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="1060" cy="260" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1000" cy="280" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M1180 740 L1180 640 L1240 640 L1380 640" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="1180" cy="740" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1380" cy="640" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M700 280 L800 280 L830 250 L670 250" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="700" cy="280" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="670" cy="250" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M1280 580 L1180 580 L1240 640 L1140 640" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="1280" cy="580" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1140" cy="640" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M720 680 L660 680 L540 680 L540 760" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="720" cy="680" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="540" cy="760" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M660 180 L660 120 L660 200 L800 200" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="660" cy="180" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="800" cy="200" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M20 20 L-80 20 L-40 -20 L-40 80" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="20" cy="20" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="-40" cy="80" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M840 360 L900 360 L1020 360 L1070 410" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="840" cy="360" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1070" cy="410" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M800 600 L850 650 L990 650 L1090 650" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="800" cy="600" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1090" cy="650" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M660 680 L580 680 L650 750 L730 750" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="660" cy="680" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="730" cy="750" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M1180 520 L1080 520 L1130 570 L1130 710" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="1180" cy="520" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1130" cy="710" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M1000 360 L880 360 L880 520 L940 520" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="1000" cy="360" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="940" cy="520" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<path d="M1280 560 L1180 560 L1180 680 L1120 680" fill="none" stroke="#0F766E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="1280" cy="560" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1120" cy="680" r="5" fill="none" stroke="#0F766E" stroke-width="2.5" opacity="0.16"/>
+<text x="64" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="76" font-weight="800" fill="#0B1F1C" text-anchor="start"><tspan x="64" dy="0">ventoy</tspan></text>
+<text x="337.59999999999997" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="76" font-weight="800" fill="#0F766E" text-anchor="start"><tspan x="337.59999999999997" dy="0">-usb</tspan></text>
+<text x="66" y="172" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#0B1F1C" text-anchor="start"><tspan x="66" dy="0">One USB stick. Many ISO files. Pick one when the PC starts.</tspan></text>
+<text x="66" y="220" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="400" fill="#46625C" text-anchor="start"><tspan x="66" dy="0">Prepare the USB from Windows, macOS or Linux.</tspan></text>
+<rect x="64" y="290" width="360" height="108" rx="10" fill="#FFFFFF" stroke="#8DB0A8" stroke-width="1.5"/>
+<rect x="85" y="312" width="78" height="48.4" rx="8" fill="#FFFFFF" stroke="#0B1F1C" stroke-width="3"/><rect x="93" y="320" width="62" height="32.4" rx="4" fill="#E5EFED"/><path d="M117.8 360.4 L115.4 371.3 L132.6 371.3 L130.2 360.4" fill="#0B1F1C" stroke="#0B1F1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="106.8" y="370.5" width="34.3" height="3.9" rx="3" fill="#0B1F1C"/>
+<text x="190" y="336" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="800" fill="#0B1F1C" text-anchor="start"><tspan x="190" dy="0">Windows</tspan></text>
+<text x="190" y="374" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="28" font-weight="400" fill="#0F766E" text-anchor="start"><tspan x="190" dy="0">.\ventoy.ps1</tspan></text>
+<path d="M424 344 L 456 344 L 456 560 L 486 560" fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="64" y="418" width="360" height="108" rx="10" fill="#FFFFFF" stroke="#8DB0A8" stroke-width="1.5"/>
+<rect x="88.1" y="448" width="71.8" height="44.5" rx="7" fill="#FFFFFF" stroke="#0B1F1C" stroke-width="3"/><rect x="95.1" y="455" width="57.8" height="30.5" rx="3" fill="#E5EFED"/><path d="M78 501.7 L86.1 494.5 L161.9 494.5 L170 501.7 Z" fill="#0B1F1C" stroke="#0B1F1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="190" y="464" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="800" fill="#0B1F1C" text-anchor="start"><tspan x="190" dy="0">macOS</tspan></text>
+<text x="190" y="502" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="28" font-weight="400" fill="#0F766E" text-anchor="start"><tspan x="190" dy="0">./ventoy.sh</tspan></text>
+<path d="M424 472 L 456 472 L 456 560 L 486 560" fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#hero-l-go)"/>
+<rect x="64" y="546" width="360" height="108" rx="10" fill="#FFFFFF" stroke="#8DB0A8" stroke-width="1.5"/>
+<rect x="85" y="568" width="78" height="48.4" rx="8" fill="#FFFFFF" stroke="#0B1F1C" stroke-width="3"/><rect x="93" y="576" width="62" height="32.4" rx="4" fill="#E5EFED"/><path d="M117.8 616.4 L115.4 627.3 L132.6 627.3 L130.2 616.4" fill="#0B1F1C" stroke="#0B1F1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="106.8" y="626.5" width="34.3" height="3.9" rx="3" fill="#0B1F1C"/>
+<text x="190" y="592" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="800" fill="#0B1F1C" text-anchor="start"><tspan x="190" dy="0">Linux</tspan></text>
+<text x="190" y="630" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="28" font-weight="400" fill="#0F766E" text-anchor="start"><tspan x="190" dy="0">./ventoy.sh</tspan></text>
+<path d="M424 600 L 456 600 L 456 560 L 486 560" fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="620" cy="350" r="50" fill="#E4ECEA" stroke="#8DB0A8" stroke-width="2"/><circle cx="620" cy="350" r="33" fill="none" stroke="#8DB0A8" stroke-width="1" opacity="0.6"/><path d="M580 335 A42.5 42.5 0 0 1 607.5 310" fill="none" stroke="#D97706" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/><circle cx="620" cy="350" r="12" fill="#F2F7F6" stroke="#8DB0A8" stroke-width="1.5"/>
+<text x="620" y="438" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#0B1F1C" text-anchor="middle"><tspan x="620" dy="0">Windows 11</tspan></text>
+<path d="M620 452 L 620 512" fill="none" stroke="#0F766E" stroke-width="3" stroke-dasharray="7 7" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#hero-l-go)"/>
+<circle cx="770" cy="350" r="50" fill="#E4ECEA" stroke="#8DB0A8" stroke-width="2"/><circle cx="770" cy="350" r="33" fill="none" stroke="#8DB0A8" stroke-width="1" opacity="0.6"/><path d="M730 335 A42.5 42.5 0 0 1 757.5 310" fill="none" stroke="#D97706" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/><circle cx="770" cy="350" r="12" fill="#F2F7F6" stroke="#8DB0A8" stroke-width="1.5"/>
+<text x="770" y="438" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#0B1F1C" text-anchor="middle"><tspan x="770" dy="0">Linux</tspan></text>
+<path d="M770 452 L 770 512" fill="none" stroke="#0F766E" stroke-width="3" stroke-dasharray="7 7" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#hero-l-go)"/>
+<circle cx="920" cy="350" r="50" fill="#E4ECEA" stroke="#8DB0A8" stroke-width="2"/><circle cx="920" cy="350" r="33" fill="none" stroke="#8DB0A8" stroke-width="1" opacity="0.6"/><path d="M880 335 A42.5 42.5 0 0 1 907.5 310" fill="none" stroke="#D97706" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/><circle cx="920" cy="350" r="12" fill="#F2F7F6" stroke="#8DB0A8" stroke-width="1.5"/>
+<text x="920" y="438" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#0B1F1C" text-anchor="middle"><tspan x="920" dy="0">Rescue</tspan></text>
+<path d="M920 452 L 920 512" fill="none" stroke="#0F766E" stroke-width="3" stroke-dasharray="7 7" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#hero-l-go)"/>
+<text x="1000" y="360" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#46625C" text-anchor="start"><tspan x="1000" dy="0">+ more</tspan></text>
+<rect x="483.8" y="536.8" width="50.4" height="50.4" rx="4" fill="#C9D3D1" stroke="#8DB0A8" stroke-width="1.5"/><rect x="493.9" y="547.9" width="11.8" height="9.1" rx="1" fill="#F2F7F6"/><rect x="493.9" y="567" width="11.8" height="9.1" rx="1" fill="#F2F7F6"/><rect x="530" y="520" width="470" height="84" rx="23.520000000000003" fill="#0F766E"/><rect x="536" y="526" width="458" height="25.2" rx="16.8" fill="#FFFFFF" opacity="0.08"/><circle cx="974.8" cy="562" r="13.4" fill="#D97706" opacity="0.8" filter="url(#hero-l-glow)"/><g class="blink"><circle cx="974.8" cy="562" r="7.6" fill="#D97706"/></g><text x="748" y="572.8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="1.5"><tspan x="748" dy="0">MULTIBOOT USB</tspan></text>
+<path d="M1004 562 L 1088 562" fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#hero-l-go)"/>
+<rect x="1106" y="470" width="120" height="74.4" rx="8" fill="#FFFFFF" stroke="#0B1F1C" stroke-width="3"/><rect x="1114" y="478" width="104" height="58.4" rx="4" fill="#E5EFED"/><path d="M1156.3 498.3 A13.4 13.4 0 1 0 1175.7 498.3 M1166 490.8 L1166 507.2" fill="none" stroke="#0F766E" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M1156.4 544.4 L1152.8 561.2 L1179.2 561.2 L1175.6 544.4" fill="#0B1F1C" stroke="#0B1F1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="1139.6" y="560" width="52.8" height="6" rx="3" fill="#0B1F1C"/>
+<text x="1166" y="640" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="800" fill="#0B1F1C" text-anchor="middle"><tspan x="1166" dy="0">Target PC</tspan></text>
+<text x="1166" y="676" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="400" fill="#46625C" text-anchor="middle"><tspan x="1166" dy="0">picks an ISO</tspan><tspan x="1166" dy="33.6">at boot</tspan></text>
+</g>
+<rect x="0.75" y="0.75" width="1278.5" height="738.5" rx="23.25" fill="none" stroke="#D0E0DC" stroke-width="1.5"/>
+</svg>

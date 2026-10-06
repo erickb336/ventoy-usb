@@ -1,10 +1,39 @@
+<a href="docs/assets/hero-light.svg">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.svg">
+  <img alt="ventoy-usb: one USB stick, many ISO files; pick one when the PC starts. Prepare the USB from Windows with .\ventoy.ps1, or from macOS or Linux with ./ventoy.sh. ISO files such as Windows 11, a Linux system or a rescue disk go onto one multiboot USB. Then the target PC starts from the USB, and you pick an ISO at boot." src="docs/assets/hero-light.svg" width="100%">
+</picture>
+</a>
+
+<p align="center">
+  <a href="https://github.com/erickb336/ventoy-usb/actions/workflows/validate.yml"><img alt="Safe validation" src="https://github.com/erickb336/ventoy-usb/actions/workflows/validate.yml/badge.svg"></a>
+  <img alt="Runs on Windows, macOS and Linux" src="https://img.shields.io/badge/runs%20on-Windows%20%7C%20macOS%20%7C%20Linux-0F766E">
+  <img alt="No sudo on macOS" src="https://img.shields.io/badge/macOS-no%20sudo-0F766E">
+</p>
+
 # Ventoy USB Setup for Windows, macOS and Linux
 
 Create a multiboot USB and copy installer ISOs using **native PowerShell on Windows**, **native Bash on macOS** (with the Mactoy app to install Ventoy) or the existing **Bash scripts on Linux**. Install Ventoy once; add ISOs later without reinstalling it.
 
-**Creating a Ventoy USB erases every partition and file on the selected USB disk. Back it up first.** Adding an ISO does not reinstall Ventoy. Creating the USB does not install Windows or erase your PC; that is a separate operation on the target PC.
+> [!WARNING]
+> **Creating a Ventoy USB erases every partition and file on the selected USB disk. Back it up first.** Adding an ISO does not reinstall Ventoy. Creating the USB does not install Windows or erase your PC; that is a separate operation on the target PC.
 
-## Platform compatibility
+**Contents:** [Pick your computer](#pick-your-computer) · [The whole journey](#the-whole-journey) · [Windows](#windows-quick-start) · [macOS](#macos-quick-start) · [Linux](#linux-quick-start) · [The verified copy](#the-verified-copy) · [Windows 11 media](#windows-11-installation-media) · [Booting](#booting-and-clean-installation) · [Secure Boot](#secure-boot) · [Troubleshooting](#troubleshooting) · [Development](#development-and-safe-validation)
+
+## Pick your computer
+
+This graphic shows the command to run on each computer, and the two options of the menu.
+
+<a href="docs/assets/pick-light.svg">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/pick-dark.svg">
+  <img alt="Pick your computer. Windows 10 or 11: run .\ventoy.ps1 in PowerShell as administrator. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 copies ISOs from a folder. On every computer, option 1 continues with option 2 when it finishes." src="docs/assets/pick-light.svg" width="100%">
+</picture>
+</a>
+
+Then go to your quick start: [Windows](#windows-quick-start), [macOS](#macos-quick-start) or [Linux](#linux-quick-start).
+
+### Platform compatibility
 
 | Computer running this utility | Supported? | Entry point |
 | --- | --- | --- |
@@ -13,6 +42,17 @@ Create a multiboot USB and copy installer ISOs using **native PowerShell on Wind
 | macOS 13.5 or later (Apple silicon and Intel) | Yes: Mactoy installs Ventoy, and this utility copies ISOs natively | `./ventoy.sh` |
 
 `./ventoy.sh` detects macOS and starts `macos/ventoy-mac.sh`. The macOS path uses only built-in tools (`diskutil`, `plutil`, `shasum`, `df`, `open`) and never uses sudo. The Linux scripts need Linux tools such as `lsblk` and `udevadm`, so they do not run on macOS. This table describes the computer preparing the USB, not which operating systems or hardware can boot a particular ISO.
+
+## The whole journey
+
+This graphic shows the four steps from a blank USB to an installed PC, with Windows 11 as the example.
+
+<a href="docs/assets/journey-light.svg">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/journey-dark.svg">
+  <img alt="The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; on Windows and macOS, the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks." src="docs/assets/journey-light.svg" width="100%">
+</picture>
+</a>
 
 ## Windows quick start
 
@@ -74,6 +114,16 @@ If your execution policy already permits scripts, the shorter entry point also w
 
 Choose **1** to create a new Ventoy USB, or **2** to copy an ISO to an existing one without reinstalling Ventoy.
 
+
+The next graphic is a tip for the selection and the erase confirmation.
+
+<a href="docs/assets/tip-yes-light.svg">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/tip-yes-dark.svg">
+  <img alt="Tip: type YES only after you check the disk name and size. At Select USB by list number, type the number in square brackets, not the disk number or the drive letter." src="docs/assets/tip-yes-light.svg" width="100%">
+</picture>
+</a>
+
 At **Select USB by list number**, enter the number in square brackets, **not the physical disk number or drive letter**. For example:
 
 ```text
@@ -86,11 +136,17 @@ In this example, type `1`, not `3` or `D:`. Your USB's name, capacity and disk n
 
 If you are unsure which disk is your USB, stop with **Ctrl+C before confirming erasure**. Unplug the USB and run:
 
+<details>
+<summary><b>Not sure which disk is your USB? Identify it with Get-Disk</b></summary>
+
+
 ```powershell
 Get-Disk | Format-Table Number, FriendlyName, BusType, @{Name='SizeGiB';Expression={[math]::Round($_.Size/1GB,1)}}, IsBoot, IsSystem
 ```
 
 Plug it back in, wait a few seconds, and run the same command again. Identify the newly appearing disk and match its model and capacity. It should show `USB`, with `IsBoot` and `IsSystem` both `False`. Disconnect other external drives if that helps identify it. Disk numbers can change after reconnection, so rerun the utility and verify the current details.
+
+</details>
 
 For a new USB, the utility downloads and verifies Ventoy, then displays the physical disk again. Type uppercase **`YES` only after confirming the intended USB and backing up anything on it**. This erases every partition on that USB. Installation uses GPT and leaves Secure Boot support enabled. Do not unplug it while installation is running.
 
@@ -122,6 +178,10 @@ Replace the example with your actual filename. Spaces, brackets and optional sur
 | Flushing / verifying | Separate flushing status and source/USB checksum progress bars. Copying reaching 100% does not mean verification is finished. |
 | Finished | **ISO copied and SHA-256 verified.** You can now safely eject the USB. |
 
+
+<details>
+<summary><b>Windows safety details: disk checks, copy rules, ZIP downloads</b></summary>
+
 Updates to the script apply on the next run. Let any current installation or copy finish. If Ventoy is already installed, select **2 — Add ISO to existing Ventoy USB** next time; do not reinstall just to get progress indicators.
 
 The Windows path uses [Ventoy's supported CLI](https://www.ventoy.net/en/doc_windows_cli.html) with a physical disk number (`/PhyDrive:N`), not GUI automation or a destructive drive-letter command. It rejects non-USB, boot/system, offline, read-only and zero-size disks, and rechecks disk identity after confirmation. USB-attached external SSDs may still appear, even when Windows calls them fixed disks. Check their model, size and serial carefully. Keep the USB connected throughout the operation.
@@ -129,6 +189,8 @@ The Windows path uses [Ventoy's supported CLI](https://www.ventoy.net/en/doc_win
 Copying requires the standard Ventoy partition layout on the selected disk, checks free space and FAT32 limits, refuses filename collisions, and uses a temporary file until checksum verification succeeds. This checks copy integrity, not ISO authenticity.
 
 For a downloaded ZIP, use Properties > Unblock before extraction if needed. Do not change machine-wide execution policy for this utility.
+
+</details>
 
 ## macOS quick start
 
@@ -153,6 +215,16 @@ Ventoy USB Setup (macOS)
 ```
 
 ### 2. Option 1: create a new Ventoy USB with Mactoy
+
+
+The next graphic is a tip for the Mactoy download. Do these checks before you give Mactoy Full Disk Access.
+
+<a href="docs/assets/tip-mactoy-light.svg">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/tip-mactoy-dark.svg">
+  <img alt="Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show source=Notarized Developer ID." src="docs/assets/tip-mactoy-light.svg" width="100%">
+</picture>
+</a>
 
 **Installing Ventoy erases every file on the USB that you choose. Back it up first.**
 
@@ -193,7 +265,8 @@ At the path prompt, drag the ISO from Finder into the Terminal window and press 
 
 The utility copies the ISO with progress (percent, GiB copied, MiB/s, time left), mounts the USB again so that it reads the USB and not the cache, and compares the SHA-256 of the source and the copy. When you see **ISO copied and SHA-256 verified.**, the utility asks if it can eject the USB (default: no). Eject the USB before you unplug it.
 
-Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes and after it mounts the USB again (if the USB mounts at a different folder, it continues there), it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**. It also removes the hidden `._` file in which macOS keeps file attributes on exFAT and FAT32, so Ventoy does not list a `._<name>.iso` file.
+
+See [The verified copy](#the-verified-copy) for each step of the copy.
 
 ## Linux quick start
 
@@ -224,6 +297,26 @@ Select a whole USB device such as `/dev/sdb`, not `/dev/sdb1`. Check `lsblk -o N
 
 Linux retains Ventoy's default partition style (MBR); the Windows path explicitly uses GPT. Existing Linux scripts find mounts by the `Ventoy` label, so connect only one Ventoy USB and verify the mount point. Their copy command can overwrite matching filenames. These behaviors were preserved, not rewritten for this Windows addition.
 
+## The verified copy
+
+On Windows and macOS, option 2 copies the ISO in the same safe way. This graphic shows each step, and what happens after an error.
+
+<a href="docs/assets/copy-light.svg">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/copy-dark.svg">
+  <img alt="The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a hidden temp file named .ventoy-copy-something. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file and stop." src="docs/assets/copy-light.svg" width="100%">
+</picture>
+</a>
+
+<details>
+<summary><b>Copy rules in detail</b></summary>
+
+Copying requires the standard Ventoy partition layout on the selected disk, checks free space and FAT32 limits, refuses filename collisions, and uses a temporary file until checksum verification succeeds. This checks copy integrity, not ISO authenticity.
+
+Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes and after it mounts the USB again (if the USB mounts at a different folder, it continues there), it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**. It also removes the hidden `._` file in which macOS keeps file attributes on exFAT and FAT32, so Ventoy does not list a `._<name>.iso` file.
+
+</details>
+
 ## Windows 11 installation media
 
 The Windows 11 menu option opens [Microsoft's official download page](https://www.microsoft.com/software-download/windows11). Select **Download Windows 11 Disk Image (ISO)** and the architecture matching the target PC. Save it to the host PC, wait for completion, then paste its path into the prompt. The utility does not scrape temporary Microsoft download URLs. If the browser cannot open, use the printed URL manually. On Linux, download the ISO in your browser and place it in the ISO directory. On macOS, the menu works as on Windows; drag the finished file into Terminal.
@@ -250,9 +343,19 @@ Two SSDs remain two physical devices. Removing Linux can reclaim space but does 
 
 ## Secure Boot
 
+<details>
+<summary><b>Secure Boot details</b></summary>
+
 The Windows installer leaves Secure Boot support enabled by omitting `/NOSB`. It does not configure firmware or guarantee compatibility with every PC. Ventoy may require key enrollment on first boot; keys can change between releases. Follow the current [official Secure Boot instructions](https://www.ventoy.net/en/doc_secure.html). Some firmware requires its Microsoft third-party UEFI CA option. Ventoy's image validation policy is separate from enabling firmware Secure Boot; consult upstream instructions if you need strict validation.
 
+</details>
+
 ## Troubleshooting
+
+Open the list for the computer that prepares the USB.
+
+<details>
+<summary><b>Windows</b></summary>
 
 | Problem | Action |
 | --- | --- |
@@ -269,6 +372,14 @@ The Windows installer leaves Secure Boot support enabled by omitting `/NOSB`. It
 | No drive letter | Identify the USB's large data partition in Disk Management and assign a letter, then retry option 2. Do not assign one to its small EFI partition. |
 | File already exists | Rename the source or deliberately remove/rename the old ISO yourself. Windows copying refuses overwrites. |
 | ISO too large | Check free space. FAT32 limits files to 4 GiB minus one byte; new Windows installs use Ventoy's default exFAT. |
+
+</details>
+
+<details>
+<summary><b>macOS</b></summary>
+
+| Problem | Action |
+| --- | --- |
 | macOS: "No Ventoy USB found" | Connect the USB and run `./ventoy.sh` again. Check that `diskutil list external physical` shows it. If it has no Ventoy layout, use option 1. Right after Mactoy, unplug and reconnect the USB, then choose option 2. |
 | macOS: "The hidden temporary file .ventoy-copy-… can remain on the USB" | The copy stopped while the USB was not mounted. Connect the USB, open its top folder in Finder, press **Shift-Command-.** to show hidden files, and delete the file with that name. |
 | macOS: data partition is NTFS | macOS can only read NTFS. Use a Ventoy USB with exFAT (the Mactoy default), or copy the ISO from Windows or Linux. |
@@ -276,11 +387,24 @@ The Windows installer leaves Secure Boot support enabled by omitting `/NOSB`. It
 | macOS: Mactoy cannot write the USB | Turn on Full Disk Access for Mactoy in System Settings > Privacy & Security, and allow it in Login Items. Then retry in Mactoy. |
 | macOS: "Could not unmount" during verification | Close Finder windows and apps that use the USB, then run option 2 again. The temporary file is removed. |
 | macOS: `permission denied: ./ventoy.sh` | Run `chmod +x ventoy.sh macos/ventoy-mac.sh`, or run `bash ventoy.sh`. |
+
+</details>
+
+<details>
+<summary><b>All computers</b></summary>
+
+| Problem | Action |
+| --- | --- |
 | USB does not boot | Try the UEFI boot entry, check the ISO checksum, firmware settings and Secure Boot guidance. Test on the target PC. |
+
+</details>
 
 Errors and Ctrl+C clean up temporary downloads and partial copies where possible. If Ventoy is already writing a disk, the wrapper waits for the process before removing its working files. Do not unplug the USB or close the terminal mid-installation. Forced termination or power loss can leave temporary files or an incomplete USB. Failure log excerpts are displayed before the temporary package is removed.
 
 ## Development and safe validation
+
+<details>
+<summary><b>Files, safe tests and graphics</b></summary>
 
 - `ventoy.ps1`: interactive UI, prerequisites, orchestration and cleanup.
 - `windows/Disks.ps1`: discovery, physical disk identity and partition checks.
@@ -307,6 +431,15 @@ Get-UsbDisks | ForEach-Object { Show-UsbDisk $_ }
 On macOS, `bash tests/test-macos.sh` runs without a USB. It tests path parsing and disk checks with a stub `diskutil`, then creates Ventoy-like disk images with `hdiutil` and tests copying, verification, name collisions and cleanup on them. It never touches a real disk.
 
 Actual installation, USB re-enumeration, cancellation while writing, and UEFI/Secure Boot/Windows installer boot require manual verification with disposable USB media. Never run destructive installation in automated tests.
+
+The README graphics are SVG files in `docs/assets`, each in a light and a dark version. `scripts/graphics.mjs` draws them, and nobody edits an SVG by hand. It needs only Node 20 or later, with no packages:
+
+```bash
+node scripts/graphics.mjs        # draw docs/assets/*.svg again
+node scripts/check-graphics.mjs  # fail if an SVG is out of date, a text is too small for a phone, or the README shows a graphic wrongly
+```
+
+</details>
 
 ## License
 

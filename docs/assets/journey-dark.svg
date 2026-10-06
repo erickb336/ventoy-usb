@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 590" width="1100" height="590" role="img" aria-label="The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; on Windows and macOS, the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks.">
+<style>.blink{animation:blink 2.4s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.blink{animation:none}}</style>
+<defs>
+<pattern id="journey-d-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.4" fill="#2DD4BF" opacity="0.1"/></pattern>
+<filter id="journey-d-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+<clipPath id="journey-d-frame"><rect width="1100" height="590" rx="24"/></clipPath>
+<marker id="journey-d-go" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#2DD4BF"/></marker>
+<marker id="journey-d-bad" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#F87171"/></marker>
+<marker id="journey-d-muted" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#3D5A54"/></marker>
+</defs>
+<g clip-path="url(#journey-d-frame)">
+<rect width="1100" height="590" fill="#0A1316"/>
+<rect width="1100" height="590" fill="url(#journey-d-dots)"/>
+<path d="M0 520 L0 360 L30 390 L60 420" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="0" cy="520" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="60" cy="420" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M240 440 L240 360 L380 360 L480 360" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="240" cy="440" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="480" cy="360" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M880 260 L960 260 L900 260 L780 260" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="880" cy="260" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="780" cy="260" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M840 140 L780 140 L840 200 L880 160" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="840" cy="140" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="880" cy="160" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M120 400 L160 440 L100 440 L240 440" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="120" cy="400" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="240" cy="440" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M180 0 L210 30 L260 80 L330 150" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="180" cy="0" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="330" cy="150" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M940 220 L960 200 L900 200 L780 200" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="940" cy="220" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="780" cy="200" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M940 100 L990 50 L1110 50 L1030 50" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="940" cy="100" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="1030" cy="50" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M1080 520 L960 520 L960 680 L900 680" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="1080" cy="520" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="900" cy="680" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M400 520 L440 480 L320 480 L320 540" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="400" cy="520" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="320" cy="540" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M380 400 L380 500 L380 440 L380 540" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="380" cy="400" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="380" cy="540" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<path d="M180 60 L180 140 L180 20 L180 140" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="180" cy="60" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<circle cx="180" cy="140" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
+<text x="36" y="62" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#2DD4BF" text-anchor="start" letter-spacing="2"><tspan x="36" dy="0">THE WHOLE JOURNEY · WINDOWS 11 EXAMPLE</tspan></text>
+<rect x="28" y="86" width="510" height="392" rx="14" fill="none" stroke="#3D5A54" stroke-width="1.5" stroke-dasharray="8 8"/>
+<text x="44" y="116" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#9DB9B3" text-anchor="start" letter-spacing="1.5"><tspan x="44" dy="0">ON THIS COMPUTER</tspan></text>
+<rect x="556" y="86" width="510" height="392" rx="14" fill="none" stroke="#3D5A54" stroke-width="1.5" stroke-dasharray="8 8"/>
+<text x="572" y="116" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#9DB9B3" text-anchor="start" letter-spacing="1.5"><tspan x="572" dy="0">ON THE TARGET PC</tspan></text>
+<rect x="36" y="132" width="230" height="330" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#journey-d-glow)"/><rect x="36" y="132" width="230" height="330" rx="10" fill="#111D20" stroke="#F87171" stroke-width="2.5"/>
+<circle cx="68" cy="164" r="21" fill="#F87171"/><text x="68" y="172.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A1316" text-anchor="middle"><tspan x="68" dy="0">1</tspan></text>
+<rect x="86.8" y="190.8" width="26.4" height="26.4" rx="4" fill="#5B6B69" stroke="#3D5A54" stroke-width="1.5"/><rect x="92.1" y="196.6" width="6.2" height="4.8" rx="1" fill="#0A1316"/><rect x="92.1" y="206.6" width="6.2" height="4.8" rx="1" fill="#0A1316"/><rect x="111" y="182" width="110" height="44" rx="12.32" fill="#115E59"/><rect x="117" y="188" width="98" height="13.2" rx="8.8" fill="#FFFFFF" opacity="0.08"/><circle cx="207.8" cy="204" r="7" fill="#FBBF24" opacity="0.8" filter="url(#journey-d-glow)"/><g class="blink"><circle cx="207.8" cy="204" r="4" fill="#FBBF24"/></g>
+<text x="151" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="800" fill="#E6F4F1" text-anchor="middle"><tspan x="151" dy="0">Prepare the USB</tspan></text>
+<text x="151" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="151" dy="0">Install Ventoy</tspan><tspan x="151" dy="31.2">once. This erases</tspan><tspan x="151" dy="31.2">the USB.</tspan></text>
+<path d="M270 297 L 296 297" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#journey-d-go)"/>
+<rect x="300" y="132" width="230" height="330" rx="10" fill="#111D20" stroke="#3D5A54" stroke-width="1.5"/>
+<circle cx="332" cy="164" r="21" fill="#2DD4BF"/><text x="332" y="172.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A1316" text-anchor="middle"><tspan x="332" dy="0">2</tspan></text>
+<circle cx="415" cy="210" r="38" fill="#1B2B2E" stroke="#3D5A54" stroke-width="2"/><circle cx="415" cy="210" r="25.1" fill="none" stroke="#3D5A54" stroke-width="1" opacity="0.6"/><path d="M384.6 198.6 A32.3 32.3 0 0 1 405.5 179.6" fill="none" stroke="#FBBF24" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/><circle cx="415" cy="210" r="9.1" fill="#0A1316" stroke="#3D5A54" stroke-width="1.5"/>
+<text x="415" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="800" fill="#E6F4F1" text-anchor="middle"><tspan x="415" dy="0">Add the ISO</tspan></text>
+<text x="415" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="415" dy="0">Copy the Windows 11</tspan><tspan x="415" dy="31.2">ISO to the USB.</tspan><tspan x="415" dy="31.2">Windows and macOS</tspan><tspan x="415" dy="31.2">check its SHA-256.</tspan></text>
+<path d="M534 297 L 560 297" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#journey-d-go)"/>
+<rect x="564" y="132" width="230" height="330" rx="10" fill="#111D20" stroke="#3D5A54" stroke-width="1.5"/>
+<circle cx="596" cy="164" r="21" fill="#2DD4BF"/><text x="596" y="172.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A1316" text-anchor="middle"><tspan x="596" dy="0">3</tspan></text>
+<rect x="636" y="172" width="86" height="53.3" rx="8" fill="#111D20" stroke="#E6F4F1" stroke-width="3"/><rect x="644" y="180" width="70" height="37.3" rx="4" fill="#0E191C"/><path d="M672.1 192.3 A9.6 9.6 0 1 0 685.9 192.3 M679 186.9 L679 198.7" fill="none" stroke="#2DD4BF" stroke-width="3.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M672.1 225.3 L669.5 237.4 L688.5 237.4 L685.9 225.3" fill="#E6F4F1" stroke="#E6F4F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="660.1" y="236.5" width="37.8" height="4.3" rx="3" fill="#E6F4F1"/>
+<text x="679" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="800" fill="#E6F4F1" text-anchor="middle"><tspan x="679" dy="0">Boot the PC</tspan></text>
+<text x="679" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="679" dy="0">One-time boot menu:</tspan><tspan x="679" dy="31.2">UEFI USB entry. Pick</tspan><tspan x="679" dy="31.2">the ISO in Ventoy.</tspan></text>
+<path d="M798 297 L 824 297" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#journey-d-go)"/>
+<rect x="828" y="132" width="230" height="330" rx="10" fill="#111D20" stroke="#3D5A54" stroke-width="1.5"/>
+<circle cx="860" cy="164" r="21" fill="#2DD4BF"/><text x="860" y="172.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A1316" text-anchor="middle"><tspan x="860" dy="0">4</tspan></text>
+<rect x="900" y="172" width="86" height="53.3" rx="8" fill="#111D20" stroke="#E6F4F1" stroke-width="3"/><rect x="908" y="180" width="70" height="37.3" rx="4" fill="#0E191C"/><path d="M934.5 198.7 L940.9 205.1 L953.7 191.2" fill="none" stroke="#4ADE80" stroke-width="4.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M936.1 225.3 L933.5 237.4 L952.5 237.4 L949.9 225.3" fill="#E6F4F1" stroke="#E6F4F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="924.1" y="236.5" width="37.8" height="4.3" rx="3" fill="#E6F4F1"/>
+<text x="943" y="292" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="800" fill="#E6F4F1" text-anchor="middle"><tspan x="943" dy="0">Install</tspan></text>
+<text x="943" y="330" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="943" dy="0">Pick the internal</tspan><tspan x="943" dy="31.2">disk, never the USB.</tspan><tspan x="943" dy="31.2">Then start from it.</tspan></text>
+<text x="36" y="524" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="start"><tspan x="36" dy="0">Between steps 2 and 3, eject the USB and move it to the target PC.</tspan><tspan x="36" dy="32.4">Steps 1 and 2 never change the target PC or its disks.</tspan></text>
+</g>
+<rect x="0.75" y="0.75" width="1098.5" height="588.5" rx="23.25" fill="none" stroke="#1D302C" stroke-width="1.5"/>
+</svg>
