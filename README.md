@@ -185,7 +185,7 @@ At the path prompt, drag the ISO from Finder into the Terminal window and press 
 
 The utility copies the ISO with progress (percent, GiB copied, MiB/s, time left), mounts the USB again so that it reads the USB and not the cache, and compares the SHA-256 of the source and the copy. When you see **ISO copied and SHA-256 verified.**, the utility asks if it can eject the USB (default: no). Eject the USB before you unplug it.
 
-Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes, it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**.
+Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes and after it mounts the USB again, it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**. It also removes the hidden `._` file in which macOS keeps file attributes on exFAT and FAT32, so Ventoy does not list a `._<name>.iso` file.
 
 ## Linux quick start
 
@@ -261,7 +261,8 @@ The Windows installer leaves Secure Boot support enabled by omitting `/NOSB`. It
 | No drive letter | Identify the USB's large data partition in Disk Management and assign a letter, then retry option 2. Do not assign one to its small EFI partition. |
 | File already exists | Rename the source or deliberately remove/rename the old ISO yourself. Windows copying refuses overwrites. |
 | ISO too large | Check free space. FAT32 limits files to 4 GiB minus one byte; new Windows installs use Ventoy's default exFAT. |
-| macOS: "No Ventoy USB found" | Connect the USB and run `./ventoy.sh` again. Check that `diskutil list external physical` shows it. If it has no Ventoy layout, use option 1. |
+| macOS: "No Ventoy USB found" | Connect the USB and run `./ventoy.sh` again. Check that `diskutil list external physical` shows it. If it has no Ventoy layout, use option 1. Right after Mactoy, unplug and reconnect the USB, then choose option 2. |
+| macOS: "The hidden temporary file .ventoy-copy-… can remain on the USB" | The copy stopped while the USB was not mounted. Connect the USB, open its top folder in Finder, press **Shift-Command-.** to show hidden files, and delete the file with that name. |
 | macOS: data partition is NTFS | macOS can only read NTFS. Use a Ventoy USB with exFAT (the Mactoy default), or copy the ISO from Windows or Linux. |
 | macOS: mounted read-only | Eject the USB, connect it again and retry. If it stays read-only, run First Aid on it in Disk Utility. |
 | macOS: Mactoy cannot write the USB | Turn on Full Disk Access for Mactoy in System Settings > Privacy & Security, and allow it in Login Items. Then retry in Mactoy. |
