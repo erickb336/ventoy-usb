@@ -55,6 +55,12 @@ else
   exit 1
 fi
 
+# A mount point with a line break is an error of the caller (for example, two mount points in one value).
+if [[ "$VENTOY_MOUNT" == *$'\n'* ]]; then
+  echo "❌ The Ventoy mount point contains a line break. Give one mount point." >&2
+  exit 1
+fi
+
 # Check if mount point exists and is a directory
 if [[ ! -d "$VENTOY_MOUNT" ]]; then
   # Try to find and mount Ventoy partition if mount point doesn't exist

@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
-# Safe Linux tests for ventoy-add-isos.sh. No USB stick is needed and no real disk is touched:
-# most tests copy to a temporary folder, and the FAT32 tests use a small loop image
-# that this script creates (only when passwordless sudo, losetup and mkfs.vfat exist).
+# Safe Linux tests for ventoy-add-isos.sh and for the ISO copy of ventoy-install.sh after the install.
+# No USB stick is needed and no real disk is touched: most tests copy to a temporary folder,
+# and the FAT32 and mount tests use small loop images that this script creates
+# (only when passwordless sudo, losetup and mkfs.vfat exist). The tests never run the Ventoy install.
 set -u
 
 root=$(cd "$(dirname "$0")/.." && pwd)
 script=$root/ventoy-add-isos.sh
 work=$(mktemp -d "${TMPDIR:-/tmp}/ventoy-linux-test.XXXXXX")
 passes=0 failures=0 skips=0
-loop_mnt=""
+loop_mnt="" loop_dev=""
 
 cleanup() {
+  if [[ -n "$loop_dev" ]]; then
+    findmnt -n -o TARGET --source "$loop_dev" 2>/dev/null | while read -r m; do sudo umount "$m"; done
+    sudo losetup -d "$loop_dev" 2>/dev/null
+  fi
   if [[ -n "$loop_mnt" ]]; then
     sudo umount "$loop_mnt" 2>/dev/null
     sudo rmdir "$loop_mnt" 2>/dev/null
@@ -358,6 +363,108 @@ EOF
   pgrep -f "sleep 60" >/dev/null && fail "sudo keep-alive: stopped at exit" || pass "sudo keep-alive: stopped at exit"
 
   check "FAT32: only the verified ISOs on the USB" "keep.iso small.iso" "$(ls -A "$loop_mnt" | sort | tr '\n' ' ' | sed 's/ $//')"
+fi
+
+echo "== Mount argument with a line break: refused before any sudo"
+stub=$work/stub-newline
+mkdir -p "$stub"
+printf '#!/usr/bin/env bash\necho "sdz1 Ventoy"\n' >"$stub/lsblk"
+printf '#!/usr/bin/env bash\necho "$*" >>"%s"\n' "$work/sudo-newline.log" >"$stub/sudo"
+chmod +x "$stub/lsblk" "$stub/sudo"
+run "$work/missing1"$'\n'"$work/missing2" "$work/isos2" "$stub"
+check "exit code 1" 1 "$rc"
+contains "clear message" "The Ventoy mount point contains a line break. Give one mount point." "$out"
+check "no sudo call" "" "$(cat "$work/sudo-newline.log" 2>/dev/null)"
+[[ -e "$work/missing1" ]] && fail "no folder made" || pass "no folder made"
+
+# Tests of copy_isos_to in ventoy-install.sh: the copy to the USB that the installer just installed.
+installer=$root/ventoy-install.sh
+# hand_off <device> <PATH prefix> <downloaded ISO folder>: call copy_isos_to as the installer does after the install.
+hand_off() {
+  out=$(cd "$root" && TEMP_ISO_DIR=$3 PATH="$2:$PATH" bash -c 'source "$1"; copy_isos_to "$2"' _ "$installer" "$1" <<<y 2>&1)
+  rc=$?
+}
+
+echo "== Install hand-off: two Ventoy USBs are connected, the installed one is the second"
+stub=$work/stub-handoff
+mkdir -p "$stub" "$work/hA" "$work/hB" "$work/dl1"
+cat >"$stub/lsblk" <<EOF
+#!/usr/bin/env bash
+case "\$*" in
+  "-nr -o PATH,LABEL /dev/fakeA") printf '/dev/fakeA \n/dev/fakeA1 Ventoy\n/dev/fakeA2 VTOYEFI\n' ;;
+  "-nr -o PATH,LABEL /dev/fakeB") printf '/dev/fakeB \n/dev/fakeB1 Ventoy\n/dev/fakeB2 VTOYEFI\n' ;;
+  "-nr -o PATH,LABEL /dev/fakeC") printf '/dev/fakeC \n/dev/fakeC1 \n' ;;
+  "-nr -o PATH,LABEL /dev/fakeD") printf '/dev/fakeD \n/dev/fakeD1 Ventoy\n/dev/fakeD2 Ventoy\n' ;;
+  *) printf 'LABEL MOUNTPOINT\nVentoy $work/hA\nVentoy $work/hB\n' ;; # all devices: the other USB comes first
+esac
+EOF
+cat >"$stub/findmnt" <<EOF
+#!/usr/bin/env bash
+case "\$*" in
+  "-n -f -o TARGET --source /dev/fakeA1") echo "$work/hA" ;;
+  "-n -f -o TARGET --source /dev/fakeB1") echo "$work/hB" ;;
+  *) exec "$real_findmnt" "\$@" ;;
+esac
+EOF
+chmod +x "$stub/lsblk" "$stub/findmnt"
+cp "$work/isos2/bad.iso" "$work/dl1/dl.iso"
+hand_off /dev/fakeB "$stub" "$work/dl1"
+check "exit code 0" 0 "$rc"
+contains "mount of the installed USB" "Ventoy partition /dev/fakeB1 is mounted at: $work/hB" "$out"
+cmp -s "$work/isos2/bad.iso" "$work/hB/dl.iso" && pass "copied to the installed USB" || fail "copied to the installed USB: $out"
+check "other Ventoy USB unchanged" "" "$(ls -A "$work/hA")"
+[[ -e "$work/dl1" ]] && fail "downloads removed after a complete copy" || pass "downloads removed after a complete copy"
+
+echo "== Install hand-off: an ISO is not copied, so the downloads are kept"
+mkdir -p "$work/dl2"
+cp "$work/isos2/bad.iso" "$work/dl2/dl.iso" # already on the USB: skipped
+head -c 100000 /dev/urandom >"$work/dl2/new.iso"
+hand_off /dev/fakeB "$stub" "$work/dl2"
+check "exit code 1" 1 "$rc"
+check "downloads kept" "dl.iso new.iso" "$(ls -A "$work/dl2" | sort | tr '\n' ' ' | sed 's/ $//')"
+contains "folder named" "The script kept all of them in $work/dl2" "$out"
+contains "how to copy later" "./ventoy-add-isos.sh $work/hB $work/dl2" "$out"
+
+echo "== Install hand-off: no Ventoy partition, or two, on the installed USB: stop, copy nothing"
+for dev in /dev/fakeC:0 /dev/fakeD:2; do
+  mkdir -p "$work/dl3"
+  cp "$work/isos2/bad.iso" "$work/dl3/other.iso"
+  hand_off "${dev%:*}" "$stub" "$work/dl3"
+  check "${dev%:*}: exit code 1" 1 "$rc"
+  contains "${dev%:*}: clear message" "Expected 1 partition with the label Ventoy on ${dev%:*}, found ${dev#*:}. No ISO was copied." "$out"
+  check "${dev%:*}: downloads kept" "other.iso" "$(ls -A "$work/dl3")"
+  check "${dev%:*}: nothing copied to another Ventoy USB" "" "$(ls -A "$work/hA")"
+  rm -rf "$work/dl3"
+done
+
+echo "== Install hand-off: the Ventoy partition is not mounted (loop image): mount at a new folder, copy, unmount"
+if [[ "$(uname -s)" != Linux ]] || ! sudo -n true 2>/dev/null || ! command -v mkfs.vfat >/dev/null || ! command -v losetup >/dev/null; then
+  skip "needs Linux, passwordless sudo, losetup and mkfs.vfat"
+else
+  img=$work/handoff.img
+  truncate -s 64M "$img"
+  mkfs.vfat -F 32 -n Ventoy "$img" >/dev/null
+  # Only the loop device that losetup returns for this image is used.
+  loop_dev=$(sudo losetup -f --show "$img")
+  stub=$work/stub-handoff-loop
+  mkdir -p "$stub" "$work/dl4"
+  printf '#!/usr/bin/env bash\n[[ "$*" == "-nr -o PATH,LABEL %s" ]] && echo "%s Ventoy"\n' "$loop_dev" "$loop_dev" >"$stub/lsblk"
+  chmod +x "$stub/lsblk"
+  head -c 300000 /dev/urandom >"$work/dl4/loop.iso"
+  cp "$work/dl4/loop.iso" "$work/loop.iso"
+  hand_off "$loop_dev" "$stub" "$work/dl4"
+  check "exit code 0" 0 "$rc"
+  contains "mount announced" "Ventoy partition $loop_dev is not mounted. Mounting it..." "$out"
+  m=$(sed -n "s|^📂 Ventoy partition $loop_dev is mounted at: ||p" <<<"$out")
+  case "$m" in "${TMPDIR:-/tmp}"/ventoy.??????) pass "mounted at a new temporary folder" ;; *) fail "mounted at a new temporary folder: [$m]" ;; esac
+  check "unmounted after the copy" "" "$(findmnt -n -o TARGET --source "$loop_dev")"
+  [[ -n "$m" && ! -e "$m" ]] && pass "temporary folder removed" || fail "temporary folder removed: [$m]"
+  [[ -e "$work/dl4" ]] && fail "downloads removed after a complete copy" || pass "downloads removed after a complete copy"
+  chk=$(mktemp -d "${TMPDIR:-/tmp}/ventoy-check.XXXXXX")
+  sudo mount -o ro "$loop_dev" "$chk"
+  cmp -s "$work/loop.iso" "$chk/loop.iso" && pass "ISO on the installed USB" || fail "ISO on the installed USB"
+  sudo umount "$chk"
+  rmdir "$chk"
 fi
 
 echo
