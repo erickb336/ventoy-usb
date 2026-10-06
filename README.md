@@ -305,7 +305,11 @@ Select a whole USB device such as `/dev/sdb`, not `/dev/sdb1`. Check `lsblk -o N
 - At the end, it prints a summary: copied and SHA-256 verified, skipped, and failed. If it skipped or failed an ISO, it exits with code 1, and `./ventoy-install.sh` shows a warning instead of "Ventoy USB is ready".
 - It reads the ISO as your user. It uses sudo only for the USB (write and read-back), and only when the mount is not writable by you (for example, a mount made by root). It then asks for your password once, before the first copy.
 
-Linux keeps Ventoy's default partition style (MBR); the Windows path uses GPT. The Linux scripts find the USB by its `Ventoy` label. The mount point that you give must be the mount point of a file system with that label, or the script asks before it continues. When two or more Ventoy USBs are connected, the script lists them and asks which one to use.
+Linux keeps Ventoy's default partition style (MBR); the Windows path uses GPT. Which USB gets the ISOs:
+
+- `./ventoy-install.sh` copies the ISOs only to the USB that it just installed. It uses the `Ventoy` partition of the device that you selected, never a Ventoy USB of another device. If that partition is not mounted, the script mounts it at a new temporary folder and unmounts it at the end.
+- `./ventoy-add-isos.sh` (option 2) finds the USB by its `Ventoy` label. The mount point that you give must be the mount point of a file system with that label, or the script asks before it continues. When two or more Ventoy USBs are connected, it lists them and asks which one to use.
+- When the installer cannot copy all the downloaded ISOs, it keeps them in their temporary folder. It shows the folder and the command to copy them later.
 
 ## The verified copy
 
@@ -410,7 +414,8 @@ Open the list for the computer that prepares the USB.
 | Problem | Action |
 | --- | --- |
 | Linux: "Skipped: … already exists. It was not changed." | The USB already has a file with that name. The script never overwrites it. To replace it, delete the old ISO from the USB yourself, then run the script again. |
-| Linux: the summary shows a skipped or failed ISO, and the script exits with code 1 | Read the line of that ISO above the summary. The ISOs marked ✅ copied were verified. Fix the cause, then run the script again: it skips the ISOs that are already on the USB. |
+| Linux: the summary shows a skipped or failed ISO, and the script exits with code 1 | Read the line of that ISO above the summary. The ISOs marked ✅ copied were verified. Fix the cause, then copy again with `./ventoy-add-isos.sh` (option 2); do not install Ventoy again. It skips the ISOs that are already on the USB. If `./ventoy-install.sh` downloaded the ISOs, it kept them and shows their folder and the command to use. |
+| Linux: "Expected 1 partition with the label Ventoy on …" | After the install, the installer did not find exactly one `Ventoy` partition on the device that you selected, so it copied nothing. Ventoy is installed. Unplug and reconnect the USB, check it with `lsblk -o NAME,LABEL,MOUNTPOINT`, then copy the ISOs with `./ventoy-add-isos.sh` (option 2). |
 | Linux: "sudo is necessary to write to it" | Your user cannot write to the mount point, for example because root mounted it. Type your password once. To copy without sudo, mount the USB as your user (for example, open it in your file manager). |
 | Linux: "sudo needs the password again" | The sudo time limit ended during a long run. Run the script again; it skips the ISOs that are already on the USB. |
 | Linux: "sudo on this computer asks for the password at each command" | Your sudo setting keeps no time limit (`timestamp_timeout=0`), so the script cannot copy with sudo. It stops before the first copy. Mount the USB as your user (open it in your file manager, or run `udisksctl mount -b /dev/<partition>`), then run the script again. |
