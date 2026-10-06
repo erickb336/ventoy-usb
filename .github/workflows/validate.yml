@@ -1,0 +1,21 @@
+name: Safe validation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Windows PowerShell 5.1 safe tests
+        shell: powershell
+        run: .\tests\Test-Windows.ps1
+      - name: PowerShell 7 safe tests
+        shell: pwsh
+        run: .\tests\Test-Windows.ps1
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check preserved Bash syntax (never run installer)
+        run: bash -n ventoy.sh ventoy-install.sh ventoy-add-isos.sh
