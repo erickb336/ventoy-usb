@@ -904,9 +904,9 @@ y"
   check "ISO not copied: work folder removed, downloads kept" "$(basename "$dl")" "$(ls -A "$e2e/tmp")"
   rm -rf "$dl"
 
-  echo "== Installer, Ctrl+C during an ISO download: no .part is kept and no folder is named"
+  echo "== Installer stopped during an ISO download (SIGTERM): no .part is kept and no folder is named"
   rm -rf "$e2e/installed" "$e2e/curl.log" "$e2e/tmp"/*
-  # setsid: the installer leads its own process group, so that the SIGINT reaches it and curl, as Ctrl+C does.
+  # setsid: the installer leads its own process group, so that the test can stop the curl stub at the end.
   TMPDIR=$e2e/tmp PATH="$stub:$PATH" setsid bash -c 'cd "$1" && exec bash ventoy-install.sh 9.9.9' _ "$e2e/app" <<<"$loop_dev
 YES
 yhttps://example.test/slow.iso
@@ -914,12 +914,15 @@ y
 y" >"$e2e/int.log" 2>&1 &
   pid=$!
   for _ in $(seq 100); do [[ -n "$(find "$e2e/tmp" -name 'slow.iso.part' 2>/dev/null)" ]] && break; sleep 0.1; done
-  check "Ctrl+C: the download is in progress" 1 "$(find "$e2e/tmp" -name 'slow.iso.part' | wc -l | tr -d ' ')"
-  kill -INT -- -"$pid"
+  check "stopped: the download is in progress" 1 "$(find "$e2e/tmp" -name 'slow.iso.part' | wc -l | tr -d ' ')"
+  # The signal goes to the installer only, so the curl stub still holds the .part when the cleanup runs.
+  kill -TERM "$pid"
   wait "$pid" 2>/dev/null
-  check "Ctrl+C: no .part left" "" "$(find "$e2e/tmp" -name '*.part')"
-  if grep -q "kept them" "$e2e/int.log"; then fail "Ctrl+C: no kept-downloads message"; else pass "Ctrl+C: no kept-downloads message"; fi
-  check "Ctrl+C: work folder and empty download folder removed" "" "$(ls -A "$e2e/tmp")"
+  check "stopped: exit code 143" 143 "$?"
+  check "stopped: no .part left" "" "$(find "$e2e/tmp" -name '*.part')"
+  if grep -q "kept them" "$e2e/int.log"; then fail "stopped: no kept-downloads message"; else pass "stopped: no kept-downloads message"; fi
+  check "stopped: work folder and empty download folder removed" "" "$(ls -A "$e2e/tmp")"
+  kill -TERM -- -"$pid" 2>/dev/null
 
   echo "== Installer on a noexec temporary folder: stops with a TMPDIR hint before any download"
   noexec=$work/noexec
