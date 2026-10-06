@@ -274,9 +274,10 @@ $dragged "; echo "$VT_ISO") | tail -1)
     mkdir -p "$hook" "$work/outside"
     cat >"$hook/diskutil" <<'EOF2'
 #!/bin/bash
-# INT_ON_MOUNT: on "mount", send SIGINT (Ctrl+C) to the caller and do not mount.
+# STOP_ON_MOUNT: on "mount", stop the caller with SIGTERM and do not mount. (SIGINT, as from
+# Ctrl+C, takes the same cleanup path, but a background job ignores it.)
 # FLIP: from the FLIP_AT-th "info -plist FLIP_PART" on, replace a key ("Key -type value").
-[ "$1" = mount ] && [ -n "${INT_ON_MOUNT:-}" ] && { kill -INT $PPID; exit 1; }
+[ "$1" = mount ] && [ -n "${STOP_ON_MOUNT:-}" ] && { kill -TERM $PPID; exit 1; }
 if [ "$1 $2 $3" = "info -plist ${FLIP_PART:-}" ]; then
     n=$(($(cat "$FLIP_COUNT" 2>/dev/null || echo 0) + 1))
     echo "$n" >"$FLIP_COUNT"
@@ -330,13 +331,13 @@ EOF2
         check "no ISO or temp file after the change ($flip)" "" "$([ -e "$dest" ] && echo "$dest"; leftovers)"
     done
 
-    # Ctrl+C while the volume is unmounted: the hidden file name is shown.
-    hooked stop INT_ON_MOUNT=1
-    check "Ctrl+C while unmounted exit code" 130 "$rc"
+    # A stop (Ctrl+C or SIGTERM) while the volume is unmounted: the hidden file name is shown.
+    hooked stop STOP_ON_MOUNT=1
+    check "stop while unmounted exit code" 143 "$rc"
     diskutil mount "${disk}s1" >/dev/null
     left=$(ls -A "$VT_MOUNT" | grep '^\.ventoy-copy')
     [ -n "$left" ] && pass "temp file stays on the unmounted USB" || fail "temp file stays on the unmounted USB"
-    contains "Ctrl+C while unmounted names the hidden file" "The hidden temporary file $left can remain on the USB." "$out"
+    contains "stop while unmounted names the hidden file" "The hidden temporary file $left can remain on the USB." "$out"
     rm -f "$VT_MOUNT/$left" "$VT_MOUNT/._$left"
 
     # The ISO name appears during the verification, or at the rename.
