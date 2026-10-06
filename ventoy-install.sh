@@ -167,14 +167,13 @@ fi
 echo "🔄 Syncing data to USB..."
 sync
 
-echo
-echo "🎉 Ventoy USB is ready!"
-echo "➡️  Boot from this USB and select an ISO to install."
-
 # Cleanup
 rm -rf "ventoy-$VENTOY_VERSION" ventoy.tar.gz
 
+echo
 if [[ $COPY_STATUS -ne 0 ]]; then
   echo "⚠️  Ventoy is installed, but not all ISOs were copied. See the ISO summary above."
   exit "$COPY_STATUS"
 fi
+echo "🎉 Ventoy USB is ready!"
+echo "➡️  Boot from this USB and select an ISO to install."
