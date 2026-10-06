@@ -29,6 +29,8 @@ open_mactoy() {
     cat <<'EOF'
 
 WARNING: Installing Ventoy erases every file on the USB you choose. Back it up first.
+Before you give Mactoy Full Disk Access, run: spctl -a -vv /Applications/Mactoy.app
+It must show "source=Notarized Developer ID". The README tells how to check the .dmg file too.
 In Mactoy:
   1. Connect the USB. Select its card in the sidebar. Check its name and size.
   2. On the "Install Ventoy" tab, keep the defaults: version Latest, MBR, Secure Boot on.

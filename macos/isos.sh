@@ -96,7 +96,7 @@ mac_copy_iso() {
     mount=$VT_MOUNT
     name=$(basename "$iso")
     dest=$mount/$name
-    size=$(stat -f %z "$iso")
+    size=$(stat -L -f %z "$iso") # -L: the size of the ISO, not of a link to it
     if [ -e "$dest" ] || [ -L "$dest" ]; then
         die "Already exists: $dest. Rename or remove it yourself, then run again."
     fi
@@ -110,7 +110,8 @@ mac_copy_iso() {
 
     echo "Copying $iso to /dev/$disk, $(mac_clean "$dest")"
     # Recheck the disk and volume immediately before the first write.
-    mac_same_volume "$disk" "$uuid" "$mount" "$scope" || die "The USB changed. Run again and select the USB again."
+    mac_same_volume "$disk" "$uuid" "$scope" && [ "$VT_MOUNT" = "$mount" ] ||
+        die "The USB changed. Run again and select the USB again."
     trap mac_copy_cleanup EXIT
     trap 'exit 130' INT
     trap 'exit 143' TERM
@@ -141,8 +142,12 @@ mac_copy_iso() {
     # Unmount and mount again, so the hash reads the USB and not the cache.
     diskutil unmount "$VT_PART" >/dev/null || die "Could not unmount /dev/$VT_PART to verify the copy."
     diskutil mount "$VT_PART" >/dev/null || die "Could not mount /dev/$VT_PART again."
-    mac_same_volume "$disk" "$uuid" "$mount" "$scope" ||
+    mac_same_volume "$disk" "$uuid" "$scope" ||
         die "The USB changed during the copy. If its top folder has the hidden file $tmpname, delete it."
+    # The mount point can change, for example when a volume with the same name was ejected.
+    mount=$VT_MOUNT
+    VT_TMP=$mount/$tmpname
+    dest=$mount/$name
 
     echo "[2/3] Reading source ISO for SHA-256 verification..."
     src_hash=$(mac_sha256 "$iso")
