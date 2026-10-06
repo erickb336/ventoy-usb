@@ -150,15 +150,17 @@ fi
 echo "📂 Ventoy mounted at: $VENTOY_MOUNT"
 
 cd ..
+# Ventoy is installed now. A failed ISO copy must not stop the cleanup below.
+COPY_STATUS=0
 if [[ -n "${TEMP_ISO_DIR:-}" ]]; then
-  ./ventoy-add-isos.sh "$VENTOY_MOUNT" "$TEMP_ISO_DIR"
+  ./ventoy-add-isos.sh "$VENTOY_MOUNT" "$TEMP_ISO_DIR" || COPY_STATUS=$?
   rm -rf "$TEMP_ISO_DIR"
 else
   echo
   read -rp "Optional: directory containing ISO files (leave empty to skip): " ISO_DIR
 
   if [[ -n "$ISO_DIR" ]]; then
-    ./ventoy-add-isos.sh "$VENTOY_MOUNT" "$ISO_DIR"
+    ./ventoy-add-isos.sh "$VENTOY_MOUNT" "$ISO_DIR" || COPY_STATUS=$?
   fi
 fi
 
@@ -171,3 +173,8 @@ echo "➡️  Boot from this USB and select an ISO to install."
 
 # Cleanup
 rm -rf "ventoy-$VENTOY_VERSION" ventoy.tar.gz
+
+if [[ $COPY_STATUS -ne 0 ]]; then
+  echo "⚠️  Ventoy is installed, but not all ISOs were copied. See the ISO summary above."
+  exit "$COPY_STATUS"
+fi
