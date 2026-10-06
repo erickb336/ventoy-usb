@@ -112,7 +112,7 @@ stop() {
   wait "$1" 2>/dev/null || true
 }
 
-# Use sudo only to write, and only when this user cannot write to the mount (for example, a mount made by root).
+# Use sudo only for the USB, and only when this user cannot write to the mount (for example, a mount made by root).
 # -n: never ask for a password in the middle of a copy. A background job keeps the sudo timestamp fresh.
 SUDO=()
 SUDO_KEEPALIVE_PID=""
@@ -120,9 +120,20 @@ if [[ ! -w "$VENTOY_MOUNT" ]]; then
   SUDO=(sudo -n)
   echo "🔐 $VENTOY_MOUNT is not writable by $(id -un). sudo is necessary to write to it."
   sudo -v
+  # With sudo's timestamp_timeout=0, each sudo command asks for the password again, so no copy can work.
+  if ! sudo -n true 2>/dev/null; then
+    echo "❌ sudo on this computer asks for the password at each command, so the script cannot copy with sudo." >&2
+    echo "   Mount the USB as your user (for example, open it in your file manager, or run udisksctl mount -b /dev/<partition>), then run the script again." >&2
+    exit 1
+  fi
   while sudo -n -v; do sleep 60; done >/dev/null 2>&1 &
   SUDO_KEEPALIVE_PID=$!
 fi
+
+# usb_test <test arguments>: test a path on the USB as the user that writes to it, so that a root-only mount works.
+usb_test() { "${SUDO[@]}" test "$@"; }
+# usb_exists <path>: a file, a folder or a link (also a broken link) is at <path> on the USB.
+usb_exists() { usb_test -e "$1" || usb_test -L "$1"; }
 
 FSTYPE=$(findmnt -n -o FSTYPE --target "$VENTOY_MOUNT" 2>/dev/null || true)
 TMP_COPY=""
@@ -136,7 +147,7 @@ cleanup_copy() {
   fi
   if [[ -n "$TMP_COPY" ]]; then
     "${SUDO[@]}" rm -f -- "$TMP_COPY" || true
-    if [[ -e "$TMP_COPY" ]]; then
+    if usb_test -e "$TMP_COPY"; then
       echo "⚠️  Could not remove the temporary file $TMP_COPY. Delete it yourself." >&2
     fi
     TMP_COPY=""
@@ -178,7 +189,7 @@ copy_iso() {
   dest=$VENTOY_MOUNT/$name
   echo
   echo "📦 $name"
-  if [[ -e "$dest" || -L "$dest" ]]; then
+  if usb_exists "$dest"; then
     echo "⏭️  Skipped: $dest already exists. It was not changed. To replace it, delete it first."
     return 2
   fi
@@ -233,9 +244,9 @@ copy_iso() {
   fi
 
   # -T: never move into a folder. -n: never replace a file that appeared during the copy.
-  if [[ -e "$dest" || -L "$dest" ]] ||
+  if usb_exists "$dest" ||
     ! "${SUDO[@]}" mv -n -T -- "$TMP_COPY" "$dest" ||
-    [[ -e "$TMP_COPY" || -L "$dest" || ! -f "$dest" ]]; then
+    usb_test -e "$TMP_COPY" || usb_test -L "$dest" || ! usb_test -f "$dest"; then
     echo "❌ Failed: $dest appeared during the copy. It was not changed. The copy was removed." >&2
     return 1
   fi

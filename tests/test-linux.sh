@@ -15,6 +15,7 @@ cleanup() {
     sudo umount "$loop_mnt" 2>/dev/null
     sudo rmdir "$loop_mnt" 2>/dev/null
   fi
+  [[ -d "$work/usb-root" ]] && sudo -n rm -rf "$work/usb-root"
   rm -rf "$work"
 }
 trap cleanup EXIT
@@ -221,9 +222,30 @@ else
   stub=$work/stub-sudo-expired
   mkdir -p "$stub" "$work/usb9"
   chmod 555 "$work/usb9"
+  cat >"$stub/sudo" <<EOF
+#!/usr/bin/env bash
+# "sudo -v" and the first "sudo -n true" succeed. Then the timestamp is expired: -n fails, other calls ask for a password.
+case "\$1 \${2:-}" in
+  "-v ") exit 0 ;;
+  "-n true") [[ -e "$stub/used" ]] || { touch "$stub/used"; exit 0; } ;;
+esac
+case "\$1" in
+  -n) echo "sudo: a password is required" >&2; exit 1 ;;
+  *) echo "[sudo] password for \$(id -un):" >&2; exit 1 ;;
+esac
+EOF
+  chmod +x "$stub/sudo"
+  run "$work/usb9" "$work/isos2" "$stub"
+  check "exit code 1" 1 "$rc"
+  contains "clear message" "Failed: sudo needs the password again. Run the script again to copy bad.iso." "$out"
+  case "$out" in *"password for"*) fail "no password prompt" ;; *) pass "no password prompt" ;; esac
+
+  echo "== sudo asks for the password at each command (timestamp_timeout=0): stop before the first copy"
+  stub=$work/stub-sudo-zero
+  mkdir -p "$stub"
   cat >"$stub/sudo" <<'EOF'
 #!/usr/bin/env bash
-# The first "sudo -v" succeeds. Later the timestamp is expired: -n fails, other calls ask for a password.
+# "sudo -v" succeeds, but it keeps no timestamp: each "sudo -n" fails.
 case "$1" in
   -v) exit 0 ;;
   -n) echo "sudo: a password is required" >&2; exit 1 ;;
@@ -233,9 +255,46 @@ EOF
   chmod +x "$stub/sudo"
   run "$work/usb9" "$work/isos2" "$stub"
   check "exit code 1" 1 "$rc"
-  contains "clear message" "Failed: sudo needs the password again. Run the script again to copy bad.iso." "$out"
+  contains "clear message" "sudo on this computer asks for the password at each command, so the script cannot copy with sudo." "$out"
+  contains "tells how to mount as the user" "Mount the USB as your user" "$out"
+  case "$out" in *"📦 bad.iso"*) fail "stops before the first ISO" ;; *) pass "stops before the first ISO" ;; esac
   case "$out" in *"password for"*) fail "no password prompt" ;; *) pass "no password prompt" ;; esac
   chmod 755 "$work/usb9"
+fi
+
+echo "== Root-only mount (a folder with mode 0700 owned by root): sudo checks the names on the USB"
+if [[ "$(uname -s)" != Linux || "$(id -u)" == 0 ]] || ! sudo -n true 2>/dev/null; then
+  skip "needs Linux, a non-root user and passwordless sudo"
+else
+  rusb=$work/usb-root
+  sudo mkdir -m 700 "$rusb"
+  run "$rusb" "$work/isos2"
+  check "first run: exit code 0" 0 "$rc"
+  contains "first run: verified" "✅ bad.iso copied and SHA-256 verified." "$out"
+  case "$out" in *"appeared during the copy"*) fail "first run: no false race" ;; *) pass "first run: no false race" ;; esac
+  sudo cmp -s "$work/isos2/bad.iso" "$rusb/bad.iso" && pass "first run: same bytes" || fail "first run: same bytes"
+  before=$(sudo sh -c 'sha256sum <"$1"; stat -c %Y -- "$1"' sh "$rusb/bad.iso")
+  sleep 1.1 # an overwrite would change the mtime
+  run "$rusb" "$work/isos2"
+  check "second run: exit code 1" 1 "$rc"
+  contains "second run: skipped" "⏭️  Skipped: $rusb/bad.iso already exists. It was not changed." "$out"
+  check "second run: file unchanged" "$before" "$(sudo sh -c 'sha256sum <"$1"; stat -c %Y -- "$1"' sh "$rusb/bad.iso")"
+
+  # A sudo wrapper: "rm" does nothing and "mv" fails, so the temporary file stays after a failed ISO.
+  stub=$work/stub-root-rm
+  mkdir -p "$stub" "$work/isos-root"
+  head -c 100000 /dev/urandom >"$work/isos-root/other.iso"
+  cat >"$stub/sudo" <<EOF
+#!/usr/bin/env bash
+case " \$* " in *" rm "*) exit 0 ;; *" mv "*) exit 1 ;; esac
+exec $(command -v sudo) "\$@"
+EOF
+  chmod +x "$stub/sudo"
+  run "$rusb" "$work/isos-root" "$stub"
+  check "temporary file kept: exit code 1" 1 "$rc"
+  contains "temporary file kept: warning" "Could not remove the temporary file $rusb/.ventoy-copy-" "$out"
+  check "temporary file kept: it is there" 1 "$(sudo find "$rusb" -maxdepth 1 -name '.ventoy-copy-*' | wc -l | tr -d ' ')"
+  sudo rm -rf "$rusb"
 fi
 
 echo "== FAT32 loop image (root-owned mount, so the script uses sudo)"
