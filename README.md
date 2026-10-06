@@ -299,7 +299,9 @@ You can also run the Linux scripts directly:
 
 The installer verifies the Ventoy download before anything runs it as root, as on Windows. It reads the SHA-256 digest of `ventoy-<version>-linux.tar.gz` from the GitHub release (the `digest` field of the release asset), downloads the package over https only, and compares the SHA-256 of the file with the digest. When they are different, or the release gives no digest, it removes the download and stops before it extracts or runs the package. There is no option to skip this check. For a release without a digest, you can give the expected SHA-256 yourself with `--sha256 <hex>` and an explicit version. Only do that with a SHA-256 from a source that you trust.
 
-Every download (the release data, the package and the ISO URLs) uses https. The installer refuses an `http://` ISO URL before any download, and `curl` refuses a redirect from https to http.
+Every download (the release data, the package and the ISO URLs) uses https. The installer refuses an `http://` ISO URL before any download, and `curl` refuses a redirect from https to http. The verification trusts the system CA store and the configuration and environment of `curl` (for example, proxy variables and `CURL_CA_BUNDLE`); the installer ignores `~/.curlrc`. It needs `sha256sum`, `curl`, `tar`, `lsblk` and `findmnt`, and stops with a list of the missing ones before any action.
+
+The installer downloads, verifies, extracts and runs the Ventoy package in a private temporary folder that only your user can read, and removes that folder at the end, also after an error. The downloaded ISOs are in a separate folder (see below).
 
 Select a whole USB device such as `/dev/sdb`, not `/dev/sdb1`. Check `lsblk -o NAME,TRAN,SIZE,MODEL,LABEL,MOUNTPOINT` before confirming. The installer uses force-install (`-I`), which erases existing Ventoy installations too. It offers ISO URL downloads and copying from a local directory. Only use trusted direct ISO URLs; download Windows ISOs manually because Microsoft links can expire.
 
@@ -311,7 +313,7 @@ The installer asks these questions, in this order:
 4. `Continue? (y/n)` and then `Double-check. Continue? (y/n)`: Ventoy2Disk asks these two questions. Type `y` to both to install Ventoy. If you type `n`, the installer says "Ventoy was not installed" and stops.
 5. `Optional: directory containing ISO files (leave empty to skip):` only when you did not download ISOs.
 
-The installer saves each download under a name that ends in `.iso`. It removes the query (`?…`) and the fragment (`#…`) of the URL from the name, and adds `.iso` when the name does not end in `.iso`. When two URLs give the same name, it stops before any download.
+The installer saves each download under a name that ends in `.iso`. It removes the query (`?…`) and the fragment (`#…`) of the URL from the name, decodes `%XX` codes (`Win%2011.iso` becomes `Win 11.iso`), and adds `.iso` when the name does not end in `.iso`. When two URLs give the same name, or a name would be hidden (it starts with `.`), it stops before any download. Each download goes to a `.part` file and gets its name only when it is complete, so the folder never holds a truncated `.iso`. An empty download folder is removed.
 
 `./ventoy-add-isos.sh` copies each `.iso` file of the folder (`.iso` in any case, as on Windows; not the hidden files) and checks its SHA-256, as on Windows and macOS (see [The verified copy](#the-verified-copy)):
 
@@ -428,6 +430,8 @@ Open the list for the computer that prepares the USB.
 
 | Problem | Action |
 | --- | --- |
+| Linux: "Failed to retrieve Ventoy version" | The request to the GitHub API failed. Check your internet connection. GitHub limits the API requests of a computer without a login (error 403): wait an hour, or give the version yourself, for example `./ventoy-install.sh 1.1.17`. |
+| Linux: "Extraction failed" | The verified package could not be unpacked (a damaged download, or no space left in the temporary folder). Nothing was installed and the temporary folder was removed. Run the script again. |
 | Linux: "gives no SHA-256 digest for ventoy-…-linux.tar.gz" | The GitHub release has no digest for the Linux package, so the installer cannot verify the download. It stops before any download. Check the version (`./ventoy-install.sh 1.1.17`, for example) and your internet connection, then run it again. Do not bypass the verification. If you have the SHA-256 of the package from a source that you trust, run `./ventoy-install.sh <version> --sha256 <hex>`. |
 | Linux: "SHA-256 mismatch for ventoy-…-linux.tar.gz" | The downloaded package is not the one that the release (or your `--sha256`) describes. The installer removed the download and installed nothing. Run it again; if it fails again, check your network and the release page. Do not bypass the verification. |
 | Linux: "Only https URLs are allowed", or `curl` stops with "Protocol "http" not supported" | An ISO URL is plain http, or an https URL redirected to http. The installer downloads only over https. Use an https URL for the ISO, or download the ISO yourself and give its folder (option 2). |
