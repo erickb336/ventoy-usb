@@ -653,6 +653,11 @@ download 'https://a.test/x.iso' 'HTTP://b.test/y.iso'
 check "http URL: exit code 1" 1 "$rc"
 contains "http URL: clear message" "Only https URLs are allowed: HTTP://b.test/y.iso. Aborted." "$out"
 check "http URL: nothing downloaded" "" "$(cat "$stub/calls" 2>/dev/null)"
+rm -f "$stub/calls"
+download 'https://a.test/x%0Ay.iso'
+check "control character in the name: exit code 1" 1 "$rc"
+contains "control character in the name: clear message" "gives the file name x?y.iso, which is hidden, has a slash or has a control character, so it is not a usable file name. Aborted." "$out"
+check "control character in the name: nothing downloaded" "" "$(cat "$stub/calls" 2>/dev/null)"
 
 echo "== Installer downloads with the real curl: a redirect from https to http is refused (local TLS server)"
 if ! command -v python3 >/dev/null || ! command -v openssl >/dev/null; then
@@ -821,6 +826,7 @@ case \$url in
   *api.github.com/*) exit 22 ;;
   *-linux.tar.gz) cp "$e2e/ventoy.tar.gz" "\$out" ;;
   */empty.iso) : >"\$out" ;;
+  */slow.iso) printf part >"\$out"; exec "$real_sleep" 30 ;;
   *) printf 'ISO %s' "\$url" >"\$out" ;;
 esac
 EOF
@@ -897,6 +903,46 @@ y"
   [[ -e "$dl/empty.iso" ]] && pass "ISO not copied: downloads kept" || fail "ISO not copied: downloads kept: [$dl]"
   check "ISO not copied: work folder removed, downloads kept" "$(basename "$dl")" "$(ls -A "$e2e/tmp")"
   rm -rf "$dl"
+
+  echo "== Installer, Ctrl+C during an ISO download: no .part is kept and no folder is named"
+  rm -rf "$e2e/installed" "$e2e/curl.log" "$e2e/tmp"/*
+  # setsid: the installer leads its own process group, so that the SIGINT reaches it and curl, as Ctrl+C does.
+  TMPDIR=$e2e/tmp PATH="$stub:$PATH" setsid bash -c 'cd "$1" && exec bash ventoy-install.sh 9.9.9' _ "$e2e/app" <<<"$loop_dev
+YES
+yhttps://example.test/slow.iso
+y
+y" >"$e2e/int.log" 2>&1 &
+  pid=$!
+  for _ in $(seq 100); do [[ -n "$(find "$e2e/tmp" -name 'slow.iso.part' 2>/dev/null)" ]] && break; sleep 0.1; done
+  check "Ctrl+C: the download is in progress" 1 "$(find "$e2e/tmp" -name 'slow.iso.part' | wc -l | tr -d ' ')"
+  kill -INT -- -"$pid"
+  wait "$pid" 2>/dev/null
+  check "Ctrl+C: no .part left" "" "$(find "$e2e/tmp" -name '*.part')"
+  if grep -q "kept them" "$e2e/int.log"; then fail "Ctrl+C: no kept-downloads message"; else pass "Ctrl+C: no kept-downloads message"; fi
+  check "Ctrl+C: work folder and empty download folder removed" "" "$(ls -A "$e2e/tmp")"
+
+  echo "== Installer on a noexec temporary folder: stops with a TMPDIR hint before any download"
+  noexec=$work/noexec
+  mkdir -p "$noexec"
+  if ! sudo mount -t tmpfs -o noexec,uid="$(id -u)" tmpfs "$noexec"; then
+    skip "cannot mount a noexec tmpfs"
+  else
+    rm -f "$e2e/curl.log"
+    out=$(cd "$e2e/app" && TMPDIR=$noexec PATH="$stub:$PATH" bash ventoy-install.sh 9.9.9 2>&1 <<<"")
+    rc=$?
+    check "noexec: exit code 1" 1 "$rc"
+    contains "noexec: clear message" "❌ The temporary folder $noexec does not allow programs to run (noexec). Set TMPDIR to a folder that does, for example: TMPDIR=\"\$HOME/tmp\" ./ventoy-install.sh" "$out"
+    check "noexec: no download" "" "$(cat "$e2e/curl.log" 2>/dev/null)"
+    check "noexec: work folder removed" "" "$(ls -A "$noexec")"
+    sudo umount "$noexec"
+  fi
+  rmdir "$noexec"
+
+  echo "== Installer started from a folder that is removed during the run: the work folder is still removed"
+  mkdir -p "$e2e/gone"
+  out=$(cd "$e2e/gone" && rm -rf "$e2e/gone" && TMPDIR=$e2e/tmp PATH="$stub:$PATH" bash "$e2e/app/ventoy-install.sh" 9.9.9 --sha256 abc 2>&1 <<<"")
+  check "start folder gone: exit code 1" 1 "$?"
+  check "start folder gone: work folder removed" "" "$(ls -A "$e2e/tmp")"
 
   echo "== Installer prerequisites: a PATH without sha256sum stops before any action"
   nosha=$work/nosha

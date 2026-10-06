@@ -56,8 +56,8 @@ download_isos() {
     [[ -n "$name" ]] || name=download
     name=$(url_decode "$name")
     [[ "${name,,}" == *.iso ]] || name=$name.iso
-    if [[ "$name" == .* || "$name" == */* ]]; then
-      echo "❌ The URL $url gives the file name $name, which is hidden or has a slash, so it cannot be copied to the USB. Aborted." >&2
+    if [[ "$name" == .* || "$name" == */* || "$name" == *[[:cntrl:]]* ]]; then
+      echo "❌ The URL $url gives the file name ${name//[[:cntrl:]]/?}, which is hidden, has a slash or has a control character, so it is not a usable file name. Aborted." >&2
       return 1
     fi
     for n in "${names[@]}"; do
@@ -84,8 +84,9 @@ download_isos() {
 }
 
 # downloads_kept [mount]: tell where the downloaded ISOs are and how to copy them later. [mount]: the Ventoy mount, if it is still mounted.
-# An empty folder (no download was complete) is removed instead.
+# An interrupted download (.part) is removed first; an empty folder (no download was complete) is removed instead.
 downloads_kept() {
+  rm -f -- "$TEMP_ISO_DIR"/*.part
   if rmdir -- "$TEMP_ISO_DIR" 2>/dev/null; then
     return 0
   fi
@@ -189,10 +190,19 @@ START_DIR=$PWD
 WORK_DIR=$(mktemp -d)
 cleanup() {
   [[ -z "$TEMP_ISO_DIR" || ! -d "$TEMP_ISO_DIR" ]] || downloads_kept
-  cd "$START_DIR"
-  rm -rf -- "$WORK_DIR"
+  cd "$START_DIR" 2>/dev/null || cd /
+  if [[ -n "$WORK_DIR" && "$WORK_DIR" == /* ]]; then
+    rm -rf -- "$WORK_DIR"
+  fi
 }
 trap cleanup EXIT
+# Ventoy2Disk.sh runs from the work folder, so a temporary folder that allows no program to run (noexec) stops the script here.
+printf '#!/bin/sh\nexit 0\n' >"$WORK_DIR/can-run"
+chmod +x "$WORK_DIR/can-run"
+if ! "$WORK_DIR/can-run" 2>/dev/null; then
+  echo "❌ The temporary folder ${WORK_DIR%/*} does not allow programs to run (noexec). Set TMPDIR to a folder that does, for example: TMPDIR=\"\$HOME/tmp\" ./ventoy-install.sh"
+  exit 1
+fi
 
 # Arguments: [version] [--sha256 <hex>]. --sha256 gives the expected SHA-256 of the package yourself,
 # for a release that has no digest. It needs an explicit version. There is no way to skip the verification.
