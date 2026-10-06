@@ -653,6 +653,11 @@ download 'https://a.test/x.iso' 'HTTP://b.test/y.iso'
 check "http URL: exit code 1" 1 "$rc"
 contains "http URL: clear message" "Only https URLs are allowed: HTTP://b.test/y.iso. Aborted." "$out"
 check "http URL: nothing downloaded" "" "$(cat "$stub/calls" 2>/dev/null)"
+rm -f "$stub/calls"
+download 'https://a.test/x%0Ay.iso'
+check "control character in the name: exit code 1" 1 "$rc"
+contains "control character in the name: clear message" "gives the file name x?y.iso, which is hidden, has a slash or has a control character, so it is not a usable file name. Aborted." "$out"
+check "control character in the name: nothing downloaded" "" "$(cat "$stub/calls" 2>/dev/null)"
 
 echo "== Installer downloads with the real curl: a redirect from https to http is refused (local TLS server)"
 if ! command -v python3 >/dev/null || ! command -v openssl >/dev/null; then
@@ -672,6 +677,8 @@ class H(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/ok.iso':
             self.send_response(200); self.end_headers(); self.wfile.write(b'ISO ok')
+        elif self.path == '/cut.iso':
+            self.send_response(200); self.send_header('Content-Length', '100'); self.end_headers(); self.wfile.write(b'ISO cut'); self.wfile.flush()
         elif self.path == '/chain.iso':
             self.send_response(302); self.send_header('Location', 'https://127.0.0.1:%d/redir.iso' % self.server.server_address[1]); self.end_headers()
         else:
@@ -688,14 +695,24 @@ EOF
   srv_pid=$!
   for _ in $(seq 50); do [[ -s "$srv/port" ]] && break; sleep 0.1; done
   port=$(cat "$srv/port")
+  # ~/.curlrc names a proxy that does not exist: the installer must ignore it (curl -q).
+  mkdir -p "$work/home"
+  printf 'proxy = "http://127.0.0.1:1"\n' >"$work/home/.curlrc"
   tls_download() { # <url>...: download_isos with the real curl, which trusts the test certificate
-    out=$(cd "$root" && CURL_CA_BUNDLE=$srv/cert.pem TMPDIR=$work/dltmp bash -c 'source "$1"; shift; download_isos "$@"; echo "DIR=$TEMP_ISO_DIR"' _ "$installer" "$@" 2>&1)
+    out=$(cd "$root" && HOME=$work/home CURL_CA_BUNDLE=$srv/cert.pem TMPDIR=$work/dltmp bash -c 'source "$1"; shift; r=0; download_isos "$@" || r=$?; [[ -z "$TEMP_ISO_DIR" ]] || downloads_kept; echo "DIR=$TEMP_ISO_DIR"; exit $r' _ "$installer" "$@" 2>&1)
     rc=$?
     dir=$(sed -n 's/^DIR=//p' <<<"$out")
   }
   tls_download "https://127.0.0.1:$port/ok.iso"
   check "https without a redirect: exit code 0" 0 "$rc"
   check "https without a redirect: file downloaded" "ISO ok" "$(cat "$dir/ok.iso" 2>/dev/null)"
+  check "a .curlrc in HOME would break the download without -q" 7 "$(HOME=$work/home CURL_CA_BUNDLE=$srv/cert.pem curl -fsL "https://127.0.0.1:$port/ok.iso" >/dev/null 2>&1; echo $?)"
+  tls_download "https://127.0.0.1:$port/cut.iso"
+  check "server closes mid-transfer: exit code 1" 1 "$rc"
+  contains "server closes mid-transfer: clear message" "Download failed: https://127.0.0.1:$port/cut.iso." "$out"
+  check "server closes mid-transfer: no truncated .iso or .part kept" "" "$(find "$work/dltmp" -name 'cut*')"
+  [[ -d "$dir" ]] && fail "server closes mid-transfer: empty folder removed" || pass "server closes mid-transfer: empty folder removed"
+  case "$out" in *"kept them in"*) fail "server closes mid-transfer: no kept message" ;; *) pass "server closes mid-transfer: no kept message" ;; esac
   check "the redirect target serves the file to a curl without the https-only rule" "ISO ok" "$(CURL_CA_BUNDLE=$srv/cert.pem curl -fsL "https://127.0.0.1:$port/redir.iso" 2>/dev/null)"
   for p in redir chain; do
     tls_download "https://127.0.0.1:$port/$p.iso"
@@ -764,6 +781,7 @@ else
 read -rp 'Continue? (y/n) ' a; [[ \$a == y ]] || exit 0
 read -rp 'Double-check. Continue? (y/n) ' a; [[ \$a == y ]] || exit 0
 touch "$e2e/installed"
+echo "\$PWD" >"$e2e/pwd"
 echo "Install Ventoy to \$2 successfully finished."
 EOF
   chmod +x "$e2e/pkg/ventoy-9.9.9/Ventoy2Disk.sh"
@@ -807,6 +825,8 @@ case \$url in
   *api.github.com/*/releases/tags/v9.9.9) cat "$e2e/release.json" ;;
   *api.github.com/*) exit 22 ;;
   *-linux.tar.gz) cp "$e2e/ventoy.tar.gz" "\$out" ;;
+  */empty.iso) : >"\$out" ;;
+  */slow.iso) printf part >"\$out"; exec "$real_sleep" 30 ;;
   *) printf 'ISO %s' "\$url" >"\$out" ;;
 esac
 EOF
@@ -859,6 +879,9 @@ y"
   contains "complete run: end message" "🎉 Ventoy USB is ready!" "$out"
   check "complete run: ISOs on the USB" "get.iso one.iso" "$(ls -A "$e2e/usb" | LC_ALL=C sort | tr '\n' ' ' | sed 's/ $//')"
   [[ -n "$dl" && ! -e "$dl" ]] && pass "complete run: downloads removed" || fail "complete run: downloads removed: [$dl]"
+  case "$(cat "$e2e/pwd")" in "$e2e/tmp/"*/ventoy-9.9.9) pass "complete run: the package ran in a private work folder" ;; *) fail "complete run: the package ran in a private work folder: $(cat "$e2e/pwd")" ;; esac
+  check "complete run: work folder removed" "" "$(ls -A "$e2e/tmp")"
+  check "complete run: nothing left in the start folder" "ventoy-add-isos.sh ventoy-install.sh" "$(ls -A "$e2e/app" | LC_ALL=C sort | tr '\n' ' ' | sed 's/ $//')"
 
   install_run "$loop_dev
 YES
@@ -871,13 +894,71 @@ y"
 
   install_run "$loop_dev
 YES
-yhttps://example.test/.hidden.iso
+yhttps://example.test/empty.iso
 y
 y"
   check "ISO not copied: exit code 1" 1 "$rc"
   contains "ISO not copied: end message" "⚠️  Ventoy is installed, but not all ISOs were copied. See the messages above." "$out"
   case "$out" in *"Ventoy USB is ready"*) fail "ISO not copied: not ready" ;; *) pass "ISO not copied: not ready" ;; esac
-  [[ -e "$dl/.hidden.iso" ]] && pass "ISO not copied: downloads kept" || fail "ISO not copied: downloads kept: [$dl]"
+  [[ -e "$dl/empty.iso" ]] && pass "ISO not copied: downloads kept" || fail "ISO not copied: downloads kept: [$dl]"
+  check "ISO not copied: work folder removed, downloads kept" "$(basename "$dl")" "$(ls -A "$e2e/tmp")"
+  rm -rf "$dl"
+
+  echo "== Installer stopped during an ISO download (SIGTERM): no .part is kept and no folder is named"
+  rm -rf "$e2e/installed" "$e2e/curl.log" "$e2e/tmp"/*
+  # setsid: the installer leads its own process group, so that the test can stop the curl stub at the end.
+  TMPDIR=$e2e/tmp PATH="$stub:$PATH" setsid bash -c 'cd "$1" && exec bash ventoy-install.sh 9.9.9' _ "$e2e/app" <<<"$loop_dev
+YES
+yhttps://example.test/slow.iso
+y
+y" >"$e2e/int.log" 2>&1 &
+  pid=$!
+  for _ in $(seq 100); do [[ -n "$(find "$e2e/tmp" -name 'slow.iso.part' 2>/dev/null)" ]] && break; sleep 0.1; done
+  check "stopped: the download is in progress" 1 "$(find "$e2e/tmp" -name 'slow.iso.part' | wc -l | tr -d ' ')"
+  # The signal goes to the installer only, so the curl stub still holds the .part when the cleanup runs.
+  kill -TERM "$pid"
+  wait "$pid" 2>/dev/null
+  check "stopped: exit code 143" 143 "$?"
+  check "stopped: no .part left" "" "$(find "$e2e/tmp" -name '*.part')"
+  if grep -q "kept them" "$e2e/int.log"; then fail "stopped: no kept-downloads message"; else pass "stopped: no kept-downloads message"; fi
+  check "stopped: work folder and empty download folder removed" "" "$(ls -A "$e2e/tmp")"
+  kill -TERM -- -"$pid" 2>/dev/null
+
+  echo "== Installer on a noexec temporary folder: stops with a TMPDIR hint before any download"
+  noexec=$work/noexec
+  mkdir -p "$noexec"
+  if ! sudo mount -t tmpfs -o noexec,uid="$(id -u)" tmpfs "$noexec"; then
+    skip "cannot mount a noexec tmpfs"
+  else
+    rm -f "$e2e/curl.log"
+    out=$(cd "$e2e/app" && TMPDIR=$noexec PATH="$stub:$PATH" bash ventoy-install.sh 9.9.9 2>&1 <<<"")
+    rc=$?
+    check "noexec: exit code 1" 1 "$rc"
+    contains "noexec: clear message" "❌ The temporary folder $noexec does not allow programs to run (noexec). Set TMPDIR to a folder that does, for example: TMPDIR=\"\$HOME/tmp\" ./ventoy-install.sh" "$out"
+    check "noexec: no download" "" "$(cat "$e2e/curl.log" 2>/dev/null)"
+    check "noexec: work folder removed" "" "$(ls -A "$noexec")"
+    sudo umount "$noexec"
+  fi
+  rmdir "$noexec"
+
+  echo "== Installer started from a folder that is removed during the run: the work folder is still removed"
+  mkdir -p "$e2e/gone"
+  out=$(cd "$e2e/gone" && rm -rf "$e2e/gone" && TMPDIR=$e2e/tmp PATH="$stub:$PATH" bash "$e2e/app/ventoy-install.sh" 9.9.9 --sha256 abc 2>&1 <<<"")
+  check "start folder gone: exit code 1" 1 "$?"
+  check "start folder gone: work folder removed" "" "$(ls -A "$e2e/tmp")"
+
+  echo "== Installer prerequisites: a PATH without sha256sum stops before any action"
+  nosha=$work/nosha
+  mkdir -p "$nosha"
+  for t in tar lsblk findmnt; do ln -s "$(command -v $t)" "$nosha/$t"; done
+  ln -s "$stub/curl" "$nosha/curl"
+  rm -f "$e2e/curl.log"
+  out=$(cd "$e2e/app" && env PATH="$nosha" /bin/bash ventoy-install.sh 9.9.9 2>&1 <<<"")
+  rc=$?
+  check "exit code 1" 1 "$rc"
+  contains "lists the missing program" "❌ These programs are not installed: sha256sum. Install them, then run the script again." "$out"
+  check "no download" "" "$(cat "$e2e/curl.log" 2>/dev/null)"
+  rm -rf "$e2e/tmp"/*
 
   install_run "$loop_dev
 YES
