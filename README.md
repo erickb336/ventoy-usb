@@ -273,7 +273,7 @@ See [The verified copy](#the-verified-copy) for each step of the copy.
 
 ## Linux quick start
 
-Prerequisites: Bash, `curl`, `tar`, `grep`, `sed`, `awk`, `lsblk`, `sudo`, `udevadm`, `partprobe`, and standard mount/copy utilities. Installation needs sudo and internet access; your system must support mounting exFAT. On Debian/Ubuntu, `partprobe` is in the `parted` package.
+Prerequisites: Bash, `curl`, `tar`, `grep`, `sed`, `awk`, `sha256sum`, `lsblk`, `sudo`, `udevadm`, `partprobe`, and standard mount/copy utilities. Installation needs sudo and internet access; your system must support mounting exFAT. On Debian/Ubuntu, `partprobe` is in the `parted` package.
 
 ```bash
 git clone https://github.com/erickb336/ventoy-usb.git
@@ -292,9 +292,14 @@ You can also run the Linux scripts directly:
 ```bash
 ./ventoy-install.sh          # latest release, USB selection, YES confirmation
 ./ventoy-install.sh 1.1.17   # optional explicit version (example)
+./ventoy-install.sh 1.1.17 --sha256 <hex>   # only for a release without a digest: the expected SHA-256 from a source that you trust
 ./ventoy-add-isos.sh         # interactive copy
 ./ventoy-add-isos.sh /mnt/ventoy ./isos
 ```
+
+The installer verifies the Ventoy download before anything runs it as root, as on Windows. It reads the SHA-256 digest of `ventoy-<version>-linux.tar.gz` from the GitHub release (the `digest` field of the release asset), downloads the package over https only, and compares the SHA-256 of the file with the digest. When they are different, or the release gives no digest, it removes the download and stops before it extracts or runs the package. There is no option to skip this check. For a release without a digest, you can give the expected SHA-256 yourself with `--sha256 <hex>` and an explicit version. Only do that with a SHA-256 from a source that you trust.
+
+Every download (the release data, the package and the ISO URLs) uses https. The installer refuses an `http://` ISO URL before any download, and `curl` refuses a redirect from https to http.
 
 Select a whole USB device such as `/dev/sdb`, not `/dev/sdb1`. Check `lsblk -o NAME,TRAN,SIZE,MODEL,LABEL,MOUNTPOINT` before confirming. The installer uses force-install (`-I`), which erases existing Ventoy installations too. It offers ISO URL downloads and copying from a local directory. Only use trusted direct ISO URLs; download Windows ISOs manually because Microsoft links can expire.
 
@@ -423,6 +428,9 @@ Open the list for the computer that prepares the USB.
 
 | Problem | Action |
 | --- | --- |
+| Linux: "gives no SHA-256 digest for ventoy-…-linux.tar.gz" | The GitHub release has no digest for the Linux package, so the installer cannot verify the download. It stops before any download. Check the version (`./ventoy-install.sh 1.1.17`, for example) and your internet connection, then run it again. Do not bypass the verification. If you have the SHA-256 of the package from a source that you trust, run `./ventoy-install.sh <version> --sha256 <hex>`. |
+| Linux: "SHA-256 mismatch for ventoy-…-linux.tar.gz" | The downloaded package is not the one that the release (or your `--sha256`) describes. The installer removed the download and installed nothing. Run it again; if it fails again, check your network and the release page. Do not bypass the verification. |
+| Linux: "Only https URLs are allowed", or `curl` stops with "Protocol "http" not supported" | An ISO URL is plain http, or an https URL redirected to http. The installer downloads only over https. Use an https URL for the ISO, or download the ISO yourself and give its folder (option 2). |
 | Linux: "Skipped: … already exists. It was not changed." | The USB already has a file with that name. The script never overwrites it. To replace it, delete the old ISO from the USB yourself, then run the script again. |
 | Linux: the summary shows a failed ISO, and the script exits with code 1 | Read the line of that ISO above the summary. The ISOs marked ✅ copied were verified. Fix the cause, then copy again with `./ventoy-add-isos.sh` (option 2); do not install Ventoy again. It skips the ISOs that are already on the USB. If `./ventoy-install.sh` downloaded the ISOs, it kept them and shows their folder and how to copy them. |
 | Linux: "Ventoy was not installed on …" | Ventoy2Disk did not install Ventoy: you typed `n` at one of its two questions, or it stopped with an error (see its messages above). The installer keeps the downloaded ISOs and shows their folder. Run `./ventoy-install.sh` again and type `y` to both questions. |
