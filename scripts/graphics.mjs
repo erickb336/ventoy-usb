@@ -256,7 +256,7 @@ function journey(t, id) {
 function copy(t, id) {
   const W = 600, S = 20, x = 28, w = 500, h = 74, gap = 18, y0 = 112, busX = x + w + 28;
   const steps = [
-    ["Check: same USB, free space,", "FAT32 limit, name not used"],
+    ["Check: free space, FAT32 limit, name", "not used. Windows, macOS: same USB."],
     ["Write to a temp file", "named .ventoy-copy-…"],
     ["Copy, with progress"],
     ["Flush the data to the USB"],
@@ -283,7 +283,7 @@ function copy(t, id) {
   out.push(box(t, id, x, yBad, busX + 16 - x, bh, "bad"));
   out.push(text(x + 24, yBad + 40, ["Any error, a different SHA-256", "or Ctrl+C:"], { size: S, weight: 800, fill: t.bad, lh: 1.3 }));
   out.push(text(x + 24, yBad + 104, ["the utility removes the temp file where", "possible and stops. Linux then goes on", "with the next ISO, except after Ctrl+C."], { size: S, fill: t.ink, lh: 1.3 }));
-  return svg(t, id, W, yBad + bh + 30, 53, out.join("\n"), "The verified copy, on Windows, macOS and Linux. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name; on Linux, an ISO whose name is already on the USB is skipped. 2, write to a temp file named .ventoy-copy-something; on macOS and Linux, the file is hidden. 3, copy, with progress: on Windows and macOS, the percent, GiB copied, MiB per second and time left; on Linux, the bytes copied and the speed. 4, flush the data to the USB. 5, skip the cache, so that the copy is read from the USB: on macOS, unmount the USB, mount it again, and check that it is the same USB; on Linux, read the copy with O_DIRECT. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file where possible, and stop. Linux then goes on with the next ISO, except after Ctrl+C.");
+  return svg(t, id, W, yBad + bh + 30, 53, out.join("\n"), "The verified copy, on Windows, macOS and Linux. 1, check: enough free space, the FAT32 file size limit, and no file with the same name; on Windows and macOS, also check that it is the same USB; on Linux, an ISO whose name is already on the USB is skipped. 2, write to a temp file named .ventoy-copy-something; on macOS and Linux, the file is hidden. 3, copy, with progress: on Windows and macOS, the percent, GiB copied, MiB per second and time left; on Linux, the bytes copied and the speed. 4, flush the data to the USB. 5, skip the cache, so that the copy is read from the USB: on macOS, unmount the USB, mount it again, and check that it is the same USB; on Linux, read the copy with O_DIRECT. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file where possible, and stop. Linux then goes on with the next ISO, except after Ctrl+C.");
 }
 
 /** A tip: a USB stick in a round badge on the left, and the tip in a framed card to the right. */

@@ -303,7 +303,7 @@ Select a whole USB device such as `/dev/sdb`, not `/dev/sdb1`. Check `lsblk -o N
 - It never overwrites a file. When an ISO with the same name is already on the USB, it skips that ISO and tells you.
 - It refuses an ISO that is larger than the free space, or larger than 4 GiB minus 1 byte on FAT32.
 - At the end, it prints a summary: copied and SHA-256 verified, skipped, and failed. If it skipped or failed an ISO, it exits with code 1, and `./ventoy-install.sh` shows a warning instead of "Ventoy USB is ready".
-- It reads the ISO as your user. It uses sudo only to write to the USB, and only when your user cannot write to the mount point (for example, a mount made by root). It then asks for your password once, before the first copy.
+- It reads the ISO as your user. It uses sudo only for the USB (write and read-back), and only when the mount is not writable by you (for example, a mount made by root). It then asks for your password once, before the first copy.
 
 Linux keeps Ventoy's default partition style (MBR); the Windows path uses GPT. The Linux scripts find the USB by its `Ventoy` label. The mount point that you give must be the mount point of a file system with that label, or the script asks before it continues. When two or more Ventoy USBs are connected, the script lists them and asks which one to use.
 
@@ -315,7 +315,7 @@ On Windows, macOS and Linux, option 2 copies each ISO in the same safe way. This
 <a href="docs/assets/copy-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/copy-dark.svg">
-  <img alt="The verified copy, on Windows, macOS and Linux. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name; on Linux, an ISO whose name is already on the USB is skipped. 2, write to a temp file named .ventoy-copy-something; on macOS and Linux, the file is hidden. 3, copy, with progress: on Windows and macOS, the percent, GiB copied, MiB per second and time left; on Linux, the bytes copied and the speed. 4, flush the data to the USB. 5, skip the cache, so that the copy is read from the USB: on macOS, unmount the USB, mount it again, and check that it is the same USB; on Linux, read the copy with O_DIRECT. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file where possible, and stop. Linux then goes on with the next ISO, except after Ctrl+C." src="docs/assets/copy-light.svg" width="480">
+  <img alt="The verified copy, on Windows, macOS and Linux. 1, check: enough free space, the FAT32 file size limit, and no file with the same name; on Windows and macOS, also check that it is the same USB; on Linux, an ISO whose name is already on the USB is skipped. 2, write to a temp file named .ventoy-copy-something; on macOS and Linux, the file is hidden. 3, copy, with progress: on Windows and macOS, the percent, GiB copied, MiB per second and time left; on Linux, the bytes copied and the speed. 4, flush the data to the USB. 5, skip the cache, so that the copy is read from the USB: on macOS, unmount the USB, mount it again, and check that it is the same USB; on Linux, read the copy with O_DIRECT. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file where possible, and stop. Linux then goes on with the next ISO, except after Ctrl+C." src="docs/assets/copy-light.svg" width="480">
 </picture>
 </a>
 </p>
@@ -327,7 +327,7 @@ Copying requires the standard Ventoy partition layout on the selected disk, chec
 
 Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes and after it mounts the USB again (if the USB mounts at a different folder, it continues there), it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**. It also removes the hidden `._` file in which macOS keeps file attributes on exFAT and FAT32, so Ventoy does not list a `._<name>.iso` file.
 
-Copy rules on Linux are the same, with these differences. It copies all the ISOs of a folder, one after the other. It skips an ISO whose name is already on the USB, and an error stops only that ISO; **Ctrl+C** stops all. It shows the progress of `dd` (bytes copied and speed). It reads the copy back with O_DIRECT, so that it reads the USB and not the page cache. If the file system does not support O_DIRECT, it drops the copy from the page cache, reads it again and prints a note. If it cannot remove the temporary file, it tells you its name, so that you can delete it.
+Copy rules on Linux are the same, with these differences. It does not check the disk identity or the Ventoy partition layout: it checks only that the exact mount point that you give has the `Ventoy` label, and it does not check the disk again before it writes. It copies all the ISOs of a folder, one after the other. It skips an ISO whose name is already on the USB, and an error stops only that ISO; **Ctrl+C** stops all. It shows the progress of `dd` (bytes copied and speed). It reads the copy back with O_DIRECT, so that it reads the USB and not the page cache. If the file system does not support O_DIRECT, it drops the copy from the page cache, reads it again and prints a note. If it cannot remove the temporary file, it tells you its name, so that you can delete it.
 
 </details>
 
@@ -410,9 +410,10 @@ Open the list for the computer that prepares the USB.
 | Problem | Action |
 | --- | --- |
 | Linux: "Skipped: … already exists. It was not changed." | The USB already has a file with that name. The script never overwrites it. To replace it, delete the old ISO from the USB yourself, then run the script again. |
-| Linux: the summary shows a skipped or failed ISO, and the script exits with code 1 | Read the line of that ISO above the summary. The other ISOs were copied and verified. Fix the cause, then run the script again: it skips the ISOs that are already on the USB. |
+| Linux: the summary shows a skipped or failed ISO, and the script exits with code 1 | Read the line of that ISO above the summary. The ISOs marked ✅ copied were verified. Fix the cause, then run the script again: it skips the ISOs that are already on the USB. |
 | Linux: "sudo is necessary to write to it" | Your user cannot write to the mount point, for example because root mounted it. Type your password once. To copy without sudo, mount the USB as your user (for example, open it in your file manager). |
 | Linux: "sudo needs the password again" | The sudo time limit ended during a long run. Run the script again; it skips the ISOs that are already on the USB. |
+| Linux: "sudo on this computer asks for the password at each command" | Your sudo setting keeps no time limit (`timestamp_timeout=0`), so the script cannot copy with sudo. It stops before the first copy. Mount the USB as your user (open it in your file manager, or run `udisksctl mount -b /dev/<partition>`), then run the script again. |
 | Linux: "does not appear to be a Ventoy mount point" | Give the mount point of the USB's large `Ventoy` partition itself, not a folder in it. Check it with `lsblk -o NAME,LABEL,MOUNTPOINT`. |
 | Linux: "Could not remove the temporary file" | Delete the hidden `.ventoy-copy-…` file named in the message from the top folder of the USB. |
 
