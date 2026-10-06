@@ -195,7 +195,7 @@ function pick(t, id) {
   const rows = [
     ["Windows", "10 or 11", "monitor", "ventoy.ps1", "PowerShell as admin", "1  Create a new USB (erases it)", "2  Add an ISO, SHA-256 checked"],
     ["macOS", "13.5 or later", "laptop", "./ventoy.sh", "Terminal", "1  Mactoy creates it (erases USB)", "2  Add an ISO, SHA-256 checked"],
-    ["Linux", "uses sudo", "monitor", "./ventoy.sh", "Terminal", "1  Create a new USB (erases it)", "2  Copy ISOs from a folder"],
+    ["Linux", "uses sudo", "monitor", "./ventoy.sh", "Terminal", "1  Create a new USB (erases it)", "2  Add ISOs, SHA-256 checked"],
   ];
   const out = [heading(t, 36, 62, "PICK YOUR COMPUTER")];
   rows.forEach(([name, sub, kind, cmd, where, o1, o2], i) => {
@@ -215,7 +215,7 @@ function pick(t, id) {
   });
   const fy = y0 + 3 * (rowH + 22) + 14;
   out.push(text(36, fy, ["Red: this option erases the USB. Dashed: option 1 continues", "with option 2 when it finishes."], { size: SMALL, fill: t.muted, lh: 1.35 }));
-  return svg(t, id, W, fy + 64, 23, out.join("\n"), "Pick your computer. Windows 10 or 11: run ventoy.ps1 in PowerShell as administrator, with the full command in step 3 of the Windows quick start. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 copies ISOs from a folder. On every computer, option 1 continues with option 2 when it finishes.");
+  return svg(t, id, W, fy + 64, 23, out.join("\n"), "Pick your computer. Windows 10 or 11: run ventoy.ps1 in PowerShell as administrator, with the full command in step 3 of the Windows quick start. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 adds the ISOs of a folder, each with a SHA-256 check. On every computer, option 1 continues with option 2 when it finishes.");
 }
 
 /** The journey, in a column for a phone: prepare the USB and add the ISO on this computer, then boot and install on the
@@ -224,7 +224,7 @@ function journey(t, id) {
   const W = 600, S = 20, x = 28, w = W - 56, ch = 150, gap = 30;
   const steps = [
     ["Prepare the USB", ["Install Ventoy once.", "This erases the USB."], "stick"],
-    ["Add the ISO", ["Copy the Windows 11 ISO", "to the USB. Windows and", "macOS check its SHA-256."], "disc"],
+    ["Add the ISO", ["Copy the Windows 11 ISO", "to the USB. The utility", "checks its SHA-256."], "disc"],
     ["Boot the PC", ["One-time boot menu: UEFI", "USB entry. Pick the ISO", "in Ventoy."], "power"],
     ["Install", ["Pick the internal disk,", "never the USB. Then start", "from it."], "check"],
   ];
@@ -248,23 +248,23 @@ function journey(t, id) {
   out.push(flow(id, `M${x + 30} ${end1 - 18} L ${x + 30} ${end1 + 92}`, t.go, "go"), text(x + 60, end1 + 52, "Eject the USB. Move it to the target PC.", { size: S, weight: 700, fill: t.ink }));
   const end2 = place(end1 + 70 + 40, "ON THE TARGET PC", 2);
   out.push(text(x, end2 + 46, ["Steps 1 and 2 never change the target PC", "or its disks."], { size: S, fill: t.muted, lh: 1.35 }));
-  return svg(t, id, W, end2 + 100, 37, out.join("\n"), "The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; on Windows and macOS, the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks.");
+  return svg(t, id, W, end2 + 100, 37, out.join("\n"), "The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks.");
 }
 
-/** The verified copy, in a column for a phone: the steps that Windows and macOS share, the macOS remount, and the
- *  clean-up after an error. Its smallest text is 20 in a graphic 600 wide: 10.8 px on a phone. */
+/** The verified copy, in a column for a phone: the steps that Windows, macOS and Linux share, the read past the cache
+ *  on macOS and Linux, and the clean-up after an error. Its smallest text is 20 in a graphic 600 wide: 10.8 px on a phone. */
 function copy(t, id) {
   const W = 600, S = 20, x = 28, w = 500, h = 74, gap = 18, y0 = 112, busX = x + w + 28;
   const steps = [
     ["Check: same USB, free space,", "FAT32 limit, name not used"],
     ["Write to a temp file", "named .ventoy-copy-…"],
-    ["Copy, with %, GiB, MiB/s", "and time left"],
+    ["Copy, with progress"],
     ["Flush the data to the USB"],
-    ["macOS only: unmount, mount", "again, check the USB"],
+    ["Skip the cache. macOS: unmount,", "mount again. Linux: O_DIRECT."],
     ["Read the SHA-256 of the", "source and of the copy"],
     ["Same? Rename the temp file.", "Never overwrite a file."],
   ];
-  const out = [heading(t, x, 56, "THE VERIFIED COPY"), text(x, 88, "Windows and macOS", { size: S, fill: t.muted })];
+  const out = [heading(t, x, 56, "THE VERIFIED COPY"), text(x, 88, "Windows, macOS and Linux", { size: S, fill: t.muted })];
   steps.forEach((lines, i) => {
     const y = y0 + i * (h + gap);
     out.push(box(t, id, x, y, w, h, i === 4 ? "go" : "plain"));
@@ -278,12 +278,12 @@ function copy(t, id) {
   out.push(flow(id, `M${x + 30} ${yOk - gap - 8} L ${x + 30} ${yOk - 4}`, t.go, "go", { sw: 2.5 }));
   out.push(box(t, id, x, yOk, w, 58, "ok"), text(x + w / 2, yOk + 36, "ISO copied and SHA-256 verified.", { size: S, weight: 800, fill: t.ink, anchor: "middle" }));
   // The error path: down the right side to the error box below the success box.
-  const yBad = yOk + 58 + 40, bh = 150;
+  const yBad = yOk + 58 + 40, bh = 176;
   out.push(flow(id, `M${busX} ${y0 + h + gap + h / 2} L ${busX} ${yBad - 4}`, t.bad, "bad", { sw: 2.5, dash: "5 6" }));
   out.push(box(t, id, x, yBad, busX + 16 - x, bh, "bad"));
   out.push(text(x + 24, yBad + 40, ["Any error, a different SHA-256", "or Ctrl+C:"], { size: S, weight: 800, fill: t.bad, lh: 1.3 }));
-  out.push(text(x + 24, yBad + 104, ["the utility removes the temp file (or", "tells you how to delete it) and stops."], { size: S, fill: t.ink, lh: 1.3 }));
-  return svg(t, id, W, yBad + bh + 30, 53, out.join("\n"), "The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a temp file named .ventoy-copy-something; on macOS, the file is hidden. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file, or tell you how to delete it, and stop.");
+  out.push(text(x + 24, yBad + 104, ["the utility removes the temp file where", "possible and stops. Linux then goes on", "with the next ISO, except after Ctrl+C."], { size: S, fill: t.ink, lh: 1.3 }));
+  return svg(t, id, W, yBad + bh + 30, 53, out.join("\n"), "The verified copy, on Windows, macOS and Linux. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name; on Linux, an ISO whose name is already on the USB is skipped. 2, write to a temp file named .ventoy-copy-something; on macOS and Linux, the file is hidden. 3, copy, with progress: on Windows and macOS, the percent, GiB copied, MiB per second and time left; on Linux, the bytes copied and the speed. 4, flush the data to the USB. 5, skip the cache, so that the copy is read from the USB: on macOS, unmount the USB, mount it again, and check that it is the same USB; on Linux, read the copy with O_DIRECT. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file where possible, and stop. Linux then goes on with the next ISO, except after Ctrl+C.");
 }
 
 /** A tip: a USB stick in a round badge on the left, and the tip in a framed card to the right. */
