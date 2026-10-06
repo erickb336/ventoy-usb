@@ -1,103 +1,94 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 732" width="1100" height="732" role="img" aria-label="The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a hidden temp file named .ventoy-copy-something. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file and stop.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1044" width="600" height="1044" role="img" aria-label="The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a temp file named .ventoy-copy-something; on macOS, the file is hidden. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file, or tell you how to delete it, and stop.">
 <style>.blink{animation:blink 2.4s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.blink{animation:none}}</style>
 <defs>
 <pattern id="copy-d-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.4" fill="#60A5FA" opacity="0.1"/></pattern>
 <filter id="copy-d-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
-<clipPath id="copy-d-frame"><rect width="1100" height="732" rx="24"/></clipPath>
+<clipPath id="copy-d-frame"><rect width="600" height="1044" rx="24"/></clipPath>
 <marker id="copy-d-go" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#60A5FA"/></marker>
 <marker id="copy-d-bad" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#F87171"/></marker>
 <marker id="copy-d-muted" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#3B4E6B"/></marker>
 </defs>
 <g clip-path="url(#copy-d-frame)">
-<rect width="1100" height="732" fill="#0A0F1A"/>
-<rect width="1100" height="732" fill="url(#copy-d-dots)"/>
-<path d="M0 720 L40 720 L-80 720 L-60 740" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="0" cy="720" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="-60" cy="740" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M580 40 L580 180 L680 180 L780 180" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="580" cy="40" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="780" cy="180" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M240 220 L240 80 L360 80 L300 80" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="240" cy="220" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="300" cy="80" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M560 0 L600 40 L700 40 L660 40" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="560" cy="0" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="660" cy="40" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M580 620 L580 720 L610 750 L670 810" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="580" cy="620" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="670" cy="810" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M900 580 L1000 580 L1080 660 L1220 660" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="900" cy="580" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1220" cy="660" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M120 600 L120 540 L160 580 L180 560" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="120" cy="600" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="180" cy="560" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M720 260 L720 120 L860 120 L940 120" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="720" cy="260" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="940" cy="120" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M1060 60 L980 60 L920 60 L990 130" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="1060" cy="60" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="990" cy="130" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M20 340 L160 340 L100 340 L240 340" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="20" cy="340" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="240" cy="340" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M700 480 L780 480 L900 480 L900 340" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="700" cy="480" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="900" cy="340" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M600 120 L440 120 L500 60 L360 60" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="600" cy="120" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="360" cy="60" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M1060 80 L1110 130 L970 130 L1010 170" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="1060" cy="80" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1010" cy="170" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M940 80 L1000 20 L1000 -60 L1080 -140" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="940" cy="80" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1080" cy="-140" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<path d="M1020 260 L1080 200 L1180 200 L1180 80" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="1020" cy="260" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1180" cy="80" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
-<text x="36" y="62" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#60A5FA" text-anchor="start" letter-spacing="2"><tspan x="36" dy="0">THE VERIFIED COPY · WINDOWS AND MACOS</tspan></text>
-<rect x="36" y="96" width="700" height="58" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
-<circle cx="68" cy="125" r="20" fill="#60A5FA"/><text x="68" y="133.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="68" dy="0">1</tspan></text>
-<text x="100" y="133" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="100" dy="0">Check: same USB, free space, FAT32 limit, name not used</tspan></text>
-<path d="M68 156 L 68 170" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
-<rect x="36" y="172" width="700" height="58" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
-<circle cx="68" cy="201" r="20" fill="#60A5FA"/><text x="68" y="209.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="68" dy="0">2</tspan></text>
-<text x="100" y="209" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="100" dy="0">Write to a hidden temp file (.ventoy-copy-…)</tspan></text>
-<path d="M68 232 L 68 246" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
-<path d="M740 201 L 788 201" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="36" y="248" width="700" height="58" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
-<circle cx="68" cy="277" r="20" fill="#60A5FA"/><text x="68" y="285.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="68" dy="0">3</tspan></text>
-<text x="100" y="285" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="100" dy="0">Copy, with %, GiB, MiB/s and time left</tspan></text>
-<path d="M68 308 L 68 322" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
-<path d="M740 277 L 788 277" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="36" y="324" width="700" height="58" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
-<circle cx="68" cy="353" r="20" fill="#60A5FA"/><text x="68" y="361.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="68" dy="0">4</tspan></text>
-<text x="100" y="361" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="100" dy="0">Flush the data to the USB</tspan></text>
-<path d="M68 384 L 68 398" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
-<path d="M740 353 L 788 353" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="36" y="400" width="700" height="58" rx="10" fill="none" stroke="#60A5FA" stroke-width="6" opacity="0.45" filter="url(#copy-d-glow)"/><rect x="36" y="400" width="700" height="58" rx="10" fill="#111A2B" stroke="#60A5FA" stroke-width="2.5"/>
-<circle cx="68" cy="429" r="20" fill="#60A5FA"/><text x="68" y="437.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="68" dy="0">5</tspan></text>
-<text x="100" y="437" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6EEF8" text-anchor="start"><tspan x="100" dy="0">macOS only: unmount, mount again, check the USB</tspan></text>
-<path d="M68 460 L 68 474" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
-<path d="M740 429 L 788 429" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="36" y="476" width="700" height="58" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
-<circle cx="68" cy="505" r="20" fill="#60A5FA"/><text x="68" y="513.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="68" dy="0">6</tspan></text>
-<text x="100" y="513" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="100" dy="0">Read the SHA-256 of the source and of the copy</tspan></text>
-<path d="M68 536 L 68 550" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
-<path d="M740 505 L 788 505" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
-<rect x="36" y="552" width="700" height="58" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
-<circle cx="68" cy="581" r="20" fill="#60A5FA"/><text x="68" y="589.6" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="68" dy="0">7</tspan></text>
-<text x="100" y="589" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="100" dy="0">Same? Rename the temp file. Never overwrite a file.</tspan></text>
-<path d="M740 581 L 788 581" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M68 612 L 68 636" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
-<rect x="36" y="640" width="700" height="58" rx="10" fill="none" stroke="#4ADE80" stroke-width="6" opacity="0.45" filter="url(#copy-d-glow)"/><rect x="36" y="640" width="700" height="58" rx="10" fill="#111A2B" stroke="#4ADE80" stroke-width="2.5"/>
-<text x="386" y="677" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#E6EEF8" text-anchor="middle"><tspan x="386" dy="0">ISO copied and SHA-256 verified.</tspan></text>
-<path d="M788 201 L 788 581" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M788 391 L 802 391" fill="none" stroke="#F87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-bad)"/>
-<rect x="806" y="241" width="258" height="300" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#copy-d-glow)"/><rect x="806" y="241" width="258" height="300" rx="10" fill="#111A2B" stroke="#F87171" stroke-width="2.5"/>
-<text x="935" y="289" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#F87171" text-anchor="middle"><tspan x="935" dy="0">Any error,</tspan><tspan x="935" dy="31.2">a different</tspan><tspan x="935" dy="31.2">SHA-256 or</tspan><tspan x="935" dy="31.2">Ctrl+C</tspan></text>
-<text x="935" y="429" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#E6EEF8" text-anchor="middle"><tspan x="935" dy="0">The utility</tspan><tspan x="935" dy="31.2">removes the</tspan><tspan x="935" dy="31.2">temp file</tspan><tspan x="935" dy="31.2">and stops.</tspan></text>
+<rect width="600" height="1044" fill="#0A0F1A"/>
+<rect width="600" height="1044" fill="url(#copy-d-dots)"/>
+<path d="M0 1020 L40 1020 L-80 1020 L-60 1040" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="0" cy="1020" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="-60" cy="1040" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M320 40 L320 180 L420 180 L520 180" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="320" cy="40" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="520" cy="180" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M120 320 L120 180 L240 180 L180 180" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="120" cy="320" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="180" cy="180" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M300 20 L340 60 L440 60 L400 60" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="300" cy="20" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="400" cy="60" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M320 880 L320 980 L350 1010 L410 1070" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="320" cy="880" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="410" cy="1070" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M500 820 L600 820 L680 900 L820 900" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="500" cy="820" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="820" cy="900" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M60 840 L60 780 L100 820 L120 800" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="60" cy="840" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="120" cy="800" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M400 380 L400 240 L540 240 L620 240" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="400" cy="380" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="620" cy="240" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M580 100 L500 100 L440 100 L510 170" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="580" cy="100" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="510" cy="170" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M0 500 L140 500 L80 500 L220 500" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="0" cy="500" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="220" cy="500" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M380 680 L460 680 L580 680 L580 540" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="380" cy="680" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="580" cy="540" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M340 160 L180 160 L240 100 L100 100" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="340" cy="160" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="100" cy="100" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<text x="28" y="56" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#60A5FA" text-anchor="start" letter-spacing="2"><tspan x="28" dy="0">THE VERIFIED COPY</tspan></text>
+<text x="28" y="88" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#9FB0C8" text-anchor="start"><tspan x="28" dy="0">Windows and macOS</tspan></text>
+<rect x="28" y="112" width="500" height="74" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<circle cx="58" cy="149" r="18" fill="#60A5FA"/><text x="58" y="156.2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="58" dy="0">1</tspan></text>
+<text x="90" y="143" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="90" dy="0">Check: same USB, free space,</tspan><tspan x="90" dy="26">FAT32 limit, name not used</tspan></text>
+<path d="M58 188 L 58 202" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
+<rect x="28" y="204" width="500" height="74" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<circle cx="58" cy="241" r="18" fill="#60A5FA"/><text x="58" y="248.2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="58" dy="0">2</tspan></text>
+<text x="90" y="235" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="90" dy="0">Write to a temp file</tspan><tspan x="90" dy="26">named .ventoy-copy-…</tspan></text>
+<path d="M58 280 L 58 294" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
+<path d="M532 241 L 556 241" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="28" y="296" width="500" height="74" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<circle cx="58" cy="333" r="18" fill="#60A5FA"/><text x="58" y="340.2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="58" dy="0">3</tspan></text>
+<text x="90" y="327" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="90" dy="0">Copy, with %, GiB, MiB/s</tspan><tspan x="90" dy="26">and time left</tspan></text>
+<path d="M58 372 L 58 386" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
+<path d="M532 333 L 556 333" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="28" y="388" width="500" height="74" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<circle cx="58" cy="425" r="18" fill="#60A5FA"/><text x="58" y="432.2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="58" dy="0">4</tspan></text>
+<text x="90" y="432" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="90" dy="0">Flush the data to the USB</tspan></text>
+<path d="M58 464 L 58 478" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
+<path d="M532 425 L 556 425" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="28" y="480" width="500" height="74" rx="10" fill="none" stroke="#60A5FA" stroke-width="6" opacity="0.45" filter="url(#copy-d-glow)"/><rect x="28" y="480" width="500" height="74" rx="10" fill="#111A2B" stroke="#60A5FA" stroke-width="2.5"/>
+<circle cx="58" cy="517" r="18" fill="#60A5FA"/><text x="58" y="524.2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="58" dy="0">5</tspan></text>
+<text x="90" y="511" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#E6EEF8" text-anchor="start"><tspan x="90" dy="0">macOS only: unmount, mount</tspan><tspan x="90" dy="26">again, check the USB</tspan></text>
+<path d="M58 556 L 58 570" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
+<path d="M532 517 L 556 517" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="28" y="572" width="500" height="74" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<circle cx="58" cy="609" r="18" fill="#60A5FA"/><text x="58" y="616.2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="58" dy="0">6</tspan></text>
+<text x="90" y="603" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="90" dy="0">Read the SHA-256 of the</tspan><tspan x="90" dy="26">source and of the copy</tspan></text>
+<path d="M58 648 L 58 662" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
+<path d="M532 609 L 556 609" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="28" y="664" width="500" height="74" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<circle cx="58" cy="701" r="18" fill="#60A5FA"/><text x="58" y="708.2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#0A0F1A" text-anchor="middle"><tspan x="58" dy="0">7</tspan></text>
+<text x="90" y="695" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="90" dy="0">Same? Rename the temp file.</tspan><tspan x="90" dy="26">Never overwrite a file.</tspan></text>
+<path d="M532 701 L 556 701" fill="none" stroke="#F87171" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M58 740 L 58 762" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-go)"/>
+<rect x="28" y="766" width="500" height="58" rx="10" fill="none" stroke="#4ADE80" stroke-width="6" opacity="0.45" filter="url(#copy-d-glow)"/><rect x="28" y="766" width="500" height="58" rx="10" fill="#111A2B" stroke="#4ADE80" stroke-width="2.5"/>
+<text x="278" y="802" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#E6EEF8" text-anchor="middle"><tspan x="278" dy="0">ISO copied and SHA-256 verified.</tspan></text>
+<path d="M556 241 L 556 860" fill="none" stroke="#F87171" stroke-width="2.5" stroke-dasharray="5 6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#copy-d-bad)"/>
+<rect x="28" y="864" width="544" height="150" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#copy-d-glow)"/><rect x="28" y="864" width="544" height="150" rx="10" fill="#111A2B" stroke="#F87171" stroke-width="2.5"/>
+<text x="52" y="904" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="800" fill="#F87171" text-anchor="start"><tspan x="52" dy="0">Any error, a different SHA-256</tspan><tspan x="52" dy="26">or Ctrl+C:</tspan></text>
+<text x="52" y="968" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#E6EEF8" text-anchor="start"><tspan x="52" dy="0">the utility removes the temp file (or</tspan><tspan x="52" dy="26">tells you how to delete it) and stops.</tspan></text>
 </g>
-<rect x="0.75" y="0.75" width="1098.5" height="730.5" rx="23.25" fill="none" stroke="#1C2A42" stroke-width="1.5"/>
+<rect x="0.75" y="0.75" width="598.5" height="1042.5" rx="23.25" fill="none" stroke="#1C2A42" stroke-width="1.5"/>
 </svg>

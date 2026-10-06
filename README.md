@@ -1,7 +1,7 @@
 <a href="docs/assets/hero-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/hero-dark.svg">
-  <img alt="ventoy-usb: one USB stick, many ISO files; pick one when the PC starts. Prepare the USB from Windows with .\ventoy.ps1, or from macOS or Linux with ./ventoy.sh. ISO files such as Windows 11, a Linux system or a rescue disk go onto one multiboot USB. Then the target PC starts from the USB, and you pick an ISO at boot." src="docs/assets/hero-light.svg" width="100%">
+  <img alt="ventoy-usb: one USB stick, many ISO files; pick one when the PC starts. Prepare the USB from Windows with ventoy.ps1 in PowerShell as administrator (the full command is in step 3 of the Windows quick start), or from macOS or Linux with ./ventoy.sh. ISO files such as Windows 11, a Linux system or a rescue disk go onto one multiboot USB. Then the target PC starts from the USB, and you pick an ISO at boot." src="docs/assets/hero-light.svg" width="100%">
 </picture>
 </a>
 
@@ -23,12 +23,12 @@ Create a multiboot USB and copy installer ISOs using **native PowerShell on Wind
 
 ## Pick your computer
 
-This graphic shows the command to run on each computer, and the two options of the menu.
+This graphic shows the script to run on each computer, and the two options of the menu.
 
 <a href="docs/assets/pick-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/pick-dark.svg">
-  <img alt="Pick your computer. Windows 10 or 11: run .\ventoy.ps1 in PowerShell as administrator. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 copies ISOs from a folder. On every computer, option 1 continues with option 2 when it finishes." src="docs/assets/pick-light.svg" width="100%">
+  <img alt="Pick your computer. Windows 10 or 11: run ventoy.ps1 in PowerShell as administrator, with the full command in step 3 of the Windows quick start. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 copies ISOs from a folder. On every computer, option 1 continues with option 2 when it finishes." src="docs/assets/pick-light.svg" width="100%">
 </picture>
 </a>
 
@@ -48,12 +48,14 @@ Then go to your quick start: [Windows](#windows-quick-start), [macOS](#macos-qui
 
 This graphic shows the four steps from a blank USB to an installed PC, with Windows 11 as the example.
 
+<p align="center">
 <a href="docs/assets/journey-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/journey-dark.svg">
-  <img alt="The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; on Windows and macOS, the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks." src="docs/assets/journey-light.svg" width="100%">
+  <img alt="The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; on Windows and macOS, the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks." src="docs/assets/journey-light.svg" width="480">
 </picture>
 </a>
+</p>
 
 ## Windows quick start
 
@@ -223,7 +225,7 @@ The next graphic is a tip for the Mactoy download. Do these checks before you gi
 <a href="docs/assets/tip-mactoy-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/tip-mactoy-dark.svg">
-  <img alt="Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show source=Notarized Developer ID." src="docs/assets/tip-mactoy-light.svg" width="100%">
+  <img alt="Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show accepted and source=Notarized Developer ID." src="docs/assets/tip-mactoy-light.svg" width="100%">
 </picture>
 </a>
 
@@ -302,12 +304,14 @@ Linux retains Ventoy's default partition style (MBR); the Windows path explicitl
 
 On Windows and macOS, option 2 copies the ISO in the same safe way. This graphic shows each step, and what happens after an error.
 
+<p align="center">
 <a href="docs/assets/copy-light.svg">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/copy-dark.svg">
-  <img alt="The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a hidden temp file named .ventoy-copy-something. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file and stop." src="docs/assets/copy-light.svg" width="100%">
+  <img alt="The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a temp file named .ventoy-copy-something; on macOS, the file is hidden. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file, or tell you how to delete it, and stop." src="docs/assets/copy-light.svg" width="480">
 </picture>
 </a>
+</p>
 
 <details>
 <summary><b>Copy rules in detail</b></summary>

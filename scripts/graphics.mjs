@@ -3,12 +3,13 @@
 // here, then `node scripts/check-graphics.mjs`. No dependencies: Node 20 or later only.
 //
 // The look: a circuit board. Every graphic sits on a board with a dot grid and faint traces, and the main shapes are a
-// generic USB stick, ISO discs and computers. Blue traces carry the flow, an orange LED marks the USB, and red marks a
-// step that erases or fails. Original shapes only: no logos or trademarks of any product, company or Linux distribution;
+// generic USB stick, ISO discs and computers. Blue traces carry the flow, an orange LED marks the USB, and red marks
+// danger: a step that erases the USB, or a failure. Original shapes only: no logos or trademarks of any product, company or Linux distribution;
 // the graphics name each system in plain text.
 //
-// Each text is 7 px or more on a phone, where a graphic is 324 px wide: check-graphics.mjs checks it. So the smallest
-// text is SMALL (24) in a graphic 1100 wide, and 28 in the hero, which is 1280 wide.
+// Each text is 7 px or more on a phone, where a graphic is 324 px wide, and 10 px or more in the two dense graphics
+// (journey and copy): check-graphics.mjs checks it. So the smallest text is SMALL (24) in a graphic 1100 wide, 28 in the
+// hero, which is 1280 wide, and 20 in journey and copy, which are columns 600 wide.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -17,7 +18,8 @@ const OUT = join(dirname(fileURLToPath(import.meta.url)), "../docs/assets");
 
 /** The two themes. Light is a pale blue-grey board with dark blue traces; dark is a night-blue board with bright blue.
  *  Each accent has one meaning: blue (go) is the main flow, orange (led) is a tip or attention (the USB LED, the ISO disc
- *  shine), purple (iso) is the ISO files and the Mactoy hand-off, red (bad) is only "erases the USB" or an error, and green
+ *  shine), purple (iso) is the ISO files and the Mactoy hand-off, red (bad) is danger: a step that erases the USB, or a failure
+ *  (an error path), and green
  *  (ok) is only the one success box. Text on a coloured fill stays 4.5:1 or more. */
 const THEMES = {
   light: { dark: false, bg: "#F3F6FA", dot: "#1D4ED8", dotOp: 0.13, traceOp: 0.16, tile: "#FFFFFF", panel: "#E6EDF6", ink: "#0B1424", muted: "#475569", line: "#94A8C4", go: "#1D4ED8", led: "#B45309", iso: "#7E22CE", bad: "#C81E1E", ok: "#15803D", border: "#D3DEEC", glowOp: 0.22, stick: "#1D4ED8", stickInk: "#FFFFFF", metal: "#C9D1DC", disc: "#E5EBF3", hub: "#F3F6FA" },
@@ -139,7 +141,7 @@ function laptop(t, cx, y, w) {
 }
 
 /** A number in a circle. */
-const badge = (t, cx, cy, r, n, color) => circle(cx, cy, r, { fill: color }) + text(cx, f1(cy + SMALL * 0.36), String(n), { size: SMALL, weight: 800, fill: t.bg, anchor: "middle" });
+const badge = (t, cx, cy, r, n, color, size) => circle(cx, cy, r, { fill: color }) + text(cx, f1(cy + size * 0.36), String(n), { size, weight: 800, fill: t.bg, anchor: "middle" });
 
 /** A label in capitals, the heading inside a graphic. */
 const heading = (t, x, y, s) => text(x, y, s, { size: SMALL, weight: 800, fill: t.go, ls: 2 });
@@ -161,7 +163,7 @@ function hero(t, id) {
   out.push(text(66, 172, "One USB stick. Many ISO files. Pick one when the PC starts.", { size: 34, weight: 700, fill: t.ink }));
   out.push(text(66, 220, "Prepare the USB from Windows, macOS or Linux.", { size: S, fill: t.muted }));
   // The three computers that can prepare the USB.
-  const rows = [["Windows", ".\\ventoy.ps1", "monitor"], ["macOS", "./ventoy.sh", "laptop"], ["Linux", "./ventoy.sh", "monitor"]];
+  const rows = [["Windows", "ventoy.ps1", "monitor"], ["macOS", "./ventoy.sh", "laptop"], ["Linux", "./ventoy.sh", "monitor"]];
   rows.forEach(([name, cmd, kind], i) => {
     const y = 290 + i * 128;
     out.push(box(t, id, 64, y, 360, 108));
@@ -184,14 +186,14 @@ function hero(t, id) {
   out.push(monitor(t, 1166, 470, 120, "power"));
   out.push(text(1166, 640, "Target PC", { size: 30, weight: 800, fill: t.ink, anchor: "middle" }));
   out.push(text(1166, 676, ["picks an ISO", "at boot"], { size: S, fill: t.muted, anchor: "middle", lh: 1.2 }));
-  return svg(t, id, W, H, 11, out.join("\n"), "ventoy-usb: one USB stick, many ISO files; pick one when the PC starts. Prepare the USB from Windows with .\\ventoy.ps1, or from macOS or Linux with ./ventoy.sh. ISO files such as Windows 11, a Linux system or a rescue disk go onto one multiboot USB. Then the target PC starts from the USB, and you pick an ISO at boot.");
+  return svg(t, id, W, H, 11, out.join("\n"), "ventoy-usb: one USB stick, many ISO files; pick one when the PC starts. Prepare the USB from Windows with ventoy.ps1 in PowerShell as administrator (the full command is in step 3 of the Windows quick start), or from macOS or Linux with ./ventoy.sh. ISO files such as Windows 11, a Linux system or a rescue disk go onto one multiboot USB. Then the target PC starts from the USB, and you pick an ISO at boot.");
 }
 
 /** Pick your computer: the entry command for each computer, then option 1 or option 2. Option 1 continues to option 2. */
 function pick(t, id) {
   const W = 1100, rowH = 150, y0 = 104;
   const rows = [
-    ["Windows", "10 or 11", "monitor", ".\\ventoy.ps1", "PowerShell as admin", "1  Create a new USB (erases it)", "2  Add an ISO, SHA-256 checked"],
+    ["Windows", "10 or 11", "monitor", "ventoy.ps1", "PowerShell as admin", "1  Create a new USB (erases it)", "2  Add an ISO, SHA-256 checked"],
     ["macOS", "13.5 or later", "laptop", "./ventoy.sh", "Terminal", "1  Mactoy creates it (erases USB)", "2  Add an ISO, SHA-256 checked"],
     ["Linux", "uses sudo", "monitor", "./ventoy.sh", "Terminal", "1  Create a new USB (erases it)", "2  Copy ISOs from a folder"],
   ];
@@ -213,72 +215,75 @@ function pick(t, id) {
   });
   const fy = y0 + 3 * (rowH + 22) + 14;
   out.push(text(36, fy, ["Red: this option erases the USB. Dashed: option 1 continues", "with option 2 when it finishes."], { size: SMALL, fill: t.muted, lh: 1.35 }));
-  return svg(t, id, W, fy + 64, 23, out.join("\n"), "Pick your computer. Windows 10 or 11: run .\\ventoy.ps1 in PowerShell as administrator. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 copies ISOs from a folder. On every computer, option 1 continues with option 2 when it finishes.");
+  return svg(t, id, W, fy + 64, 23, out.join("\n"), "Pick your computer. Windows 10 or 11: run ventoy.ps1 in PowerShell as administrator, with the full command in step 3 of the Windows quick start. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 copies ISOs from a folder. On every computer, option 1 continues with option 2 when it finishes.");
 }
 
-/** The journey: prepare the USB and add the ISO on this computer, then boot and install on the target PC. */
+/** The journey, in a column for a phone: prepare the USB and add the ISO on this computer, then boot and install on the
+ *  target PC. Its smallest text is 20 in a graphic 600 wide: 10.8 px on a phone. */
 function journey(t, id) {
-  const W = 1100, tw = 230, gap = 34, ty = 132, th = 330;
+  const W = 600, S = 20, x = 28, w = W - 56, ch = 150, gap = 30;
   const steps = [
-    ["Prepare the USB", ["Install Ventoy", "once. This erases", "the USB."], "stick"],
-    ["Add the ISO", ["Copy the Windows 11", "ISO to the USB.", "Windows and macOS", "check its SHA-256."], "disc"],
-    ["Boot the PC", ["One-time boot menu:", "UEFI USB entry. Pick", "the ISO in Ventoy."], "power"],
-    ["Install", ["Pick the internal", "disk, never the USB.", "Then start from it."], "check"],
+    ["Prepare the USB", ["Install Ventoy once.", "This erases the USB."], "stick"],
+    ["Add the ISO", ["Copy the Windows 11 ISO", "to the USB. Windows and", "macOS check its SHA-256."], "disc"],
+    ["Boot the PC", ["One-time boot menu: UEFI", "USB entry. Pick the ISO", "in Ventoy."], "power"],
+    ["Install", ["Pick the internal disk,", "never the USB. Then start", "from it."], "check"],
   ];
-  const out = [heading(t, 36, 62, "THE WHOLE JOURNEY · WINDOWS 11 EXAMPLE")];
-  // The two places.
-  out.push(rect(28, 86, 2 * tw + gap + 16, 392, { rx: 14, stroke: t.line, sw: 1.5, dash: "8 8" }), text(44, 116, "ON THIS COMPUTER", { size: SMALL, weight: 700, fill: t.muted, ls: 1.5 }));
-  const x3 = 36 + 2 * (tw + gap);
-  out.push(rect(x3 - 8, 86, 2 * tw + gap + 16, 392, { rx: 14, stroke: t.line, sw: 1.5, dash: "8 8" }), text(x3 + 8, 116, "ON THE TARGET PC", { size: SMALL, weight: 700, fill: t.muted, ls: 1.5 }));
-  steps.forEach(([title, sub, icon], i) => {
-    const x = 36 + i * (tw + gap), cx = x + tw / 2;
-    out.push(box(t, id, x, ty, tw, th, i === 0 ? "bad" : "plain"));
-    out.push(badge(t, x + 32, ty + 32, 21, i + 1, i === 0 ? t.bad : t.go));
-    if (icon === "stick") out.push(stick(t, id, cx - 40, ty + 50, 110, 44, "", 0));
-    if (icon === "disc") out.push(disc(t, cx, ty + 78, 38));
-    if (icon === "power" || icon === "check") out.push(monitor(t, cx, ty + 40, 86, icon));
-    out.push(text(cx, ty + 160, title, { size: 26, weight: 800, fill: t.ink, anchor: "middle" }));
-    out.push(text(cx, ty + 198, sub, { size: SMALL, fill: t.muted, anchor: "middle", lh: 1.3 }));
-    if (i < 3) out.push(flow(id, `M${x + tw + 4} ${ty + th / 2} L ${x + tw + gap - 4} ${ty + th / 2}`, t.go, "go"));
-  });
-  out.push(text(36, 524, ["Between steps 2 and 3, eject the USB and move it to the target PC.", "Steps 1 and 2 never change the target PC or its disks."], { size: SMALL, fill: t.muted, lh: 1.35 }));
-  return svg(t, id, W, 590, 37, out.join("\n"), "The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; on Windows and macOS, the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks.");
+  const out = [heading(t, x, 56, "THE WHOLE JOURNEY"), text(x, 88, "Windows 11 example", { size: S, fill: t.muted })];
+  // The two places, each with two steps. Between them, the USB moves to the target PC.
+  const place = (top, label, first) => {
+    out.push(rect(x - 12, top, w + 24, 2 * ch + gap + 76, { rx: 14, stroke: t.line, sw: 1.5, dash: "8 8" }), text(x + 4, top + 34, label, { size: S, weight: 700, fill: t.muted, ls: 1.5 }));
+    [0, 1].forEach((k) => {
+      const i = first + k, [title, sub, icon] = steps[i], y = top + 52 + k * (ch + gap), cx = x + 92;
+      out.push(box(t, id, x, y, w, ch, i === 0 ? "bad" : "plain"));
+      out.push(badge(t, x + 30, y + 32, 19, i + 1, i === 0 ? t.bad : t.go, S));
+      if (icon === "stick") out.push(stick(t, id, cx - 46, y + 70, 100, 40, "", 0));
+      if (icon === "disc") out.push(disc(t, cx, y + 92, 36));
+      if (icon === "power" || icon === "check") out.push(monitor(t, cx, y + 58, 80, icon));
+      out.push(text(x + 164, y + 44, title, { size: 24, weight: 800, fill: t.ink }), text(x + 164, y + 80, sub, { size: S, fill: t.muted, lh: 1.3 }));
+      if (k === 0) out.push(flow(id, `M${x + 30} ${y + ch + 4} L ${x + 30} ${y + ch + gap - 4}`, t.go, "go"));
+    });
+    return top + 2 * ch + gap + 76;
+  };
+  const end1 = place(112, "ON THIS COMPUTER", 0);
+  out.push(flow(id, `M${x + 30} ${end1 - 18} L ${x + 30} ${end1 + 92}`, t.go, "go"), text(x + 60, end1 + 52, "Eject the USB. Move it to the target PC.", { size: S, weight: 700, fill: t.ink }));
+  const end2 = place(end1 + 70 + 40, "ON THE TARGET PC", 2);
+  out.push(text(x, end2 + 46, ["Steps 1 and 2 never change the target PC", "or its disks."], { size: S, fill: t.muted, lh: 1.35 }));
+  return svg(t, id, W, end2 + 100, 37, out.join("\n"), "The whole journey, with Windows 11 as the example. On this computer: 1, prepare the USB: install Ventoy once, which erases the USB. 2, add the ISO: copy the Windows 11 ISO to the USB; on Windows and macOS, the utility checks its SHA-256. Then eject the USB and move it to the target PC. On the target PC: 3, boot the PC: open the one-time boot menu, choose the UEFI USB entry, and pick the ISO in Ventoy. 4, install: in Windows Setup, pick the internal disk, never the USB, then start from that disk. Steps 1 and 2 never change the target PC or its disks.");
 }
 
-/** The verified copy: the steps that Windows and macOS share, the macOS remount, and the clean-up after an error. */
+/** The verified copy, in a column for a phone: the steps that Windows and macOS share, the macOS remount, and the
+ *  clean-up after an error. Its smallest text is 20 in a graphic 600 wide: 10.8 px on a phone. */
 function copy(t, id) {
-  const W = 1100, x = 36, w = 700, h = 58, gap = 18, y0 = 96;
+  const W = 600, S = 20, x = 28, w = 500, h = 74, gap = 18, y0 = 112, busX = x + w + 28;
   const steps = [
-    ["Check: same USB, free space, FAT32 limit, name not used", "plain"],
-    ["Write to a hidden temp file (.ventoy-copy-…)", "plain"],
-    ["Copy, with %, GiB, MiB/s and time left", "plain"],
-    ["Flush the data to the USB", "plain"],
-    ["macOS only: unmount, mount again, check the USB", "go"],
-    ["Read the SHA-256 of the source and of the copy", "plain"],
-    ["Same? Rename the temp file. Never overwrite a file.", "plain"],
+    ["Check: same USB, free space,", "FAT32 limit, name not used"],
+    ["Write to a temp file", "named .ventoy-copy-…"],
+    ["Copy, with %, GiB, MiB/s", "and time left"],
+    ["Flush the data to the USB"],
+    ["macOS only: unmount, mount", "again, check the USB"],
+    ["Read the SHA-256 of the", "source and of the copy"],
+    ["Same? Rename the temp file.", "Never overwrite a file."],
   ];
-  const out = [heading(t, 36, 62, "THE VERIFIED COPY · WINDOWS AND MACOS")];
-  const busX = w + x + 52;
-  steps.forEach(([label, kind], i) => {
+  const out = [heading(t, x, 56, "THE VERIFIED COPY"), text(x, 88, "Windows and macOS", { size: S, fill: t.muted })];
+  steps.forEach((lines, i) => {
     const y = y0 + i * (h + gap);
-    out.push(box(t, id, x, y, w, h, kind === "go" ? "go" : "plain"));
-    out.push(badge(t, x + 32, y + h / 2, 20, i + 1, t.go));
-    out.push(text(x + 64, y + h / 2 + 8, label, { size: SMALL, weight: i === 4 ? 700 : 400, fill: t.ink }));
-    if (i < steps.length - 1) out.push(flow(id, `M${x + 32} ${y + h + 2} L ${x + 32} ${y + h + gap - 2}`, t.go, "go", { sw: 2.5 }));
+    out.push(box(t, id, x, y, w, h, i === 4 ? "go" : "plain"));
+    out.push(badge(t, x + 30, y + h / 2, 18, i + 1, t.go, S));
+    out.push(text(x + 62, y + h / 2 + 7 - (lines.length - 1) * 13, lines, { size: S, weight: i === 4 ? 700 : 400, fill: t.ink, lh: 1.3 }));
+    if (i < steps.length - 1) out.push(flow(id, `M${x + 30} ${y + h + 2} L ${x + 30} ${y + h + gap - 2}`, t.go, "go", { sw: 2.5 }));
+    // After step 2, each step can fail: a red stub to the error line on the right.
     if (i >= 1) out.push(flow(id, `M${x + w + 4} ${y + h / 2} L ${busX} ${y + h / 2}`, t.bad, null, { sw: 2, dash: "5 6" }));
   });
-  const yEnd = y0 + steps.length * (h + gap);
-  out.push(flow(id, `M${x + 32} ${yEnd - gap + 2} L ${x + 32} ${yEnd + 8}`, t.go, "go", { sw: 2.5 }));
-  out.push(box(t, id, x, yEnd + 12, w, h, "ok"), text(x + w / 2, yEnd + 12 + h / 2 + 8, "ISO copied and SHA-256 verified.", { size: SMALL, weight: 800, fill: t.ink, anchor: "middle" }));
-  // The error path.
-  const by0 = y0 + h + gap + h / 2, by1 = y0 + 6 * (h + gap) + h / 2;
-  out.push(path(`M${busX} ${by0} L ${busX} ${by1}`, { stroke: t.bad, sw: 2, dash: "5 6" }));
-  const bx = busX + 18, bw = W - 36 - bx, bTop = by0 + 40, bh = 300;
-  out.push(flow(id, `M${busX} ${bTop + bh / 2} L ${bx - 4} ${bTop + bh / 2}`, t.bad, "bad", { sw: 2.5 }));
-  out.push(box(t, id, bx, bTop, bw, bh, "bad"));
-  out.push(text(bx + bw / 2, bTop + 48, ["Any error,", "a different", "SHA-256 or", "Ctrl+C"], { size: SMALL, weight: 800, fill: t.bad, anchor: "middle", lh: 1.3 }));
-  out.push(text(bx + bw / 2, bTop + 188, ["The utility", "removes the", "temp file", "and stops."], { size: SMALL, fill: t.ink, anchor: "middle", lh: 1.3 }));
-  return svg(t, id, W, yEnd + h + 46, 53, out.join("\n"), "The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a hidden temp file named .ventoy-copy-something. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file and stop.");
+  const yOk = y0 + steps.length * (h + gap) + 10;
+  out.push(flow(id, `M${x + 30} ${yOk - gap - 8} L ${x + 30} ${yOk - 4}`, t.go, "go", { sw: 2.5 }));
+  out.push(box(t, id, x, yOk, w, 58, "ok"), text(x + w / 2, yOk + 36, "ISO copied and SHA-256 verified.", { size: S, weight: 800, fill: t.ink, anchor: "middle" }));
+  // The error path: down the right side to the error box below the success box.
+  const yBad = yOk + 58 + 40, bh = 150;
+  out.push(flow(id, `M${busX} ${y0 + h + gap + h / 2} L ${busX} ${yBad - 4}`, t.bad, "bad", { sw: 2.5, dash: "5 6" }));
+  out.push(box(t, id, x, yBad, busX + 16 - x, bh, "bad"));
+  out.push(text(x + 24, yBad + 40, ["Any error, a different SHA-256", "or Ctrl+C:"], { size: S, weight: 800, fill: t.bad, lh: 1.3 }));
+  out.push(text(x + 24, yBad + 104, ["the utility removes the temp file (or", "tells you how to delete it) and stops."], { size: S, fill: t.ink, lh: 1.3 }));
+  return svg(t, id, W, yBad + bh + 30, 53, out.join("\n"), "The verified copy, on Windows and macOS. 1, check: the same USB, enough free space, the FAT32 file size limit, and no file with the same name. 2, write to a temp file named .ventoy-copy-something; on macOS, the file is hidden. 3, copy, with the percent, GiB copied, MiB per second and time left. 4, flush the data to the USB. 5, on macOS only: unmount the USB, mount it again, and check that it is the same USB. 6, read the SHA-256 of the source and of the copy. 7, if they are the same, rename the temp file to the ISO name; it never overwrites a file. Then: ISO copied and SHA-256 verified. After step 2, any error, a different SHA-256 or Ctrl+C makes the utility remove the temp file, or tell you how to delete it, and stop.");
 }
 
 /** A tip: a USB stick in a round badge on the left, and the tip in a framed card to the right. */
@@ -301,7 +306,7 @@ const tip = (lines, label, seed, accent = "led") => (t, id) => {
 const GRAPHICS = {
   hero, pick, journey, copy,
   "tip-yes": tip(["Type YES only after you check the disk name and size.", "At “Select USB by list number”, type the number", "in [ ], not the disk number or the drive letter."], "Tip: type YES only after you check the disk name and size. At Select USB by list number, type the number in square brackets, not the disk number or the drive letter.", 61),
-  "tip-mactoy": tip(["Check Mactoy before you give it Full Disk Access:", "the .dmg must match its .sha256 file, and", "spctl -a -vv must show “Notarized Developer ID”."], "Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show source=Notarized Developer ID.", 67, "iso"),
+  "tip-mactoy": tip(["Check Mactoy before you give it Full Disk Access:", "the .dmg must match its .sha256 file, and", "spctl -a -vv must show “accepted” and", "“source=Notarized Developer ID”."], "Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show accepted and source=Notarized Developer ID.", 67, "iso"),
 };
 
 /** Every graphic in both themes, as [file name, SVG]. The ids in a file start with its own name and theme, so that

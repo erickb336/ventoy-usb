@@ -1,38 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 251" width="1100" height="251" role="img" aria-label="Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show source=Notarized Developer ID.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 284" width="1100" height="284" role="img" aria-label="Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show accepted and source=Notarized Developer ID.">
 <style>.blink{animation:blink 2.4s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.blink{animation:none}}</style>
 <defs>
 <pattern id="tip-mactoy-l-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.4" fill="#1D4ED8" opacity="0.13"/></pattern>
 <filter id="tip-mactoy-l-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
-<clipPath id="tip-mactoy-l-frame"><rect width="1100" height="251" rx="24"/></clipPath>
+<clipPath id="tip-mactoy-l-frame"><rect width="1100" height="284" rx="24"/></clipPath>
 <marker id="tip-mactoy-l-go" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#1D4ED8"/></marker>
 <marker id="tip-mactoy-l-bad" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#C81E1E"/></marker>
 <marker id="tip-mactoy-l-muted" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#94A8C4"/></marker>
 </defs>
 <g clip-path="url(#tip-mactoy-l-frame)">
-<rect width="1100" height="251" fill="#F3F6FA"/>
-<rect width="1100" height="251" fill="url(#tip-mactoy-l-dots)"/>
-<path d="M0 200 L60 140 L180 140 L230 90" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
-<circle cx="0" cy="200" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<circle cx="230" cy="90" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<path d="M880 160 L920 200 L1000 120 L1000 220" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
-<circle cx="880" cy="160" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<circle cx="1000" cy="220" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<path d="M500 80 L620 80 L620 -60 L460 -60" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
-<circle cx="500" cy="80" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<circle cx="460" cy="-60" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<path d="M200 80 L40 80 L-40 80 L100 80" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
-<circle cx="200" cy="80" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<circle cx="100" cy="80" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<path d="M720 220 L800 220 L860 220 L1020 220" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
-<circle cx="720" cy="220" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<circle cx="1020" cy="220" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
-<circle cx="110" cy="125.4" r="82" fill="#7E22CE" opacity="0.22" filter="url(#tip-mactoy-l-glow)"/>
-<circle cx="110" cy="125.4" r="74" fill="#FFFFFF" stroke="#7E22CE" stroke-width="3"/>
-<rect x="57.8" y="112.2" width="26.4" height="26.4" rx="4" fill="#C9D1DC" stroke="#94A8C4" stroke-width="1.5"/><rect x="63.1" y="118" width="6.2" height="4.8" rx="1" fill="#F3F6FA"/><rect x="63.1" y="128" width="6.2" height="4.8" rx="1" fill="#F3F6FA"/><rect x="82" y="103.4" width="80" height="44" rx="12.32" fill="#1D4ED8"/><rect x="88" y="109.4" width="68" height="13.2" rx="8.8" fill="#FFFFFF" opacity="0.08"/><circle cx="148.8" cy="125.4" r="7" fill="#B45309" opacity="0.8" filter="url(#tip-mactoy-l-glow)"/><g class="blink"><circle cx="148.8" cy="125.4" r="4" fill="#B45309"/></g>
-<rect x="210" y="30" width="854" height="190.8" rx="10" fill="#FFFFFF" stroke="#94A8C4" stroke-width="1.5"/>
-<rect x="210" y="30" width="8" height="190.8" rx="4" fill="#7E22CE"/>
+<rect width="1100" height="284" fill="#F3F6FA"/>
+<rect width="1100" height="284" fill="url(#tip-mactoy-l-dots)"/>
+<path d="M0 240 L60 180 L180 180 L230 130" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="0" cy="240" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<circle cx="230" cy="130" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<path d="M880 200 L920 240 L1000 160 L1000 260" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="880" cy="200" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1000" cy="260" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<path d="M500 100 L620 100 L620 -40 L460 -40" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="500" cy="100" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<circle cx="460" cy="-40" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<path d="M200 100 L40 100 L-40 100 L100 100" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="200" cy="100" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<circle cx="100" cy="100" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<path d="M720 240 L800 240 L860 240 L1020 240" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="720" cy="240" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<circle cx="1020" cy="240" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<path d="M180 160 L180 220 L180 100 L260 100" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.16"/>
+<circle cx="180" cy="160" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<circle cx="260" cy="100" r="5" fill="none" stroke="#1D4ED8" stroke-width="2.5" opacity="0.16"/>
+<circle cx="110" cy="142.2" r="82" fill="#7E22CE" opacity="0.22" filter="url(#tip-mactoy-l-glow)"/>
+<circle cx="110" cy="142.2" r="74" fill="#FFFFFF" stroke="#7E22CE" stroke-width="3"/>
+<rect x="57.8" y="129" width="26.4" height="26.4" rx="4" fill="#C9D1DC" stroke="#94A8C4" stroke-width="1.5"/><rect x="63.1" y="134.8" width="6.2" height="4.8" rx="1" fill="#F3F6FA"/><rect x="63.1" y="144.8" width="6.2" height="4.8" rx="1" fill="#F3F6FA"/><rect x="82" y="120.2" width="80" height="44" rx="12.32" fill="#1D4ED8"/><rect x="88" y="126.2" width="68" height="13.2" rx="8.8" fill="#FFFFFF" opacity="0.08"/><circle cx="148.8" cy="142.2" r="7" fill="#B45309" opacity="0.8" filter="url(#tip-mactoy-l-glow)"/><g class="blink"><circle cx="148.8" cy="142.2" r="4" fill="#B45309"/></g>
+<rect x="210" y="30" width="854" height="224.4" rx="10" fill="#FFFFFF" stroke="#94A8C4" stroke-width="1.5"/>
+<rect x="210" y="30" width="8" height="224.4" rx="4" fill="#7E22CE"/>
 <text x="250" y="82" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#7E22CE" text-anchor="start" letter-spacing="2"><tspan x="250" dy="0">TIP</tspan></text>
-<text x="250" y="124" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="600" fill="#0B1424" text-anchor="start"><tspan x="250" dy="0">Check Mactoy before you give it Full Disk Access:</tspan><tspan x="250" dy="33.6">the .dmg must match its .sha256 file, and</tspan><tspan x="250" dy="33.6">spctl -a -vv must show “Notarized Developer ID”.</tspan></text>
+<text x="250" y="124" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="600" fill="#0B1424" text-anchor="start"><tspan x="250" dy="0">Check Mactoy before you give it Full Disk Access:</tspan><tspan x="250" dy="33.6">the .dmg must match its .sha256 file, and</tspan><tspan x="250" dy="33.6">spctl -a -vv must show “accepted” and</tspan><tspan x="250" dy="33.6">“source=Notarized Developer ID”.</tspan></text>
 </g>
-<rect x="0.75" y="0.75" width="1098.5" height="249.5" rx="23.25" fill="none" stroke="#D3DEEC" stroke-width="1.5"/>
+<rect x="0.75" y="0.75" width="1098.5" height="282.5" rx="23.25" fill="none" stroke="#D3DEEC" stroke-width="1.5"/>
 </svg>
