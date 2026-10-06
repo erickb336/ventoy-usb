@@ -115,6 +115,129 @@ check "temporary file removed" 0 "$(temps "$work/usb3")"
 [[ -e "$work/usb3/bad.iso" ]] && fail "final name absent" || pass "final name absent"
 pgrep -f "sleep 60" >/dev/null && fail "copy process stopped" || pass "copy process stopped"
 
+echo "== Direct read-back fails with an I/O error: the ISO fails, no fallback"
+stub=$work/stub-eio
+mkdir -p "$stub" "$work/usb4"
+cat >"$stub/dd" <<EOF
+#!/usr/bin/env bash
+case "\$*" in
+  *iflag=direct*) echo "dd: error reading 'copy': Input/output error" >&2; exit 1 ;;
+  *) exec "$real_dd" "\$@" ;;
+esac
+EOF
+chmod +x "$stub/dd"
+run "$work/usb4" "$work/isos2" "$stub"
+check "exit code 1" 1 "$rc"
+contains "real error shown" "Input/output error" "$out"
+contains "failure reported" "Failed: could not read the copy of bad.iso." "$out"
+contains "summary says failed" "0 copied and SHA-256 verified, 0 skipped (already on the USB), 1 failed." "$out"
+case "$out" in *"does not support direct reads"*) fail "no fallback to a cached read" ;; *) pass "no fallback to a cached read" ;; esac
+[[ -e "$work/usb4/bad.iso" ]] && fail "final name absent" || pass "final name absent"
+check "temporary file removed" 0 "$(temps "$work/usb4")"
+
+echo "== File system without direct reads: drop the cache, read normally, verify"
+stub=$work/stub-noodirect
+mkdir -p "$stub" "$work/usb5"
+cat >"$stub/dd" <<EOF
+#!/usr/bin/env bash
+case "\$*" in
+  *iflag=direct*) echo "dd: failed to open 'copy': Invalid argument" >&2; exit 1 ;;
+  *) exec "$real_dd" "\$@" ;;
+esac
+EOF
+chmod +x "$stub/dd"
+run "$work/usb5" "$work/isos2" "$stub"
+check "exit code 0" 0 "$rc"
+contains "fallback note" "does not support direct reads. The copy is dropped from the page cache" "$out"
+contains "verified" "bad.iso copied and SHA-256 verified." "$out"
+cmp -s "$work/isos2/bad.iso" "$work/usb5/bad.iso" && pass "same bytes" || fail "same bytes"
+
+echo "== Destination appears during the copy (just before the rename)"
+stub=$work/stub-race
+real_mv=$(command -v mv)
+mkdir -p "$stub" "$work/usb6"
+cat >"$stub/mv" <<EOF
+#!/usr/bin/env bash
+case "\$*" in *.ventoy-copy-*) printf 'existing' >"\${@: -1}" ;; esac
+exec "$real_mv" "\$@"
+EOF
+chmod +x "$stub/mv"
+run "$work/usb6" "$work/isos2" "$stub"
+check "exit code 1" 1 "$rc"
+contains "race reported" "bad.iso appeared during the copy. It was not changed. The copy was removed." "$out"
+check "existing file unchanged" "existing" "$(cat "$work/usb6/bad.iso")"
+check "temporary file removed" 0 "$(temps "$work/usb6")"
+
+echo "== Mount check: a folder in a Ventoy mount is not the Ventoy mount"
+stub=$work/stub-lsblk
+mkdir -p "$stub" "$work/usb7"
+printf '#!/usr/bin/env bash\necho "LABEL MOUNTPOINT"\necho "Ventoy %s/sub"\n' "$work/usb7" >"$stub/lsblk"
+chmod +x "$stub/lsblk"
+out=$(PATH="$stub:$PATH" bash "$script" "$work/usb7" "$work/isos2" <<<n 2>&1)
+rc=$?
+check "exit code 1" 1 "$rc"
+contains "warning" "$work/usb7 does not appear to be a Ventoy mount point" "$out"
+contains "aborted" "Aborted." "$out"
+check "nothing written" "" "$(ls -A "$work/usb7")"
+
+echo "== Mount check: the mount point of a file system labelled Ventoy passes without a question"
+stub=$work/stub-findmnt
+real_findmnt=$(command -v findmnt)
+mkdir -p "$stub" "$work/usb8"
+cat >"$stub/findmnt" <<EOF
+#!/usr/bin/env bash
+case "\$*" in "-n -o LABEL --mountpoint $work/usb8") echo Ventoy ;; *) exec "$real_findmnt" "\$@" ;; esac
+EOF
+chmod +x "$stub/findmnt"
+out=$(PATH="$stub:$PATH" bash "$script" "$work/usb8" "$work/isos2" </dev/null 2>&1)
+rc=$?
+check "exit code 0" 0 "$rc"
+case "$out" in *"does not appear to be a Ventoy mount point"*) fail "no warning" ;; *) pass "no warning" ;; esac
+
+echo "== Auto-detect finds two Ventoy USBs: list them and ask"
+stub=$work/stub-two
+mkdir -p "$stub" "$work/usbA" "$work/usbB"
+printf '#!/usr/bin/env bash\necho "LABEL MOUNTPOINT"\necho "Ventoy %s"\necho "Ventoy %s"\n' "$work/usbA" "$work/usbB" >"$stub/lsblk"
+chmod +x "$stub/lsblk"
+out=$(PATH="$stub:$PATH" bash "$script" 2>&1 <<EOF
+
+$work/usbB
+$work/isos2
+y
+EOF
+)
+rc=$?
+check "exit code 0" 0 "$rc"
+contains "both listed" "More than one Ventoy USB found:
+  $work/usbA
+  $work/usbB" "$out"
+cmp -s "$work/isos2/bad.iso" "$work/usbB/bad.iso" && pass "copied to the chosen USB" || fail "copied to the chosen USB"
+check "other USB unchanged" "" "$(ls -A "$work/usbA")"
+
+echo "== sudo timestamp expired before a copy: fail with a clear message, no password prompt"
+if [[ "$(id -u)" == 0 ]]; then
+  skip "needs a non-root user (root can write to every folder, so the script never uses sudo)"
+else
+  stub=$work/stub-sudo-expired
+  mkdir -p "$stub" "$work/usb9"
+  chmod 555 "$work/usb9"
+  cat >"$stub/sudo" <<'EOF'
+#!/usr/bin/env bash
+# The first "sudo -v" succeeds. Later the timestamp is expired: -n fails, other calls ask for a password.
+case "$1" in
+  -v) exit 0 ;;
+  -n) echo "sudo: a password is required" >&2; exit 1 ;;
+  *) echo "[sudo] password for $(id -un):" >&2; exit 1 ;;
+esac
+EOF
+  chmod +x "$stub/sudo"
+  run "$work/usb9" "$work/isos2" "$stub"
+  check "exit code 1" 1 "$rc"
+  contains "clear message" "Failed: sudo needs the password again. Run the script again to copy bad.iso." "$out"
+  case "$out" in *"password for"*) fail "no password prompt" ;; *) pass "no password prompt" ;; esac
+  chmod 755 "$work/usb9"
+fi
+
 echo "== FAT32 loop image (root-owned mount, so the script uses sudo)"
 if [[ "$(uname -s)" != Linux ]] || ! sudo -n true 2>/dev/null || ! command -v mkfs.vfat >/dev/null || ! command -v losetup >/dev/null; then
   skip "FAT32 tests need Linux, passwordless sudo, losetup and mkfs.vfat"
@@ -146,7 +269,36 @@ else
   check "over 4 GiB: exit code 1" 1 "$rc"
   contains "over 4 GiB: refused" "Failed: big.iso is larger than the FAT32 file size limit (4 GiB)." "$out"
 
-  check "FAT32: only small.iso on the USB" "small.iso" "$(ls -A "$loop_mnt")"
+  # The ISO is a link to a file that only root can read. The script must read the ISO as the user.
+  stub=$work/stub-fat-sync
+  mkdir -p "$stub" "$work/fat-secret"
+  sudo sh -c 'head -c 100000 /dev/urandom >"$1" && chmod 600 "$1"' sh "$work/root-only"
+  ln -s "$work/root-only" "$work/fat-secret/secret.iso"
+  cat >"$stub/sync" <<EOF
+#!/usr/bin/env bash
+for f in "$loop_mnt"/.ventoy-copy-*; do [[ -e "\$f" ]] && stat -c %s -- "\$f" >>"$work/written"; done
+exec "$real_sync" "\$@"
+EOF
+  chmod +x "$stub/sync"
+  run "$loop_mnt" "$work/fat-secret" "$stub"
+  check "root-only ISO: exit code 1" 1 "$rc"
+  contains "root-only ISO: read as the user" "Permission denied" "$out"
+  contains "root-only ISO: failed" "0 copied and SHA-256 verified, 0 skipped (already on the USB), 1 failed." "$out"
+  check "root-only ISO: no byte written to the USB" "" "$(cat "$work/written" 2>/dev/null)"
+  check "root-only ISO: temporary file removed" 0 "$(temps "$loop_mnt")"
+
+  # A wrapper around the real sudo records each call: the script refreshes the timestamp while it runs.
+  stub=$work/stub-fat-sudo
+  mkdir -p "$stub" "$work/fat-keep"
+  printf '#!/usr/bin/env bash\necho "$*" >>"%s"\nexec %s "$@"\n' "$work/sudo.log" "$(command -v sudo)" >"$stub/sudo"
+  chmod +x "$stub/sudo"
+  head -c 3000000 /dev/urandom >"$work/fat-keep/keep.iso"
+  run "$loop_mnt" "$work/fat-keep" "$stub"
+  check "sudo keep-alive: exit code 0" 0 "$rc"
+  grep -qx -- '-n -v' "$work/sudo.log" && pass "sudo keep-alive: timestamp refreshed" || fail "sudo keep-alive: timestamp refreshed: $(cat "$work/sudo.log")"
+  pgrep -f "sleep 60" >/dev/null && fail "sudo keep-alive: stopped at exit" || pass "sudo keep-alive: stopped at exit"
+
+  check "FAT32: only the verified ISOs on the USB" "keep.iso small.iso" "$(ls -A "$loop_mnt" | sort | tr '\n' ' ' | sed 's/ $//')"
 fi
 
 echo
