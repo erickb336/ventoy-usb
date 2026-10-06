@@ -18,7 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check preserved Bash syntax (never run installer)
-        run: bash -n ventoy.sh ventoy-install.sh ventoy-add-isos.sh
+        run: bash -n ventoy.sh ventoy-install.sh ventoy-add-isos.sh tests/test-linux.sh
+      - name: Linux safe tests (temporary folders and a loop image only, never a real disk)
+        run: |
+          command -v mkfs.vfat >/dev/null || sudo apt-get install -y dosfstools
+          bash tests/test-linux.sh
   macos:
     runs-on: macos-latest
     steps:
