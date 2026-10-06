@@ -119,9 +119,12 @@ PATH="$stub:$PATH" bash "$script" "$work/usb3" "$work/isos2" <<<y >"$work/term.l
 pid=$!
 for _ in $(seq 100); do [[ "$(wc -l <"$stub/pids" 2>/dev/null)" -eq 2 ]] && break; sleep 0.1; done
 check "temporary file exists during the copy" 1 "$(temps "$work/usb3")"
+start=$SECONDS
 kill -TERM "$pid"
 wait "$pid"
 check "exit code 143" 143 "$?"
+# Each side of the copy hangs for 30 s. A stop that misses one side waits for it.
+(( SECONDS - start < 10 )) && pass "stops at once, without a wait for a side of the copy" || fail "stops at once, without a wait for a side of the copy: $((SECONDS - start)) s"
 check "temporary file removed" 0 "$(temps "$work/usb3")"
 [[ -e "$work/usb3/bad.iso" ]] && fail "final name absent" || pass "final name absent"
 check "both sides of the copy started" 2 "$(wc -l <"$stub/pids" | tr -d ' ')"
