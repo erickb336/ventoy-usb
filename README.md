@@ -9,6 +9,7 @@
   <a href="https://github.com/erickb336/ventoy-usb/actions/workflows/validate.yml"><img alt="Safe validation" src="https://github.com/erickb336/ventoy-usb/actions/workflows/validate.yml/badge.svg"></a>
   <img alt="Runs on Windows, macOS and Linux" src="https://img.shields.io/badge/runs%20on-Windows%20%7C%20macOS%20%7C%20Linux-0F766E">
   <img alt="No sudo on macOS" src="https://img.shields.io/badge/macOS-no%20sudo-0F766E">
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-0F766E"></a>
 </p>
 
 # Ventoy USB Setup for Windows, macOS and Linux
@@ -443,4 +444,7 @@ node scripts/check-graphics.mjs  # fail if an SVG is out of date, a text is too 
 
 ## License
 
-Scripts are provided as-is. [Ventoy](https://github.com/ventoy/Ventoy) is a separate upstream project licensed under GPL v3.0.
+The scripts in this repository are under the MIT licence: see [LICENSE](LICENSE). They are provided as-is, without warranty.
+
+- [Ventoy](https://github.com/ventoy/Ventoy) is a separate upstream project under GPL v3.0.
+- [Mactoy](https://github.com/cashcon57/mactoy) is a separate project under the MIT licence.
