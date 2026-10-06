@@ -1,108 +1,108 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 698" width="1100" height="698" role="img" aria-label="Pick your computer. Windows 10 or 11: run .\ventoy.ps1 in PowerShell as administrator. Option 1 creates a new USB and erases it; option 2 adds an ISO with a SHA-256 check. macOS 13.5 or later: run ./ventoy.sh in Terminal. Option 1 hands over to the Mactoy app, which creates the USB and erases it; option 2 adds an ISO with a SHA-256 check. Linux, which uses sudo: run ./ventoy.sh in Terminal. Option 1 creates a new USB and erases it; option 2 copies ISOs from a folder. On every computer, option 1 continues with option 2 when it finishes.">
 <style>.blink{animation:blink 2.4s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.blink{animation:none}}</style>
 <defs>
-<pattern id="pick-d-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.4" fill="#2DD4BF" opacity="0.1"/></pattern>
+<pattern id="pick-d-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.4" fill="#60A5FA" opacity="0.1"/></pattern>
 <filter id="pick-d-glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
 <clipPath id="pick-d-frame"><rect width="1100" height="698" rx="24"/></clipPath>
-<marker id="pick-d-go" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#2DD4BF"/></marker>
+<marker id="pick-d-go" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#60A5FA"/></marker>
 <marker id="pick-d-bad" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#F87171"/></marker>
-<marker id="pick-d-muted" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#3D5A54"/></marker>
+<marker id="pick-d-muted" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0 L12 6 L0 12 L3 6 z" fill="#3B4E6B"/></marker>
 </defs>
 <g clip-path="url(#pick-d-frame)">
-<rect width="1100" height="698" fill="#0A1316"/>
+<rect width="1100" height="698" fill="#0A0F1A"/>
 <rect width="1100" height="698" fill="url(#pick-d-dots)"/>
-<path d="M0 20 L40 60 L0 60 L-120 60" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="0" cy="20" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="-120" cy="60" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M1040 80 L1180 80 L1080 80 L1130 30" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="1040" cy="80" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1130" cy="30" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M600 280 L700 280 L720 300 L800 380" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="600" cy="280" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="800" cy="380" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M100 640 L150 690 L10 690 L70 750" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="100" cy="640" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="70" cy="750" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M1080 460 L1180 460 L1200 440 L1300 440" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="1080" cy="460" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1300" cy="440" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M920 140 L920 260 L990 190 L1030 230" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="920" cy="140" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1030" cy="230" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M140 60 L210 -10 L350 -10 L380 -40" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="140" cy="60" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="380" cy="-40" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M160 360 L40 360 L40 280 L40 180" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="160" cy="360" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="40" cy="180" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M1080 300 L1160 300 L1230 370 L1330 370" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="1080" cy="300" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1330" cy="370" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M600 240 L670 310 L770 310 L910 310" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="600" cy="240" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="910" cy="310" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M1080 140 L1220 140 L1260 100 L1260 200" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="1080" cy="140" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="1260" cy="200" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M340 40 L390 90 L440 140 L360 140" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="340" cy="40" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="360" cy="140" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M500 460 L500 600 L540 640 L540 540" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="500" cy="460" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="540" cy="540" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M440 420 L360 420 L220 420 L220 360" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="440" cy="420" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="220" cy="360" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<path d="M380 340 L380 480 L430 430 L510 350" fill="none" stroke="#2DD4BF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<circle cx="380" cy="340" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<circle cx="510" cy="350" r="5" fill="none" stroke="#2DD4BF" stroke-width="2.5" opacity="0.14"/>
-<text x="36" y="62" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#2DD4BF" text-anchor="start" letter-spacing="2"><tspan x="36" dy="0">PICK YOUR COMPUTER</tspan></text>
-<rect x="36" y="104" width="210" height="150" rx="10" fill="#111D20" stroke="#3D5A54" stroke-width="1.5"/>
-<rect x="112" y="116" width="58" height="36" rx="8" fill="#111D20" stroke="#E6F4F1" stroke-width="3"/><rect x="120" y="124" width="42" height="20" rx="4" fill="#0E191C"/><path d="M136.4 152 L134.6 160.1 L147.4 160.1 L145.6 152" fill="#E6F4F1" stroke="#E6F4F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="128.2" y="159.5" width="25.5" height="2.9" rx="3" fill="#E6F4F1"/>
-<text x="141" y="204" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="800" fill="#E6F4F1" text-anchor="middle"><tspan x="141" dy="0">Windows</tspan></text>
-<text x="141" y="236" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="141" dy="0">10 or 11</tspan></text>
-<path d="M250 179 L 282 179" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<rect x="290" y="134" width="262" height="90" rx="10" fill="none" stroke="#2DD4BF" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="290" y="134" width="262" height="90" rx="10" fill="#111D20" stroke="#2DD4BF" stroke-width="2.5"/>
-<text x="421" y="172" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" font-weight="700" fill="#2DD4BF" text-anchor="middle"><tspan x="421" dy="0">.\ventoy.ps1</tspan></text>
-<text x="421" y="206" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="421" dy="0">PowerShell as admin</tspan></text>
-<path d="M556 179 L 574 179 L 574 140 L 596 140" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<path d="M574 179 L 574 218 L 596 218" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<rect x="600" y="112" width="418" height="56" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="112" width="418" height="56" rx="10" fill="#111D20" stroke="#F87171" stroke-width="2.5"/>
-<text x="622" y="149" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6F4F1" text-anchor="start"><tspan x="622" dy="0">1  Create a new USB (erases it)</tspan></text>
-<rect x="600" y="190" width="418" height="56" rx="10" fill="none" stroke="#4ADE80" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="190" width="418" height="56" rx="10" fill="#111D20" stroke="#4ADE80" stroke-width="2.5"/>
-<text x="622" y="227" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6F4F1" text-anchor="start"><tspan x="622" dy="0">2  Add an ISO, SHA-256 checked</tspan></text>
-<path d="M1022 140 L 1050 140 L 1050 218 L 1026 218" fill="none" stroke="#3D5A54" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-muted)"/>
-<rect x="36" y="276" width="210" height="150" rx="10" fill="#111D20" stroke="#3D5A54" stroke-width="1.5"/>
-<rect x="113.7" y="292" width="54.6" height="33.9" rx="7" fill="#111D20" stroke="#E6F4F1" stroke-width="3"/><rect x="120.7" y="299" width="40.6" height="19.9" rx="3" fill="#0E191C"/><path d="M106 332.9 L111.7 327.9 L170.3 327.9 L176 332.9 Z" fill="#E6F4F1" stroke="#E6F4F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="141" y="376" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="800" fill="#E6F4F1" text-anchor="middle"><tspan x="141" dy="0">macOS</tspan></text>
-<text x="141" y="408" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="141" dy="0">13.5 or later</tspan></text>
-<path d="M250 351 L 282 351" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<rect x="290" y="306" width="262" height="90" rx="10" fill="none" stroke="#2DD4BF" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="290" y="306" width="262" height="90" rx="10" fill="#111D20" stroke="#2DD4BF" stroke-width="2.5"/>
-<text x="421" y="344" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" font-weight="700" fill="#2DD4BF" text-anchor="middle"><tspan x="421" dy="0">./ventoy.sh</tspan></text>
-<text x="421" y="378" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="421" dy="0">Terminal</tspan></text>
-<path d="M556 351 L 574 351 L 574 312 L 596 312" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<path d="M574 351 L 574 390 L 596 390" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<rect x="600" y="284" width="418" height="56" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="284" width="418" height="56" rx="10" fill="#111D20" stroke="#F87171" stroke-width="2.5"/>
-<text x="622" y="321" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6F4F1" text-anchor="start"><tspan x="622" dy="0">1  Mactoy creates it (erases USB)</tspan></text>
-<rect x="600" y="362" width="418" height="56" rx="10" fill="none" stroke="#4ADE80" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="362" width="418" height="56" rx="10" fill="#111D20" stroke="#4ADE80" stroke-width="2.5"/>
-<text x="622" y="399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6F4F1" text-anchor="start"><tspan x="622" dy="0">2  Add an ISO, SHA-256 checked</tspan></text>
-<path d="M1022 312 L 1050 312 L 1050 390 L 1026 390" fill="none" stroke="#3D5A54" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-muted)"/>
-<rect x="36" y="448" width="210" height="150" rx="10" fill="#111D20" stroke="#3D5A54" stroke-width="1.5"/>
-<rect x="112" y="460" width="58" height="36" rx="8" fill="#111D20" stroke="#E6F4F1" stroke-width="3"/><rect x="120" y="468" width="42" height="20" rx="4" fill="#0E191C"/><path d="M136.4 496 L134.6 504.1 L147.4 504.1 L145.6 496" fill="#E6F4F1" stroke="#E6F4F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="128.2" y="503.5" width="25.5" height="2.9" rx="3" fill="#E6F4F1"/>
-<text x="141" y="548" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="800" fill="#E6F4F1" text-anchor="middle"><tspan x="141" dy="0">Linux</tspan></text>
-<text x="141" y="580" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="141" dy="0">uses sudo</tspan></text>
-<path d="M250 523 L 282 523" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<rect x="290" y="478" width="262" height="90" rx="10" fill="none" stroke="#2DD4BF" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="290" y="478" width="262" height="90" rx="10" fill="#111D20" stroke="#2DD4BF" stroke-width="2.5"/>
-<text x="421" y="516" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" font-weight="700" fill="#2DD4BF" text-anchor="middle"><tspan x="421" dy="0">./ventoy.sh</tspan></text>
-<text x="421" y="550" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="middle"><tspan x="421" dy="0">Terminal</tspan></text>
-<path d="M556 523 L 574 523 L 574 484 L 596 484" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<path d="M574 523 L 574 562 L 596 562" fill="none" stroke="#2DD4BF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
-<rect x="600" y="456" width="418" height="56" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="456" width="418" height="56" rx="10" fill="#111D20" stroke="#F87171" stroke-width="2.5"/>
-<text x="622" y="493" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6F4F1" text-anchor="start"><tspan x="622" dy="0">1  Create a new USB (erases it)</tspan></text>
-<rect x="600" y="534" width="418" height="56" rx="10" fill="none" stroke="#4ADE80" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="534" width="418" height="56" rx="10" fill="#111D20" stroke="#4ADE80" stroke-width="2.5"/>
-<text x="622" y="571" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6F4F1" text-anchor="start"><tspan x="622" dy="0">2  Copy ISOs from a folder</tspan></text>
-<path d="M1022 484 L 1050 484 L 1050 562 L 1026 562" fill="none" stroke="#3D5A54" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-muted)"/>
-<text x="36" y="634" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9DB9B3" text-anchor="start"><tspan x="36" dy="0">Red: this option erases the USB. Dashed: option 1 continues</tspan><tspan x="36" dy="32.4">with option 2 when it finishes.</tspan></text>
+<path d="M0 20 L40 60 L0 60 L-120 60" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="0" cy="20" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="-120" cy="60" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M1040 80 L1180 80 L1080 80 L1130 30" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="1040" cy="80" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="1130" cy="30" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M600 280 L700 280 L720 300 L800 380" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="600" cy="280" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="800" cy="380" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M100 640 L150 690 L10 690 L70 750" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="100" cy="640" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="70" cy="750" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M1080 460 L1180 460 L1200 440 L1300 440" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="1080" cy="460" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="1300" cy="440" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M920 140 L920 260 L990 190 L1030 230" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="920" cy="140" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="1030" cy="230" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M140 60 L210 -10 L350 -10 L380 -40" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="140" cy="60" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="380" cy="-40" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M160 360 L40 360 L40 280 L40 180" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="160" cy="360" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="40" cy="180" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M1080 300 L1160 300 L1230 370 L1330 370" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="1080" cy="300" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="1330" cy="370" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M600 240 L670 310 L770 310 L910 310" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="600" cy="240" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="910" cy="310" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M1080 140 L1220 140 L1260 100 L1260 200" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="1080" cy="140" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="1260" cy="200" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M340 40 L390 90 L440 140 L360 140" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="340" cy="40" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="360" cy="140" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M500 460 L500 600 L540 640 L540 540" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="500" cy="460" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="540" cy="540" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M440 420 L360 420 L220 420 L220 360" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="440" cy="420" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="220" cy="360" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<path d="M380 340 L380 480 L430 430 L510 350" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<circle cx="380" cy="340" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<circle cx="510" cy="350" r="5" fill="none" stroke="#60A5FA" stroke-width="2.5" opacity="0.14"/>
+<text x="36" y="62" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#60A5FA" text-anchor="start" letter-spacing="2"><tspan x="36" dy="0">PICK YOUR COMPUTER</tspan></text>
+<rect x="36" y="104" width="210" height="150" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<rect x="112" y="116" width="58" height="36" rx="8" fill="#111A2B" stroke="#E6EEF8" stroke-width="3"/><rect x="120" y="124" width="42" height="20" rx="4" fill="#0E1626"/><path d="M136.4 152 L134.6 160.1 L147.4 160.1 L145.6 152" fill="#E6EEF8" stroke="#E6EEF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="128.2" y="159.5" width="25.5" height="2.9" rx="3" fill="#E6EEF8"/>
+<text x="141" y="204" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="800" fill="#E6EEF8" text-anchor="middle"><tspan x="141" dy="0">Windows</tspan></text>
+<text x="141" y="236" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9FB0C8" text-anchor="middle"><tspan x="141" dy="0">10 or 11</tspan></text>
+<path d="M250 179 L 282 179" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<rect x="290" y="134" width="262" height="90" rx="10" fill="none" stroke="#60A5FA" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="290" y="134" width="262" height="90" rx="10" fill="#111A2B" stroke="#60A5FA" stroke-width="2.5"/>
+<text x="421" y="172" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" font-weight="700" fill="#60A5FA" text-anchor="middle"><tspan x="421" dy="0">.\ventoy.ps1</tspan></text>
+<text x="421" y="206" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9FB0C8" text-anchor="middle"><tspan x="421" dy="0">PowerShell as admin</tspan></text>
+<path d="M556 179 L 574 179 L 574 140 L 596 140" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<path d="M574 179 L 574 218 L 596 218" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<rect x="600" y="112" width="418" height="56" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="112" width="418" height="56" rx="10" fill="#111A2B" stroke="#F87171" stroke-width="2.5"/>
+<text x="622" y="149" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6EEF8" text-anchor="start"><tspan x="622" dy="0">1  Create a new USB (erases it)</tspan></text>
+<rect x="600" y="190" width="418" height="56" rx="10" fill="none" stroke="#60A5FA" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="190" width="418" height="56" rx="10" fill="#111A2B" stroke="#60A5FA" stroke-width="2.5"/>
+<text x="622" y="227" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6EEF8" text-anchor="start"><tspan x="622" dy="0">2  Add an ISO, SHA-256 checked</tspan></text>
+<path d="M1022 140 L 1050 140 L 1050 218 L 1026 218" fill="none" stroke="#3B4E6B" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-muted)"/>
+<rect x="36" y="276" width="210" height="150" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<rect x="113.7" y="292" width="54.6" height="33.9" rx="7" fill="#111A2B" stroke="#E6EEF8" stroke-width="3"/><rect x="120.7" y="299" width="40.6" height="19.9" rx="3" fill="#0E1626"/><path d="M106 332.9 L111.7 327.9 L170.3 327.9 L176 332.9 Z" fill="#E6EEF8" stroke="#E6EEF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="141" y="376" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="800" fill="#E6EEF8" text-anchor="middle"><tspan x="141" dy="0">macOS</tspan></text>
+<text x="141" y="408" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9FB0C8" text-anchor="middle"><tspan x="141" dy="0">13.5 or later</tspan></text>
+<path d="M250 351 L 282 351" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<rect x="290" y="306" width="262" height="90" rx="10" fill="none" stroke="#60A5FA" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="290" y="306" width="262" height="90" rx="10" fill="#111A2B" stroke="#60A5FA" stroke-width="2.5"/>
+<text x="421" y="344" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" font-weight="700" fill="#60A5FA" text-anchor="middle"><tspan x="421" dy="0">./ventoy.sh</tspan></text>
+<text x="421" y="378" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9FB0C8" text-anchor="middle"><tspan x="421" dy="0">Terminal</tspan></text>
+<path d="M556 351 L 574 351 L 574 312 L 596 312" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<path d="M574 351 L 574 390 L 596 390" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<rect x="600" y="284" width="418" height="56" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="284" width="418" height="56" rx="10" fill="#111A2B" stroke="#F87171" stroke-width="2.5"/>
+<text x="622" y="321" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6EEF8" text-anchor="start"><tspan x="622" dy="0">1  Mactoy creates it (erases USB)</tspan></text>
+<rect x="600" y="362" width="418" height="56" rx="10" fill="none" stroke="#60A5FA" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="362" width="418" height="56" rx="10" fill="#111A2B" stroke="#60A5FA" stroke-width="2.5"/>
+<text x="622" y="399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6EEF8" text-anchor="start"><tspan x="622" dy="0">2  Add an ISO, SHA-256 checked</tspan></text>
+<path d="M1022 312 L 1050 312 L 1050 390 L 1026 390" fill="none" stroke="#3B4E6B" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-muted)"/>
+<rect x="36" y="448" width="210" height="150" rx="10" fill="#111A2B" stroke="#3B4E6B" stroke-width="1.5"/>
+<rect x="112" y="460" width="58" height="36" rx="8" fill="#111A2B" stroke="#E6EEF8" stroke-width="3"/><rect x="120" y="468" width="42" height="20" rx="4" fill="#0E1626"/><path d="M136.4 496 L134.6 504.1 L147.4 504.1 L145.6 496" fill="#E6EEF8" stroke="#E6EEF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="128.2" y="503.5" width="25.5" height="2.9" rx="3" fill="#E6EEF8"/>
+<text x="141" y="548" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="28" font-weight="800" fill="#E6EEF8" text-anchor="middle"><tspan x="141" dy="0">Linux</tspan></text>
+<text x="141" y="580" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9FB0C8" text-anchor="middle"><tspan x="141" dy="0">uses sudo</tspan></text>
+<path d="M250 523 L 282 523" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<rect x="290" y="478" width="262" height="90" rx="10" fill="none" stroke="#60A5FA" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="290" y="478" width="262" height="90" rx="10" fill="#111A2B" stroke="#60A5FA" stroke-width="2.5"/>
+<text x="421" y="516" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" font-weight="700" fill="#60A5FA" text-anchor="middle"><tspan x="421" dy="0">./ventoy.sh</tspan></text>
+<text x="421" y="550" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9FB0C8" text-anchor="middle"><tspan x="421" dy="0">Terminal</tspan></text>
+<path d="M556 523 L 574 523 L 574 484 L 596 484" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<path d="M574 523 L 574 562 L 596 562" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-go)"/>
+<rect x="600" y="456" width="418" height="56" rx="10" fill="none" stroke="#F87171" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="456" width="418" height="56" rx="10" fill="#111A2B" stroke="#F87171" stroke-width="2.5"/>
+<text x="622" y="493" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6EEF8" text-anchor="start"><tspan x="622" dy="0">1  Create a new USB (erases it)</tspan></text>
+<rect x="600" y="534" width="418" height="56" rx="10" fill="none" stroke="#60A5FA" stroke-width="6" opacity="0.45" filter="url(#pick-d-glow)"/><rect x="600" y="534" width="418" height="56" rx="10" fill="#111A2B" stroke="#60A5FA" stroke-width="2.5"/>
+<text x="622" y="571" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#E6EEF8" text-anchor="start"><tspan x="622" dy="0">2  Copy ISOs from a folder</tspan></text>
+<path d="M1022 484 L 1050 484 L 1050 562 L 1026 562" fill="none" stroke="#3B4E6B" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#pick-d-muted)"/>
+<text x="36" y="634" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif" font-size="24" font-weight="400" fill="#9FB0C8" text-anchor="start"><tspan x="36" dy="0">Red: this option erases the USB. Dashed: option 1 continues</tspan><tspan x="36" dy="32.4">with option 2 when it finishes.</tspan></text>
 </g>
-<rect x="0.75" y="0.75" width="1098.5" height="696.5" rx="23.25" fill="none" stroke="#1D302C" stroke-width="1.5"/>
+<rect x="0.75" y="0.75" width="1098.5" height="696.5" rx="23.25" fill="none" stroke="#1C2A42" stroke-width="1.5"/>
 </svg>

@@ -3,7 +3,7 @@
 // here, then `node scripts/check-graphics.mjs`. No dependencies: Node 20 or later only.
 //
 // The look: a circuit board. Every graphic sits on a board with a dot grid and faint traces, and the main shapes are a
-// generic USB stick, ISO discs and computers. Teal traces carry the flow, an amber LED marks the USB, and red marks a
+// generic USB stick, ISO discs and computers. Blue traces carry the flow, an orange LED marks the USB, and red marks a
 // step that erases or fails. Original shapes only: no logos or trademarks of any product, company or Linux distribution;
 // the graphics name each system in plain text.
 //
@@ -15,10 +15,13 @@ import { fileURLToPath } from "node:url";
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), "../docs/assets");
 
-/** The two themes. Light is a pale green board with dark teal traces; dark is a night-blue board with bright teal. */
+/** The two themes. Light is a pale blue-grey board with dark blue traces; dark is a night-blue board with bright blue.
+ *  Each accent has one meaning: blue (go) is the main flow, orange (led) is a tip or attention (the USB LED, the ISO disc
+ *  shine), purple (iso) is the ISO files and the Mactoy hand-off, red (bad) is only "erases the USB" or an error, and green
+ *  (ok) is only the one success box. Text on a coloured fill stays 4.5:1 or more. */
 const THEMES = {
-  light: { dark: false, bg: "#F2F7F6", dot: "#0F766E", dotOp: 0.13, traceOp: 0.16, tile: "#FFFFFF", panel: "#E5EFED", ink: "#0B1F1C", muted: "#46625C", line: "#8DB0A8", go: "#0F766E", led: "#D97706", bad: "#C2362B", ok: "#15803D", border: "#D0E0DC", glowOp: 0.22, stick: "#0F766E", stickInk: "#FFFFFF", metal: "#C9D3D1", disc: "#E4ECEA", hub: "#F2F7F6" },
-  dark: { dark: true, bg: "#0A1316", dot: "#2DD4BF", dotOp: 0.1, traceOp: 0.14, tile: "#111D20", panel: "#0E191C", ink: "#E6F4F1", muted: "#9DB9B3", line: "#3D5A54", go: "#2DD4BF", led: "#FBBF24", bad: "#F87171", ok: "#4ADE80", border: "#1D302C", glowOp: 0.45, stick: "#115E59", stickInk: "#E6FFFA", metal: "#5B6B69", disc: "#1B2B2E", hub: "#0A1316" },
+  light: { dark: false, bg: "#F3F6FA", dot: "#1D4ED8", dotOp: 0.13, traceOp: 0.16, tile: "#FFFFFF", panel: "#E6EDF6", ink: "#0B1424", muted: "#475569", line: "#94A8C4", go: "#1D4ED8", led: "#B45309", iso: "#7E22CE", bad: "#C81E1E", ok: "#15803D", border: "#D3DEEC", glowOp: 0.22, stick: "#1D4ED8", stickInk: "#FFFFFF", metal: "#C9D1DC", disc: "#E5EBF3", hub: "#F3F6FA" },
+  dark: { dark: true, bg: "#0A0F1A", dot: "#60A5FA", dotOp: 0.1, traceOp: 0.14, tile: "#111A2B", panel: "#0E1626", ink: "#E6EEF8", muted: "#9FB0C8", line: "#3B4E6B", go: "#60A5FA", led: "#FB923C", iso: "#C084FC", bad: "#F87171", ok: "#4ADE80", border: "#1C2A42", glowOp: 0.45, stick: "#1E40AF", stickInk: "#EFF6FF", metal: "#5B6578", disc: "#1A2436", hub: "#0A0F1A" },
 };
 const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif";
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
@@ -101,7 +104,7 @@ function stick(t, id, x, y, w, h, label, labelSize) {
   ].join("");
 }
 
-/** An ISO disc: a silver ring, a hub and a short amber shine. */
+/** An ISO disc: a silver ring, a hub and a short orange shine. */
 function disc(t, cx, cy, r) {
   return [
     circle(cx, cy, r, { fill: t.disc, stroke: t.line, sw: 2 }),
@@ -114,7 +117,7 @@ function disc(t, cx, cy, r) {
 /** A desktop monitor, w wide, centred on cx with its top at y. mark: "power", "check" or none. */
 function monitor(t, cx, y, w, mark) {
   const h = w * 0.62, x = cx - w / 2;
-  const sign = mark === "check" ? path(`M${f1(cx - h * 0.16)} ${f1(y + h * 0.5)} L${f1(cx - h * 0.04)} ${f1(y + h * 0.62)} L${f1(cx + h * 0.2)} ${f1(y + h * 0.36)}`, { stroke: t.ok, sw: f1(w * 0.05) })
+  const sign = mark === "check" ? path(`M${f1(cx - h * 0.16)} ${f1(y + h * 0.5)} L${f1(cx - h * 0.04)} ${f1(y + h * 0.62)} L${f1(cx + h * 0.2)} ${f1(y + h * 0.36)}`, { stroke: t.go, sw: f1(w * 0.05) })
     : mark === "power" ? path(`M${f1(cx - h * 0.13)} ${f1(y + h * 0.38)} A${f1(h * 0.18)} ${f1(h * 0.18)} 0 1 0 ${f1(cx + h * 0.13)} ${f1(y + h * 0.38)} M${cx} ${f1(y + h * 0.28)} L${cx} ${f1(y + h * 0.5)}`, { stroke: t.go, sw: f1(w * 0.045) }) : "";
   return [
     rect(x, y, w, h, { rx: 8, fill: t.tile, stroke: t.ink, sw: 3 }),
@@ -141,7 +144,7 @@ const badge = (t, cx, cy, r, n, color) => circle(cx, cy, r, { fill: color }) + t
 /** A label in capitals, the heading inside a graphic. */
 const heading = (t, x, y, s) => text(x, y, s, { size: SMALL, weight: 800, fill: t.go, ls: 2 });
 
-/** A box with an optional glow. kind: go (teal edge), bad (red edge), ok (green edge), plain. */
+/** A box with an optional glow. kind: go (blue edge), bad (red edge), ok (green edge), plain. */
 function box(t, id, x, y, w, h, kind = "plain") {
   const color = { go: t.go, bad: t.bad, ok: t.ok }[kind] ?? t.line;
   return (kind === "plain" ? "" : rect(x, y, w, h, { rx: 10, stroke: color, sw: 6, opacity: t.glowOp, filter: `url(#${id}-glow)` })) +
@@ -173,7 +176,7 @@ function hero(t, id) {
     out.push(text(cx, 438, label, { size: S, weight: 700, fill: t.ink, anchor: "middle" }));
     out.push(flow(id, `M${cx} 452 L ${cx} 512`, t.go, "go", { dash: "7 7" }));
   }
-  out.push(text(1000, 360, "+ more", { size: S, weight: 700, fill: t.muted }));
+  out.push(text(1000, 360, "+ more", { size: S, weight: 700, fill: t.iso }));
   // The stick.
   out.push(stick(t, id, 530, 520, 470, 84, "MULTIBOOT USB", 30));
   // The target PC.
@@ -204,7 +207,7 @@ function pick(t, id) {
     const py1 = y + 8, py2 = y + rowH - 64;
     out.push(flow(id, `M556 ${mid} L 574 ${mid} L 574 ${py1 + 28} L 596 ${py1 + 28}`, t.go, "go"), flow(id, `M574 ${mid} L 574 ${py2 + 28} L 596 ${py2 + 28}`, t.go, "go"));
     out.push(box(t, id, 600, py1, 418, 56, "bad"), text(622, py1 + 37, o1, { size: SMALL, weight: 700, fill: t.ink }));
-    out.push(box(t, id, 600, py2, 418, 56, "ok"), text(622, py2 + 37, o2, { size: SMALL, weight: 700, fill: t.ink }));
+    out.push(box(t, id, 600, py2, 418, 56, "go"), text(622, py2 + 37, o2, { size: SMALL, weight: 700, fill: t.ink }));
     // Option 1 continues to option 2 when it finishes.
     out.push(flow(id, `M1022 ${py1 + 28} L 1050 ${py1 + 28} L 1050 ${py2 + 28} L 1026 ${py2 + 28}`, t.line, "muted", { dash: "6 6" }));
   });
@@ -279,16 +282,17 @@ function copy(t, id) {
 }
 
 /** A tip: a USB stick in a round badge on the left, and the tip in a framed card to the right. */
-const tip = (lines, label, seed) => (t, id) => {
+const tip = (lines, label, seed, accent = "led") => (t, id) => {
+  const a = t[accent];
   const W = 1100, size = 24, lh = 1.4, H = 120 + lines.length * size * lh + 30;
   const sx = 210, sy = 30, sw = W - 36 - sx, sh = H - 60;
   const body = [
-    circle(110, H / 2, 82, { fill: t.led, opacity: t.glowOp, filter: `url(#${id}-glow)` }),
-    circle(110, H / 2, 74, { fill: t.tile, stroke: t.led, sw: 3 }),
+    circle(110, H / 2, 82, { fill: a, opacity: t.glowOp, filter: `url(#${id}-glow)` }),
+    circle(110, H / 2, 74, { fill: t.tile, stroke: a, sw: 3 }),
     stick(t, id, 82, H / 2 - 22, 80, 44, "", 0),
     box(t, id, sx, sy, sw, sh, "plain"),
-    rect(sx, sy, 8, sh, { rx: 4, fill: t.led }),
-    text(sx + 40, sy + 52, "TIP", { size: SMALL, weight: 800, fill: t.led, ls: 2 }),
+    rect(sx, sy, 8, sh, { rx: 4, fill: a }),
+    text(sx + 40, sy + 52, "TIP", { size: SMALL, weight: 800, fill: a, ls: 2 }),
     text(sx + 40, sy + 94, lines, { size, weight: 600, fill: t.ink, lh }),
   ].join("\n");
   return svg(t, id, W, Math.round(H), seed, body, label);
@@ -297,7 +301,7 @@ const tip = (lines, label, seed) => (t, id) => {
 const GRAPHICS = {
   hero, pick, journey, copy,
   "tip-yes": tip(["Type YES only after you check the disk name and size.", "At “Select USB by list number”, type the number", "in [ ], not the disk number or the drive letter."], "Tip: type YES only after you check the disk name and size. At Select USB by list number, type the number in square brackets, not the disk number or the drive letter.", 61),
-  "tip-mactoy": tip(["Check Mactoy before you give it Full Disk Access:", "the .dmg must match its .sha256 file, and", "spctl -a -vv must show “Notarized Developer ID”."], "Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show source=Notarized Developer ID.", 67),
+  "tip-mactoy": tip(["Check Mactoy before you give it Full Disk Access:", "the .dmg must match its .sha256 file, and", "spctl -a -vv must show “Notarized Developer ID”."], "Tip: check Mactoy before you give it Full Disk Access. The SHA-256 of the .dmg file must match its .sha256 file, and spctl -a -vv must show source=Notarized Developer ID.", 67, "iso"),
 };
 
 /** Every graphic in both themes, as [file name, SVG]. The ids in a file start with its own name and theme, so that

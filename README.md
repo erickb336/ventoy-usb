@@ -7,9 +7,9 @@
 
 <p align="center">
   <a href="https://github.com/erickb336/ventoy-usb/actions/workflows/validate.yml"><img alt="Safe validation" src="https://github.com/erickb336/ventoy-usb/actions/workflows/validate.yml/badge.svg"></a>
-  <img alt="Runs on Windows, macOS and Linux" src="https://img.shields.io/badge/runs%20on-Windows%20%7C%20macOS%20%7C%20Linux-0F766E">
-  <img alt="No sudo on macOS" src="https://img.shields.io/badge/macOS-no%20sudo-0F766E">
-  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-0F766E"></a>
+  <img alt="Runs on Windows, macOS and Linux" src="https://img.shields.io/badge/runs%20on-Windows%20%7C%20macOS%20%7C%20Linux-1D4ED8">
+  <img alt="No sudo on macOS" src="https://img.shields.io/badge/macOS-no%20sudo-1D4ED8">
+  <a href="LICENSE"><img alt="MIT licence" src="https://img.shields.io/badge/licence-MIT-1D4ED8"></a>
 </p>
 
 # Ventoy USB Setup for Windows, macOS and Linux
