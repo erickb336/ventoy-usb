@@ -648,6 +648,63 @@ download 'https://a.test/x.iso' 'https://b.test/X.iso?y=1'
 check "same name: exit code 1" 1 "$rc"
 contains "same name: clear message" "Two URLs give the same file name: X.iso. Give each ISO once. Aborted." "$out"
 check "same name: nothing downloaded" "" "$(cat "$stub/calls" 2>/dev/null)"
+rm -f "$stub/calls"
+download 'https://a.test/x.iso' 'HTTP://b.test/y.iso'
+check "http URL: exit code 1" 1 "$rc"
+contains "http URL: clear message" "Only https URLs are allowed: HTTP://b.test/y.iso. Aborted." "$out"
+check "http URL: nothing downloaded" "" "$(cat "$stub/calls" 2>/dev/null)"
+
+echo "== Installer downloads with the real curl: a redirect from https to http is refused (local TLS server)"
+if ! command -v python3 >/dev/null || ! command -v openssl >/dev/null; then
+  skip "needs python3 and openssl"
+else
+  srv=$work/tls
+  mkdir -p "$srv"
+  openssl req -x509 -newkey rsa:2048 -nodes -keyout "$srv/key.pem" -out "$srv/cert.pem" -days 2 -subj /CN=127.0.0.1 \
+    -addext subjectAltName=IP:127.0.0.1 >/dev/null 2>&1
+  # The TLS server: /ok.iso serves a file; /redir.iso redirects to the plain http server, which serves the file too;
+  # /chain.iso redirects to https /redir.iso first. Without the https-only rule, each of the three downloads works.
+  cat >"$srv/server.py" <<EOF
+import http.server, ssl, threading
+plain = http.server.HTTPServer(('127.0.0.1', 0), http.server.BaseHTTPRequestHandler)
+class H(http.server.BaseHTTPRequestHandler):
+    def log_message(self, *a): pass
+    def do_GET(self):
+        if self.path == '/ok.iso':
+            self.send_response(200); self.end_headers(); self.wfile.write(b'ISO ok')
+        elif self.path == '/chain.iso':
+            self.send_response(302); self.send_header('Location', 'https://127.0.0.1:%d/redir.iso' % self.server.server_address[1]); self.end_headers()
+        else:
+            self.send_response(302); self.send_header('Location', 'http://127.0.0.1:%d/ok.iso' % plain.server_address[1]); self.end_headers()
+plain.RequestHandlerClass = H
+threading.Thread(target=plain.serve_forever, daemon=True).start()
+s = http.server.HTTPServer(('127.0.0.1', 0), H)
+ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER); ctx.load_cert_chain('$srv/cert.pem', '$srv/key.pem')
+s.socket = ctx.wrap_socket(s.socket, server_side=True)
+open('$srv/port', 'w').write(str(s.server_address[1]))
+s.serve_forever()
+EOF
+  python3 "$srv/server.py" &
+  srv_pid=$!
+  for _ in $(seq 50); do [[ -s "$srv/port" ]] && break; sleep 0.1; done
+  port=$(cat "$srv/port")
+  tls_download() { # <url>...: download_isos with the real curl, which trusts the test certificate
+    out=$(cd "$root" && CURL_CA_BUNDLE=$srv/cert.pem TMPDIR=$work/dltmp bash -c 'source "$1"; shift; download_isos "$@"; echo "DIR=$TEMP_ISO_DIR"' _ "$installer" "$@" 2>&1)
+    rc=$?
+    dir=$(sed -n 's/^DIR=//p' <<<"$out")
+  }
+  tls_download "https://127.0.0.1:$port/ok.iso"
+  check "https without a redirect: exit code 0" 0 "$rc"
+  check "https without a redirect: file downloaded" "ISO ok" "$(cat "$dir/ok.iso" 2>/dev/null)"
+  check "the redirect target serves the file to a curl without the https-only rule" "ISO ok" "$(CURL_CA_BUNDLE=$srv/cert.pem curl -fsL "https://127.0.0.1:$port/redir.iso" 2>/dev/null)"
+  for p in redir chain; do
+    tls_download "https://127.0.0.1:$port/$p.iso"
+    check "$p: redirect to http: exit code 1" 1 "$rc"
+    check "$p: redirect to http: nothing downloaded" "" "$(ls -A "$dir" 2>/dev/null)"
+  done
+  kill "$srv_pid" 2>/dev/null
+  wait "$srv_pid" 2>/dev/null
+fi
 
 echo "== Install hand-off: a download that is not copied (a hidden file) keeps the downloads; the command is pasteable"
 stub=$work/stub-handoff
@@ -711,10 +768,47 @@ echo "Install Ventoy to \$2 successfully finished."
 EOF
   chmod +x "$e2e/pkg/ventoy-9.9.9/Ventoy2Disk.sh"
   tar -czf "$e2e/ventoy.tar.gz" -C "$e2e/pkg" ventoy-9.9.9
+  pkg_sha=$(sha256sum "$e2e/ventoy.tar.gz" | cut -d' ' -f1)
+  # release_json <digest line of the linux asset>: the GitHub release JSON as the API prints it, with another asset
+  # before and after the linux package, each with its own digest.
+  release_json() {
+    cat >"$e2e/release.json" <<EOF
+{
+  "tag_name": "v9.9.9",
+  "name": "Ventoy 9.9.9 release",
+  "assets": [
+    {
+      "name": "sha256.txt",
+      "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "browser_download_url": "https://github.com/ventoy/Ventoy/releases/download/v9.9.9/sha256.txt"
+    },
+    {
+      "name": "ventoy-9.9.9-linux.tar.gz",
+      "content_type": "application/gzip",
+      "size": 12,
+      $1
+      "browser_download_url": "https://github.com/ventoy/Ventoy/releases/download/v9.9.9/ventoy-9.9.9-linux.tar.gz"
+    },
+    {
+      "name": "ventoy-9.9.9-windows.zip",
+      "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "browser_download_url": "https://github.com/ventoy/Ventoy/releases/download/v9.9.9/ventoy-9.9.9-windows.zip"
+    }
+  ]
+}
+EOF
+  }
+  release_json "\"digest\": \"sha256:$pkg_sha\","
   cat >"$stub/curl" <<EOF
 #!/usr/bin/env bash
 while (( \$# )); do case \$1 in -o) out=\$2; shift ;; esac; url=\$1; shift; done
-case \$url in *-linux.tar.gz) cp "$e2e/ventoy.tar.gz" "\$out" ;; *) printf 'ISO %s' "\$url" >"\$out" ;; esac
+echo "\$url" >>"$e2e/curl.log"
+case \$url in
+  *api.github.com/*/releases/tags/v9.9.9) cat "$e2e/release.json" ;;
+  *api.github.com/*) exit 22 ;;
+  *-linux.tar.gz) cp "$e2e/ventoy.tar.gz" "\$out" ;;
+  *) printf 'ISO %s' "\$url" >"\$out" ;;
+esac
 EOF
   cat >"$stub/lsblk" <<EOF
 #!/usr/bin/env bash
@@ -734,18 +828,25 @@ case "\$*" in
   *) exec "$real_findmnt" "\$@" ;;
 esac
 EOF
-  # sudo runs the command as this user. partprobe fails when the file partprobe-fails exists.
-  printf '#!/usr/bin/env bash\nwhile [[ "$1" == -* ]]; do shift; done\nexec "$@"\n' >"$stub/sudo"
+  # sudo runs the command as this user and logs it. partprobe fails when the file partprobe-fails exists.
+  printf '#!/usr/bin/env bash\necho "$*" >>"%s/sudo.log"\nwhile [[ "$1" == -* ]]; do shift; done\nexec "$@"\n' "$e2e" >"$stub/sudo"
   printf '#!/usr/bin/env bash\n[[ ! -e "%s/partprobe-fails" ]]\n' "$e2e" >"$stub/partprobe"
   printf '#!/usr/bin/env bash\nexit 0\n' >"$stub/udevadm"
   cp "$stub/udevadm" "$stub/umount"
   cp "$stub/udevadm" "$stub/sleep"
   chmod +x "$stub"/*
-  install_run() { # <input>: run the installer with the stubs, from a copy of the scripts
-    rm -f "$e2e/installed"
-    out=$(cd "$e2e/app" && TMPDIR=$e2e/tmp PATH="$stub:$PATH" bash ventoy-install.sh 9.9.9 <<<"$1" 2>&1)
+  install_run() { # <input> [argument]...: run the installer with the stubs, from a copy of the scripts
+    rm -rf "$e2e/installed" "$e2e/sudo.log" "$e2e/curl.log" "$e2e/app/ventoy-9.9.9" "$e2e/app/ventoy.tar.gz"
+    out=$(cd "$e2e/app" && TMPDIR=$e2e/tmp PATH="$stub:$PATH" bash ventoy-install.sh 9.9.9 "${@:2}" <<<"$1" 2>&1)
     rc=$?
     dl=$(sed -n 's/^📥 Downloading ISOs to \(.*\)\.\.\.$/\1/p' <<<"$out")
+  }
+  # unverified <name>: the package was not used: no sudo (chmod, Ventoy2Disk), no extraction, download removed
+  unverified() {
+    check "$1: exit code 1" 1 "$rc"
+    check "$1: nothing ran with sudo" "" "$(cat "$e2e/sudo.log" 2>/dev/null)"
+    check "$1: Ventoy2Disk did not run" "" "$(ls "$e2e/installed" 2>/dev/null)"
+    check "$1: package not extracted, download removed" "ventoy-add-isos.sh ventoy-install.sh" "$(ls -A "$e2e/app" | LC_ALL=C sort | tr '\n' ' ' | sed 's/ $//')"
   }
 
   install_run "$loop_dev
@@ -754,6 +855,7 @@ yhttps://example.test/one.iso?x=1 https://example.test/get
 y
 y"
   check "complete run: exit code 0" 0 "$rc"
+  contains "complete run: SHA-256 verified" "✅ SHA-256 verified." "$out"
   contains "complete run: end message" "🎉 Ventoy USB is ready!" "$out"
   check "complete run: ISOs on the USB" "get.iso one.iso" "$(ls -A "$e2e/usb" | LC_ALL=C sort | tr '\n' ' ' | sed 's/ $//')"
   [[ -n "$dl" && ! -e "$dl" ]] && pass "complete run: downloads removed" || fail "complete run: downloads removed: [$dl]"
@@ -811,6 +913,51 @@ y
   check "TEMP_ISO_DIR from the environment: exit code 0" 0 "$rc"
   [[ -e "$e2e/other/other.iso" ]] && pass "TEMP_ISO_DIR from the environment: not removed" || fail "TEMP_ISO_DIR from the environment: not removed"
   [[ -e "$e2e/usb/other.iso" ]] && fail "TEMP_ISO_DIR from the environment: not copied" || pass "TEMP_ISO_DIR from the environment: not copied"
+
+  echo "== Installer verification: the package runs as root only when its SHA-256 matches the release digest"
+  input="$loop_dev
+YES
+Ny
+y
+"
+  release_json '"digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",'
+  install_run "$input"
+  unverified "digest mismatch"
+  contains "digest mismatch: clear message" "❌ SHA-256 mismatch for ventoy-9.9.9-linux.tar.gz. The download was removed and nothing was installed." "$out"
+  contains "digest mismatch: expected" "expected: 3333333333333333333333333333333333333333333333333333333333333333" "$out"
+  contains "digest mismatch: got" "got:      $pkg_sha" "$out"
+
+  release_json ''
+  install_run "$input"
+  unverified "digest missing"
+  contains "digest missing: clear message" "❌ The GitHub release v9.9.9 gives no SHA-256 digest for ventoy-9.9.9-linux.tar.gz, so the download cannot be verified." "$out"
+  contains "digest missing: override named" "./ventoy-install.sh 9.9.9 --sha256 <hex>" "$out"
+  check "digest missing: no package download" 0 "$(grep -c -- '-linux.tar.gz' "$e2e/curl.log")"
+
+  install_run "$input" --sha256 "$(tr 'a-f' 'A-F' <<<"$pkg_sha")"
+  check "--sha256 override: exit code 0" 0 "$rc"
+  contains "--sha256 override: verified" "✅ SHA-256 verified." "$out"
+  contains "--sha256 override: end message" "🎉 Ventoy USB is ready!" "$out"
+  check "--sha256 override: release not read" 0 "$(grep -c api.github.com "$e2e/curl.log")"
+
+  install_run "$input" --sha256 4444444444444444444444444444444444444444444444444444444444444444
+  unverified "--sha256 mismatch"
+  contains "--sha256 mismatch: clear message" "❌ SHA-256 mismatch for ventoy-9.9.9-linux.tar.gz." "$out"
+
+  install_run "$input" --sha256 abc
+  unverified "--sha256 not a SHA-256"
+  contains "--sha256 not a SHA-256: clear message" "❌ --sha256 needs the 64 hex characters of the expected SHA-256." "$out"
+
+  install_run "$input" --skip-verify
+  unverified "no skip option"
+  contains "no skip option: clear message" "❌ Unknown option: --skip-verify." "$out"
+
+  release_json "\"digest\": \"sha256:$pkg_sha\","
+  mv "$e2e/ventoy.tar.gz" "$e2e/real.tar.gz"
+  tar --mtime=@1 -czf "$e2e/ventoy.tar.gz" -C "$e2e/pkg" ventoy-9.9.9
+  install_run "$input"
+  unverified "altered download"
+  mv "$e2e/real.tar.gz" "$e2e/ventoy.tar.gz"
 fi
 
 echo
