@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [ "$(uname -s)" = Darwin ]; then
+    exec /bin/bash "$(dirname "$0")/macos/ventoy-mac.sh" "$@"
+fi
+
 echo "🚀 Ventoy USB Manager"
 echo "Choose an option:"
 echo "1. Install Ventoy on a USB drive"
