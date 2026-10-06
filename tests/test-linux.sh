@@ -662,19 +662,22 @@ else
   mkdir -p "$srv"
   openssl req -x509 -newkey rsa:2048 -nodes -keyout "$srv/key.pem" -out "$srv/cert.pem" -days 2 -subj /CN=127.0.0.1 \
     -addext subjectAltName=IP:127.0.0.1 >/dev/null 2>&1
-  # /ok.iso serves a file; /redir.iso and /chain.iso redirect: the first to http, the second to https and then to http.
+  # The TLS server: /ok.iso serves a file; /redir.iso redirects to the plain http server, which serves the file too;
+  # /chain.iso redirects to https /redir.iso first. Without the https-only rule, each of the three downloads works.
   cat >"$srv/server.py" <<EOF
-import http.server, ssl, sys
+import http.server, ssl, threading
+plain = http.server.HTTPServer(('127.0.0.1', 0), http.server.BaseHTTPRequestHandler)
 class H(http.server.BaseHTTPRequestHandler):
     def log_message(self, *a): pass
     def do_GET(self):
-        port = self.server.server_address[1]
         if self.path == '/ok.iso':
             self.send_response(200); self.end_headers(); self.wfile.write(b'ISO ok')
         elif self.path == '/chain.iso':
-            self.send_response(302); self.send_header('Location', 'https://127.0.0.1:%d/redir.iso' % port); self.end_headers()
+            self.send_response(302); self.send_header('Location', 'https://127.0.0.1:%d/redir.iso' % self.server.server_address[1]); self.end_headers()
         else:
-            self.send_response(302); self.send_header('Location', 'http://127.0.0.1:%d/ok.iso' % port); self.end_headers()
+            self.send_response(302); self.send_header('Location', 'http://127.0.0.1:%d/ok.iso' % plain.server_address[1]); self.end_headers()
+plain.RequestHandlerClass = H
+threading.Thread(target=plain.serve_forever, daemon=True).start()
 s = http.server.HTTPServer(('127.0.0.1', 0), H)
 ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER); ctx.load_cert_chain('$srv/cert.pem', '$srv/key.pem')
 s.socket = ctx.wrap_socket(s.socket, server_side=True)
@@ -693,6 +696,7 @@ EOF
   tls_download "https://127.0.0.1:$port/ok.iso"
   check "https without a redirect: exit code 0" 0 "$rc"
   check "https without a redirect: file downloaded" "ISO ok" "$(cat "$dir/ok.iso" 2>/dev/null)"
+  check "the redirect target serves the file to a curl without the https-only rule" "ISO ok" "$(CURL_CA_BUNDLE=$srv/cert.pem curl -fsL "https://127.0.0.1:$port/redir.iso" 2>/dev/null)"
   for p in redir chain; do
     tls_download "https://127.0.0.1:$port/$p.iso"
     check "$p: redirect to http: exit code 1" 1 "$rc"
