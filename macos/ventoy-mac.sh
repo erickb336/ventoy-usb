@@ -44,16 +44,20 @@ echo "Ventoy USB Setup (macOS)"
 echo "[1] Create a new Ventoy USB (with Mactoy)"
 echo "[2] Add ISO to existing Ventoy USB"
 read -r -p "Select: " action || exit 1
+hint=""
 case "$action" in
-    1) open_mactoy ;;
+    1)
+        open_mactoy
+        hint="If Mactoy finished, unplug and reconnect the USB, then run ./ventoy.sh and choose 2."
+        ;;
     2) ;;
     *) die "Invalid selection." ;;
 esac
 
 echo
-mac_select_disk
+mac_select_disk "$hint"
 mac_prepare_volume "$VT_SELECTED_DISK" "$VT_SELECTED_UUID"
-echo "Ventoy data volume: $VT_MOUNT ($VT_FS)"
+echo "Ventoy data volume: $(mac_clean "$VT_MOUNT") ($VT_FS)"
 mac_read_iso
 if [ -n "$VT_ISO" ]; then
     mac_copy_iso "$VT_SELECTED_DISK" "$VT_SELECTED_UUID" "$VT_ISO"

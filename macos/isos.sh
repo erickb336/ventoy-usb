@@ -76,8 +76,12 @@ mac_copy_cleanup() {
         VT_COPY_PID=""
     fi
     if [ -n "${VT_TMP:-}" ]; then
-        rm -f "$VT_TMP"
-        [ -e "$VT_TMP" ] && echo "Could not remove the temporary file $VT_TMP. Delete it yourself." >&2
+        # "._<name>" holds the file's extended attributes on exFAT and FAT32.
+        rm -f "$VT_TMP" "$(dirname "$VT_TMP")/._$(basename "$VT_TMP")"
+        # A missing folder means that the volume is not mounted, so the file can still be on the USB.
+        if [ -e "$VT_TMP" ] || [ ! -d "$(dirname "$VT_TMP")" ]; then
+            echo "The hidden temporary file $(basename "$VT_TMP") can remain on the USB. Connect the USB, then delete that file from its top folder (in Finder, press Shift-Command-. to show hidden files)." >&2
+        fi
         VT_TMP=""
     fi
 }
@@ -87,6 +91,7 @@ mac_copy_iso() {
     local disk=$1 uuid=$2 iso=$3 scope=${4:-physical}
     local name dest size mount avail start copied tmpname src_hash copy_hash
     mac_is_iso "$iso" || die "Select an existing, nonempty .iso file: $iso"
+    case "$iso" in /*) ;; *) iso=./$iso ;; esac # A name such as "-x.iso" is not an option.
     mac_prepare_volume "$disk" "$uuid" "$scope"
     mount=$VT_MOUNT
     name=$(basename "$iso")
@@ -103,7 +108,7 @@ mac_copy_iso() {
         die "Not enough free space on $mount."
     fi
 
-    echo "Copying $iso to /dev/$disk, $dest"
+    echo "Copying $iso to /dev/$disk, $(mac_clean "$dest")"
     # Recheck the disk and volume immediately before the first write.
     mac_same_volume "$disk" "$uuid" "$mount" "$scope" || die "The USB changed. Run again and select the USB again."
     trap mac_copy_cleanup EXIT
@@ -126,29 +131,33 @@ mac_copy_iso() {
     mac_progress "$copied" "$size" $((SECONDS - start))
     echo
     [ "$copied" = "$size" ] || die "Copy is incomplete."
+    # macOS keeps attributes such as com.apple.provenance in a "._" file on exFAT and FAT32.
+    # Remove it before the rename, so that no "._<name>.iso" file stays on the USB.
+    tmpname=$(basename "$VT_TMP")
+    rm -f "$mount/._$tmpname"
     echo "Flushing data to the USB. Please wait..."
     sync
 
     # Unmount and mount again, so the hash reads the USB and not the cache.
-    tmpname=$(basename "$VT_TMP")
     diskutil unmount "$VT_PART" >/dev/null || die "Could not unmount /dev/$VT_PART to verify the copy."
-    if ! diskutil mount "$VT_PART" >/dev/null; then
-        VT_TMP=""
-        die "Could not mount /dev/$VT_PART again. Mount it, then delete $tmpname from its top folder."
-    fi
-    mac_ventoy_disk "$disk" "$scope" && [ "$VT_UUID" = "$uuid" ] && [ -n "$VT_MOUNT" ] ||
-        { VT_TMP=""; die "The USB changed during the copy. Delete $tmpname from its top folder."; }
-    mount=$VT_MOUNT
-    dest=$mount/$name
-    VT_TMP=$mount/$tmpname
+    diskutil mount "$VT_PART" >/dev/null || die "Could not mount /dev/$VT_PART again."
+    mac_same_volume "$disk" "$uuid" "$mount" "$scope" ||
+        die "The USB changed during the copy. If its top folder has the hidden file $tmpname, delete it."
 
     echo "[2/3] Reading source ISO for SHA-256 verification..."
     src_hash=$(mac_sha256 "$iso")
     echo "[3/3] Reading USB copy for SHA-256 verification. Keep the USB connected..."
     copy_hash=$(mac_sha256 "$VT_TMP")
     [ -n "$src_hash" ] && [ "$src_hash" = "$copy_hash" ] || die "Copied ISO checksum mismatch."
-    mv -n "$VT_TMP" "$dest"
-    [ -e "$VT_TMP" ] && die "Already exists: $dest. It appeared during the copy; the copy was removed."
+    # mv has no "fail if the target exists" mode, so check before and after it.
+    if [ -e "$dest" ] || [ -L "$dest" ]; then
+        die "Already exists: $dest. It appeared during the copy; the copy was removed."
+    fi
+    mv -n "$VT_TMP" "$dest" || die "Could not rename the copy to $dest; the copy was removed."
+    if [ -e "$VT_TMP" ] || [ -L "$dest" ] || [ ! -f "$dest" ] || [ -e "$dest/$tmpname" ]; then
+        [ -e "$dest/$tmpname" ] && VT_TMP=$dest/$tmpname # mv put the copy into a new folder $dest.
+        die "Already exists: $dest. It appeared during the copy; the copy was removed."
+    fi
     VT_TMP=""
     trap - EXIT INT TERM
     echo "ISO copied and SHA-256 verified."

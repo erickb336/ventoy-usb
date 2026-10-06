@@ -8,8 +8,14 @@
 VT_EFI_SIZE=33554432 # Ventoy's VTOYEFI partition is exactly 32 MiB.
 
 die() {
-    echo "Error: $*" >&2
+    echo "Error: $(mac_clean "$*")" >&2
     exit 1
+}
+
+# Print $1 without control characters (C0, DEL and UTF-8 C1), so that a USB name
+# cannot send escape sequences to the terminal. Use it on text that the USB sets.
+mac_clean() {
+    printf '%s' "$1" | LC_ALL=C sed $'s/\xc2[\x80-\x9f]//g' | LC_ALL=C tr -d '\000-\037\177'
 }
 
 # plist_get <plist text> <key path>: print the raw value, or fail if the key is absent.
@@ -43,7 +49,7 @@ mac_ventoy_disk() {
     [ "$(plist_get "$info" WritableMedia)" = true ] || { VT_REASON="Disk $disk is read-only."; return 1; }
     VT_SIZE=$(plist_get "$info" Size) || return 1
     [ "$VT_SIZE" -gt 0 ] 2>/dev/null || return 1
-    VT_MEDIA=$(plist_get "$info" MediaName) || VT_MEDIA=""
+    VT_MEDIA=$(mac_clean "$(plist_get "$info" MediaName)")
 
     efi=$(diskutil info -plist "${disk}s2" 2>/dev/null) || return 1
     [ "$(plist_get "$efi" ParentWholeDisk)" = "$disk" ] &&
@@ -61,7 +67,7 @@ mac_ventoy_disk() {
         *) return 1 ;;
     esac
     VT_UUID=$(plist_get "$data" VolumeUUID) || return 1
-    VT_LABEL=$(plist_get "$data" VolumeName) || VT_LABEL=""
+    VT_LABEL=$(mac_clean "$(plist_get "$data" VolumeName)")
     VT_MOUNT=$(plist_get "$data" MountPoint) || VT_MOUNT=""
     VT_WRITABLE=$(plist_get "$data" WritableVolume) || VT_WRITABLE=false
     VT_PART=${disk}s1
@@ -84,13 +90,14 @@ mac_list_ventoy_disks() {
     done
 }
 
-# Ask for a list number. Set VT_SELECTED_DISK and VT_SELECTED_UUID.
+# mac_select_disk [hint] [scope]: ask for a list number. Set VT_SELECTED_DISK and VT_SELECTED_UUID.
+# <hint> follows "No Ventoy USB found." when no disk is eligible.
 mac_select_disk() {
-    local scope=${1:-physical} answer
+    local hint=${1:-Connect the USB and run again, or use option 1 to create one.} scope=${2:-physical} answer
     echo "Ventoy USB disks:"
     mac_list_ventoy_disks "$scope"
     if [ "${#VT_CAND_DISKS[@]}" -eq 0 ]; then
-        die "No Ventoy USB found. Connect the USB and run again, or use option 1 to create one."
+        die "No Ventoy USB found. $hint"
     fi
     read -r -p "Select USB by list number: " answer || die "No selection."
     case "$answer" in
