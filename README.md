@@ -298,18 +298,28 @@ You can also run the Linux scripts directly:
 
 Select a whole USB device such as `/dev/sdb`, not `/dev/sdb1`. Check `lsblk -o NAME,TRAN,SIZE,MODEL,LABEL,MOUNTPOINT` before confirming. The installer uses force-install (`-I`), which erases existing Ventoy installations too. It offers ISO URL downloads and copying from a local directory. Only use trusted direct ISO URLs; download Windows ISOs manually because Microsoft links can expire.
 
-`./ventoy-add-isos.sh` copies each `.iso` file of the folder and checks its SHA-256, as on Windows and macOS (see [The verified copy](#the-verified-copy)):
+The installer asks these questions, in this order:
+
+1. `Enter USB device (e.g. /dev/sdb):` type the whole device.
+2. `Type YES to continue:` type `YES` only after you check the device and back up its data.
+3. `Do you want to download ISO files from URLs first? (y/N):` press `y` to give ISO URLs, separated by spaces.
+4. `Continue? (y/n)` and then `Double-check. Continue? (y/n)`: Ventoy2Disk asks these two questions. Type `y` to both to install Ventoy. If you type `n`, the installer says "Ventoy was not installed" and stops.
+5. `Optional: directory containing ISO files (leave empty to skip):` only when you did not download ISOs.
+
+The installer saves each download under a name that ends in `.iso`. It removes the query (`?…`) and the fragment (`#…`) of the URL from the name, and adds `.iso` when the name does not end in `.iso`. When two URLs give the same name, it stops before any download.
+
+`./ventoy-add-isos.sh` copies each `.iso` file of the folder (`.iso` in any case, as on Windows; not the hidden files) and checks its SHA-256, as on Windows and macOS (see [The verified copy](#the-verified-copy)):
 
 - It never overwrites a file. When an ISO with the same name is already on the USB, it skips that ISO and tells you.
 - It refuses an ISO that is larger than the free space, or larger than 4 GiB minus 1 byte on FAT32.
-- At the end, it prints a summary: copied and SHA-256 verified, skipped, and failed. If it skipped or failed an ISO, it exits with code 1, and `./ventoy-install.sh` shows a warning instead of "Ventoy USB is ready".
+- At the end, it prints a summary: copied and SHA-256 verified, skipped, and failed. If an ISO failed, it exits with code 1, and `./ventoy-install.sh` shows a warning instead of "Ventoy USB is ready". An ISO that it skipped because it is already on the USB is not a failure.
 - It reads the ISO as your user. It uses sudo only for the USB (write and read-back), and only when the mount is not writable by you (for example, a mount made by root). It then asks for your password once, before the first copy.
 
 Linux keeps Ventoy's default partition style (MBR); the Windows path uses GPT. Which USB gets the ISOs:
 
-- `./ventoy-install.sh` copies the ISOs only to the USB that it just installed. It uses the `Ventoy` partition of the device that you selected, never a Ventoy USB of another device. If that partition is not mounted, the script mounts it at a new temporary folder and unmounts it at the end.
+- `./ventoy-install.sh` copies the ISOs only to the USB that it just installed. It uses the `Ventoy` partition of the device that you selected, never a Ventoy USB of another device. If that partition is not mounted, the script mounts it at a new folder in `/mnt` that only root can change, and unmounts it at the end.
 - `./ventoy-add-isos.sh` (option 2) finds the USB by its `Ventoy` label. The mount point that you give must be the mount point of a file system with that label, or the script asks before it continues. When two or more Ventoy USBs are connected, it lists them and asks which one to use.
-- When the installer cannot copy all the downloaded ISOs, it keeps them in their temporary folder. It shows the folder and the command to copy them later.
+- The installer removes the downloaded ISOs only when no ISO failed and each download is on the USB. Otherwise it keeps them in their temporary folder, also when it stops before the copy. It shows the folder and how to copy the ISOs later.
 
 ## The verified copy
 
@@ -331,7 +341,7 @@ Copying requires the standard Ventoy partition layout on the selected disk, chec
 
 Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes and after it mounts the USB again (if the USB mounts at a different folder, it continues there), it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**. It also removes the hidden `._` file in which macOS keeps file attributes on exFAT and FAT32, so Ventoy does not list a `._<name>.iso` file.
 
-Copy rules on Linux are the same, with these differences. It does not check the disk identity or the Ventoy partition layout: it checks only that the exact mount point that you give has the `Ventoy` label, and it does not check the disk again before it writes. It copies all the ISOs of a folder, one after the other. It skips an ISO whose name is already on the USB, and an error stops only that ISO; **Ctrl+C** stops all. It shows the progress of `dd` (bytes copied and speed). It reads the copy back with O_DIRECT, so that it reads the USB and not the page cache. If the file system does not support O_DIRECT, it drops the copy from the page cache, reads it again and prints a note. If it cannot remove the temporary file, it tells you its name, so that you can delete it.
+Copy rules on Linux are the same, with these differences. It does not check the disk identity or the Ventoy partition layout: it checks only that the exact mount point that you give has the `Ventoy` label, and it does not check the disk again before it writes. It copies all the ISOs of a folder, one after the other. It skips an ISO whose name is already on the USB, and an error stops only that ISO; **Ctrl+C** stops all. It shows the progress of `dd` (bytes copied and speed). It reads the copy back with O_DIRECT, so that it reads the USB and not the page cache. If the file system does not support O_DIRECT, it drops the copy from the page cache, reads it again and prints a note. When `fincore` cannot confirm that no part of the copy stays in the cache, the note says so. If it cannot remove the temporary file, it tells you its name, so that you can delete it.
 
 </details>
 
@@ -414,11 +424,13 @@ Open the list for the computer that prepares the USB.
 | Problem | Action |
 | --- | --- |
 | Linux: "Skipped: … already exists. It was not changed." | The USB already has a file with that name. The script never overwrites it. To replace it, delete the old ISO from the USB yourself, then run the script again. |
-| Linux: the summary shows a skipped or failed ISO, and the script exits with code 1 | Read the line of that ISO above the summary. The ISOs marked ✅ copied were verified. Fix the cause, then copy again with `./ventoy-add-isos.sh` (option 2); do not install Ventoy again. It skips the ISOs that are already on the USB. If `./ventoy-install.sh` downloaded the ISOs, it kept them and shows their folder and the command to use. |
+| Linux: the summary shows a failed ISO, and the script exits with code 1 | Read the line of that ISO above the summary. The ISOs marked ✅ copied were verified. Fix the cause, then copy again with `./ventoy-add-isos.sh` (option 2); do not install Ventoy again. It skips the ISOs that are already on the USB. If `./ventoy-install.sh` downloaded the ISOs, it kept them and shows their folder and how to copy them. |
+| Linux: "Ventoy was not installed on …" | Ventoy2Disk did not install Ventoy: you typed `n` at one of its two questions, or it stopped with an error (see its messages above). The installer keeps the downloaded ISOs and shows their folder. Run `./ventoy-install.sh` again and type `y` to both questions. |
+| Linux: "has a character that FAT32 and exFAT do not allow in a file name" | Rename the ISO without the characters `" * : < > ? \ \|`, then run the script again. |
 | Linux: "Expected 1 partition with the label Ventoy on …" | After the install, the installer did not find exactly one `Ventoy` partition on the device that you selected, so it copied nothing. Ventoy is installed. Unplug and reconnect the USB, check it with `lsblk -o NAME,LABEL,MOUNTPOINT`, then copy the ISOs with `./ventoy-add-isos.sh` (option 2). |
 | Linux: "sudo is necessary to write to it" | Your user cannot write to the mount point, for example because root mounted it. Type your password once. To copy without sudo, mount the USB as your user (for example, open it in your file manager). |
 | Linux: "sudo needs the password again" | The sudo time limit ended during a long run. Run the script again; it skips the ISOs that are already on the USB. |
-| Linux: "sudo on this computer asks for the password at each command" | Your sudo setting keeps no time limit (`timestamp_timeout=0`), so the script cannot copy with sudo. It stops before the first copy. Mount the USB as your user (open it in your file manager, or run `udisksctl mount -b /dev/<partition>`), then run the script again. |
+| Linux: "sudo on this computer asks for the password at each command" | Your sudo setting does not remember the password (`timestamp_timeout=0`), so the script cannot copy with sudo. It stops before the first copy. Mount the USB as your user (open it in your file manager, or run `udisksctl mount -b /dev/<partition>`), then run the script again. |
 | Linux: "does not appear to be a Ventoy mount point" | Give the mount point of the USB's large `Ventoy` partition itself, not a folder in it. Check it with `lsblk -o NAME,LABEL,MOUNTPOINT`. |
 | Linux: "Could not remove the temporary file" | Delete the hidden `.ventoy-copy-…` file named in the message from the top folder of the USB. |
 
