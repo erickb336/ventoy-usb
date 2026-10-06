@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check preserved Bash syntax (never run installer)
         run: bash -n ventoy.sh ventoy-install.sh ventoy-add-isos.sh
+      - name: Check the README graphics (preinstalled Node, no dependencies)
+        run: node --version && node scripts/check-graphics.mjs
   macos:
     runs-on: macos-latest
     steps:
