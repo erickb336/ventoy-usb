@@ -1,6 +1,6 @@
-# Ventoy USB Setup for Windows and Linux
+# Ventoy USB Setup for Windows, macOS and Linux
 
-Create a multiboot USB and copy installer ISOs using **native PowerShell on Windows** or the existing **Bash scripts on Linux**. Install Ventoy once; add ISOs later without reinstalling it.
+Create a multiboot USB and copy installer ISOs using **native PowerShell on Windows**, **native Bash on macOS** (with the Mactoy app to install Ventoy) or the existing **Bash scripts on Linux**. Install Ventoy once; add ISOs later without reinstalling it.
 
 **Creating a Ventoy USB erases every partition and file on the selected USB disk. Back it up first.** Adding an ISO does not reinstall Ventoy. Creating the USB does not install Windows or erase your PC; that is a separate operation on the target PC.
 
@@ -10,9 +10,9 @@ Create a multiboot USB and copy installer ISOs using **native PowerShell on Wind
 | --- | --- | --- |
 | Windows 10/11 (Intel/AMD) | Yes, native PowerShell | `ventoy.ps1` |
 | Linux | Yes, Bash and Linux disk utilities | `./ventoy.sh` |
-| macOS | No native support in this project | Use a Windows or Linux computer to prepare the USB |
+| macOS 13.5 or later (Apple silicon and Intel) | Yes: Mactoy installs Ventoy, and this utility copies ISOs natively | `./ventoy.sh` |
 
-**macOS and Linux are not interchangeable here.** The Bash scripts require Linux tools such as `lsblk`, `udevadm` and `partprobe`, and download the Linux Ventoy installer. They do not run natively on macOS just because it has a terminal or Bash. This table describes the computer preparing the USB, not which operating systems or hardware can boot a particular ISO.
+`./ventoy.sh` detects macOS and starts `macos/ventoy-mac.sh`. The macOS path uses only built-in tools (`diskutil`, `plutil`, `shasum`, `df`, `open`) and never uses sudo. The Linux scripts need Linux tools such as `lsblk` and `udevadm`, so they do not run on macOS. This table describes the computer preparing the USB, not which operating systems or hardware can boot a particular ISO.
 
 ## Windows quick start
 
@@ -130,6 +130,63 @@ Copying requires the standard Ventoy partition layout on the selected disk, chec
 
 For a downloaded ZIP, use Properties > Unblock before extraction if needed. Do not change machine-wide execution policy for this utility.
 
+## macOS quick start
+
+Prerequisites: macOS 13.5 or later on Apple silicon or Intel, Terminal, and a USB with enough room for your ISO. Ventoy has no official macOS installer. To create a new Ventoy USB, this utility uses [Mactoy](https://github.com/cashcon57/mactoy), a free, open-source (MIT), signed and notarized app. Install Mactoy yourself; this utility never downloads or installs software.
+
+### 1. Download the project and start the utility
+
+Open **Terminal** and run these commands one at a time:
+
+```bash
+git clone https://github.com/erickb336/ventoy-usb.git
+cd ventoy-usb
+./ventoy.sh
+```
+
+The utility shows:
+
+```text
+Ventoy USB Setup (macOS)
+[1] Create a new Ventoy USB (with Mactoy)
+[2] Add ISO to existing Ventoy USB
+```
+
+### 2. Option 1: create a new Ventoy USB with Mactoy
+
+**Installing Ventoy erases every file on the USB that you choose. Back it up first.**
+
+If Mactoy is in `/Applications` or `~/Applications`, the utility opens it. If not, it opens the [Mactoy releases page](https://github.com/cashcon57/mactoy/releases) in your browser. Download the `.dmg` file, open it and drag Mactoy to **Applications**. Then, in Mactoy:
+
+1. Connect the USB. Select its card in the sidebar. Check its name and size.
+2. On the **Install Ventoy** tab, keep the defaults: version **Latest**, **MBR**, **Secure Boot** on.
+3. If macOS asks, allow Mactoy in **System Settings > General > Login Items** (**Allow in the Background**).
+4. If Mactoy asks for **Full Disk Access**, use its button to open System Settings and turn it on.
+5. Confirm the erase only when the USB name and size are correct. Wait until Mactoy has finished.
+
+Go back to Terminal and press **Enter**. The utility continues with option 2. To stop, press **Ctrl+C**.
+
+### 3. Option 2: add an ISO to a Ventoy USB
+
+The utility lists only external, physical, writable disks with the Ventoy layout: data partition 1 (exFAT or FAT32) and a 32 MiB `VTOYEFI` partition 2. Enter the number in square brackets, not the disk identifier:
+
+```text
+[1] /dev/disk4 | SanDisk Ultra | 57.30 GiB | data: Ventoy (exFAT)
+Select USB by list number: 1
+```
+
+If the data partition is not mounted, the utility mounts it. Then choose:
+
+- **1 — Windows 11:** opens Microsoft's download page. Choose the architecture of the target PC (x64 for an Intel or AMD PC). Watch progress in the browser's Downloads list (**Option-Command-L** in Safari or Chrome). Do not open the ISO.
+- **2 — Local ISO:** use an ISO that you already have.
+- **3 — Skip:** copy nothing.
+
+At the path prompt, drag the ISO from Finder into the Terminal window and press **Enter**. You can also type the path, with or without quotes, for example `~/Downloads/Win11.iso`.
+
+The utility copies the ISO with progress (percent, GiB copied, MiB/s, time left), mounts the USB again so that it reads the USB and not the cache, and compares the SHA-256 of the source and the copy. When you see **ISO copied and SHA-256 verified.**, the utility asks if it can eject the USB (default: no). Eject the USB before you unplug it.
+
+Copy rules on macOS are the same as on Windows: it never overwrites a file, it checks free space and the FAT32 limit, it checks the disk identity again before it writes, it writes to a hidden temporary file, and it removes that file after an error or **Ctrl+C**.
+
 ## Linux quick start
 
 Prerequisites: Bash, `curl`, `tar`, `grep`, `sed`, `awk`, `lsblk`, `sudo`, `udevadm`, `partprobe`, and standard mount/copy utilities. Installation needs sudo and internet access; your system must support mounting exFAT. On Debian/Ubuntu, `partprobe` is in the `parted` package.
@@ -161,7 +218,7 @@ Linux retains Ventoy's default partition style (MBR); the Windows path explicitl
 
 ## Windows 11 installation media
 
-The Windows 11 menu option opens [Microsoft's official download page](https://www.microsoft.com/software-download/windows11). Select **Download Windows 11 Disk Image (ISO)** and the architecture matching the target PC. Save it to the host PC, wait for completion, then paste its path into the prompt. The utility does not scrape temporary Microsoft download URLs. If the browser cannot open, use the printed URL manually. On Linux, download the ISO in your browser and place it in the ISO directory.
+The Windows 11 menu option opens [Microsoft's official download page](https://www.microsoft.com/software-download/windows11). Select **Download Windows 11 Disk Image (ISO)** and the architecture matching the target PC. Save it to the host PC, wait for completion, then paste its path into the prompt. The utility does not scrape temporary Microsoft download URLs. If the browser cannot open, use the printed URL manually. On Linux, download the ISO in your browser and place it in the ISO directory. On macOS, the menu works as on Windows; drag the finished file into Terminal.
 
 Compare the ISO's SHA-256 against Microsoft's published checksum for your chosen download when available:
 
@@ -170,7 +227,8 @@ Get-FileHash -Algorithm SHA256 -LiteralPath 'C:\path\Windows11.iso'
 ```
 
 ```bash
-sha256sum /path/Windows11.iso
+sha256sum /path/Windows11.iso      # Linux
+shasum -a 256 ~/Downloads/Win11.iso # macOS
 ```
 
 ## Booting and clean installation
@@ -203,6 +261,12 @@ The Windows installer leaves Secure Boot support enabled by omitting `/NOSB`. It
 | No drive letter | Identify the USB's large data partition in Disk Management and assign a letter, then retry option 2. Do not assign one to its small EFI partition. |
 | File already exists | Rename the source or deliberately remove/rename the old ISO yourself. Windows copying refuses overwrites. |
 | ISO too large | Check free space. FAT32 limits files to 4 GiB minus one byte; new Windows installs use Ventoy's default exFAT. |
+| macOS: "No Ventoy USB found" | Connect the USB and run `./ventoy.sh` again. Check that `diskutil list external physical` shows it. If it has no Ventoy layout, use option 1. |
+| macOS: data partition is NTFS | macOS can only read NTFS. Use a Ventoy USB with exFAT (the Mactoy default), or copy the ISO from Windows or Linux. |
+| macOS: mounted read-only | Eject the USB, connect it again and retry. If it stays read-only, run First Aid on it in Disk Utility. |
+| macOS: Mactoy cannot write the USB | Turn on Full Disk Access for Mactoy in System Settings > Privacy & Security, and allow it in Login Items. Then retry in Mactoy. |
+| macOS: "Could not unmount" during verification | Close Finder windows and apps that use the USB, then run option 2 again. The temporary file is removed. |
+| macOS: `permission denied: ./ventoy.sh` | Run `chmod +x ventoy.sh macos/ventoy-mac.sh`, or run `bash ventoy.sh`. |
 | USB does not boot | Try the UEFI boot entry, check the ISO checksum, firmware settings and Secure Boot guidance. Test on the target PC. |
 
 Errors and Ctrl+C clean up temporary downloads and partial copies where possible. If Ventoy is already writing a disk, the wrapper waits for the process before removing its working files. Do not unplug the USB or close the terminal mid-installation. Forced termination or power loss can leave temporary files or an incomplete USB. Failure log excerpts are displayed before the temporary package is removed.
@@ -213,6 +277,9 @@ Errors and Ctrl+C clean up temporary downloads and partial copies where possible
 - `windows/Disks.ps1`: discovery, physical disk identity and partition checks.
 - `windows/Install.ps1`: release resolution, verified extraction and CLI installation.
 - `windows/Isos.ps1`: ISO selection, Microsoft page and verified copying.
+- `macos/ventoy-mac.sh`: macOS menu and Mactoy guidance; `ventoy.sh` starts it on macOS.
+- `macos/disks.sh`: macOS discovery, Ventoy layout and identity checks (`diskutil` plist output).
+- `macos/isos.sh`: macOS ISO selection and verified copying.
 
 No Pester dependency is needed:
 
@@ -227,6 +294,8 @@ The unit suite replaces disk, network and process operations with fixtures and o
 . .\windows\Disks.ps1
 Get-UsbDisks | ForEach-Object { Show-UsbDisk $_ }
 ```
+
+On macOS, `bash tests/test-macos.sh` runs without a USB. It tests path parsing and disk checks with a stub `diskutil`, then creates Ventoy-like disk images with `hdiutil` and tests copying, verification, name collisions and cleanup on them. It never touches a real disk.
 
 Actual installation, USB re-enumeration, cancellation while writing, and UEFI/Secure Boot/Windows installer boot require manual verification with disposable USB media. Never run destructive installation in automated tests.
 
