@@ -19,3 +19,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check preserved Bash syntax (never run installer)
         run: bash -n ventoy.sh ventoy-install.sh ventoy-add-isos.sh
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Bash syntax of the macOS scripts
+        run: /bin/bash -n ventoy.sh macos/ventoy-mac.sh macos/disks.sh macos/isos.sh tests/test-macos.sh
+      - name: macOS safe tests (hdiutil disk images only, never a real disk)
+        run: /bin/bash tests/test-macos.sh
